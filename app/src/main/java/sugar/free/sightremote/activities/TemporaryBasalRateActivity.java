@@ -115,4 +115,9 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
     public void onDurationChange(int newValue) {
         setTBR.setEnabled(percentage.getValue() != 10 && newValue > 0);
     }
+
+    @Override
+    protected int getSelectedNavItemID() {
+        return R.id.nav_tbr;
+    }
 }
