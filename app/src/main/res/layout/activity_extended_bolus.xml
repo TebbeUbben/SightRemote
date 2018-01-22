@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/set_delayed_amount"
+                android:textAlignment="center" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <NumberPicker
+                    android:id="@+id/digit1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants" />
+
+                <NumberPicker
+                    android:id="@+id/digit2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingTop="10dp"
+                    android:text="@string/decimal_delimitter"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <NumberPicker
+                    android:id="@+id/digit3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants" />
+
+                <NumberPicker
+                    android:id="@+id/digit4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/set_duration"
+                android:textAlignment="center" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <NumberPicker
+                    android:id="@+id/digit5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text=":"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <NumberPicker
+                    android:id="@+id/digit6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/deliver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="64dp"
+                android:paddingRight="64dp"
+                android:text="@string/deliver" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

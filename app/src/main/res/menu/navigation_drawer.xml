@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_status"
+        android:title="@string/status" />
+    <item android:title="@string/boluses">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/nav_standard_bolus"
+                    android:title="@string/standard_bolus" />
+                <item
+                    android:id="@+id/nav_extended_bolus"
+                    android:title="@string/extended_bolus" />
+                <item
+                    android:id="@+id/nav_multiwave_bolus"
+                    android:title="@string/multiwave_bolus" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="@string/basal_rate">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/nav_tbr"
+                    android:title="@string/temporary_basalrate" />
+            </group>
+        </menu>
+    </item>
+</menu>

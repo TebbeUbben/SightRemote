@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/status_nav_stop"
+        android:title="@string/stop_pump"
+        android:icon="@drawable/ic_stop"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/status_nav_start"
+        android:title="@string/start_pump"
+        android:icon="@drawable/ic_start"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <sugar.free.sightremote.views.NonSwipeableViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/content_license_agreement" />
+        <include layout="@layout/content_pairing" />
+        <include layout="@layout/content_progress" />
+        <include layout="@layout/content_setup_complete" />
+    </sugar.free.sightremote.views.NonSwipeableViewPager>
+
+</LinearLayout>
