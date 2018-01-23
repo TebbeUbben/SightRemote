@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
         <service
             android:name="sugar.free.sightparser.handling.SightService"
-            android:exported="false" /> <!-- First add permission system -->
+            android:exported="true" />
         <activity android:name=".activities.LauncherActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

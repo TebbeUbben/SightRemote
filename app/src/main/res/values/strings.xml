@@ -68,4 +68,5 @@
     <string name="set_tbr">Set TBR</string>
     <string name="boluses">Boluses</string>
     <string name="basal_rate">Basal rate</string>
+    <string name="duration_formatter">%1$02d:%2$02d</string>
 </resources>

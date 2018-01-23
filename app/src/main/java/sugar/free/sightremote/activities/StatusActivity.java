@@ -240,9 +240,9 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     }
 
     private String formatTime(int minutes) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.time_formatter));
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return simpleDateFormat.format(new Date(minutes * 60000));
+        int dMinutes = minutes % 60;
+        int dHours = (minutes - dMinutes) / 60;
+        return getString(R.string.duration_formatter, dHours, dMinutes);
     }
 
     @Override

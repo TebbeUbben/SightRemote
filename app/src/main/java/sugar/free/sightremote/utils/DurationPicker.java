@@ -34,6 +34,10 @@ public class DurationPicker implements NumberPicker.OnValueChangeListener {
 
     @Override
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+        if (getPickerValue() > 24 * 60) {
+            if (picker == digit1) digit2.setValue(0);
+            else digit1.setValue(digit1.getValue() - 1);
+        }
         if (onDurationChangeListener != null) onDurationChangeListener.onDurationChange(getPickerValue());
     }
 
