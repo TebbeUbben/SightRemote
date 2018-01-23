@@ -136,13 +136,17 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         bluetoothDevices.clear();
         bluetoothDeviceAdapter.notifyDataSetChanged();
         if (checkLocationPermission()) {
-            bluetoothAdapter.enable();
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-            intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            registerReceiver(bluetoothBroadcastReceiver, intentFilter);
-            receiverRegistered = true;
-            bluetoothAdapter.startDiscovery();
+            if (bluetoothAdapter != null) {
+                bluetoothAdapter.enable();
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
+                intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+                registerReceiver(bluetoothBroadcastReceiver, intentFilter);
+                receiverRegistered = true;
+                bluetoothAdapter.startDiscovery();
+            } else {
+                Toast.makeText(this, R.string.bluetooth_not_found, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -165,7 +169,9 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             unregisterReceiver(bluetoothBroadcastReceiver);
             receiverRegistered = false;
         }
-        bluetoothAdapter.cancelDiscovery();
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.cancelDiscovery();
+        }
     }
 
     private PagerAdapter setupPagerAdapter = new PagerAdapter() {
