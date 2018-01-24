@@ -119,6 +119,7 @@ public class SightServiceConnector {
             }
             disconnect();
             context.unbindService(serviceConnection);
+            boundService = null;
             if (connectionCallback != null) connectionCallback.onServiceDisconnected();
         }
         connectingToService = false;
