@@ -263,5 +263,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         public void onServiceConnected() {
             statusCallback.onStatusChange(serviceConnector.getStatus());
         }
+
+        @Override
+        public void onServiceDisconnected() {
+
+        }
     };
 }

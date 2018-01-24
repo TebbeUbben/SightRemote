@@ -1,6 +1,7 @@
 package sugar.free.sightparser.pipeline.handlers;
 
 import android.os.RemoteException;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -77,7 +78,15 @@ public class RequestWorker implements DuplexHandler {
 
     private void requestNext(Pipeline pipeline) {
         if (messageRequests.size() == 0) return;
-        MessageRequest messageRequest = messageRequests.get(0);
+        MessageRequest messageRequest = null;
+        while (messageRequests.size() != 0) {
+            messageRequest = messageRequests.get(0);
+            if (!messageRequest.getBinder().isBinderAlive()) {
+                messageRequests.remove(messageRequest);
+                if (messageRequests.size() == 0) return;
+                else continue;
+            } else break;
+        }
         Service service = messageRequest.getAppLayerMessage().getService();
         if (!pipeline.getActivatedServices().contains(service)) {
             messageRequest.setMessageStatus(MessageStatus.ACTIVATING_SERVICE);

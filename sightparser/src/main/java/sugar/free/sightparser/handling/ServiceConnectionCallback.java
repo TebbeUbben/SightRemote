@@ -1,14 +1,9 @@
 package sugar.free.sightparser.handling;
 
-public abstract class ServiceConnectionCallback {
+public interface ServiceConnectionCallback {
 
-    public void onServiceConnected() {
-
-    }
-
-    public void onServiceDisconnected() {
-
-    }
+    void onServiceConnected();
+    void onServiceDisconnected();
 
 
 }

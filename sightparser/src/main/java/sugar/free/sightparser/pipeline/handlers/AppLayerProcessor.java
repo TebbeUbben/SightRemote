@@ -17,14 +17,14 @@ public class AppLayerProcessor implements DuplexHandler {
         ByteBuf byteBuf = new ByteBuf(dataMessage.getData().length);
         byteBuf.putBytes(dataMessage.getData());
         AppLayerMessage appLayerMessage = AppLayerMessage.deserialize(byteBuf);
-        Log.d("sugar.free.sightremote", "RECEIVE: " + appLayerMessage.getClass());
+        Log.d("SightService", "RECEIVE: " + appLayerMessage.getClass());
         pipeline.receive(appLayerMessage);
     }
 
     @Override
     public void onOutboundMessage(Object message, Pipeline pipeline) throws Exception {
         if (!(message instanceof AppLayerMessage)) return;
-        Log.d("sugar.free.sightremote", "SEND: " + message.getClass());
+        Log.d("SightService", "SEND: " + message.getClass());
         DataMessage dataMessage = new DataMessage();
         dataMessage.setData(((AppLayerMessage) message).serialize());
         pipeline.send(dataMessage);

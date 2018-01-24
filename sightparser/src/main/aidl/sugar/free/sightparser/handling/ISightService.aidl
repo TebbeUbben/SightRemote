@@ -5,13 +5,13 @@ import sugar.free.sightparser.handling.IStatusCallback;
 
 interface ISightService {
 
-    void pair(String mac, boolean connected);
+    void pair(String mac, IBinder binder);
     boolean isUseable();
     String getStatus();
     void requestMessage(in byte[] getClass, IMessageCallback callback);
     long registerStatusCallback(IStatusCallback callback);
     void unregisterStatusCallback(long id);
-    void connect();
-    void disconnect();
+    void connect(IBinder binder);
+    void disconnect(IBinder binder);
 
 }

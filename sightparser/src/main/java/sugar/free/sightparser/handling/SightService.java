@@ -12,6 +12,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -23,7 +24,6 @@ import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.AppLayerMessage;
 import sugar.free.sightparser.applayer.status.PumpStatusMessage;
 import sugar.free.sightparser.error.DisconnectedError;
-import sugar.free.sightparser.error.SightError;
 import sugar.free.sightparser.pipeline.Pipeline;
 import sugar.free.sightparser.pipeline.Status;
 
@@ -31,13 +31,14 @@ public class SightService extends Service {
 
     private static final int DISCONNECT_DELAY = 5000;
 
+    private long statusIdCounter = 0;
     private String tempMac;
-    private int clientsConnected = 0;
+    private Map<IBinder, IBinder.DeathRecipient> connectedClients = new HashMap<>();
     private ConnectionThread connectionThread;
     private Pipeline pipeline;
     private DataStorage dataStorage;
-    private Map<Long, IStatusCallback> statusCallbacks = new HashMap<>();
-    private int statusCallbackID = 0;
+    private Map<IStatusCallback, IBinder.DeathRecipient> statusCallbackDeathRecipients = new HashMap<>();
+    private Map<Long, IStatusCallback> statusCallbackIds = new HashMap<>();
     private Status status = Status.DISCONNECTED;
     private Timer disconnectTimer;
     private Timer timeoutTimer;
@@ -60,7 +61,6 @@ public class SightService extends Service {
                         if (received) {
                             received = false;
                             pipeline.requestMessage(new MessageRequest(new PumpStatusMessage(), new IMessageCallback() {
-
                                 @Override
                                 public IBinder asBinder() {
                                     return null;
@@ -75,7 +75,7 @@ public class SightService extends Service {
                                 public void onError(byte[] error) throws RemoteException {
                                     received = true;
                                 }
-                            }));
+                            }, binder.asBinder()));
                         } else {
                             disconnect(true);
                         }
@@ -87,7 +87,7 @@ public class SightService extends Service {
                     reconnect = true;
                 }
             } else if (status == Status.DISCONNECTED && pingTimer != null) pingTimer.cancel();
-            for (IStatusCallback sc : statusCallbacks.values())
+            for (IStatusCallback sc : new ArrayList<>(statusCallbackIds.values()))
                 try {
                     sc.onStatusChange(status.name());
                 } catch (RemoteException e) {
@@ -98,7 +98,19 @@ public class SightService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d("SightService", "CLIENT BOUND TO SERVICE");
         return binder;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.d("SightService", "CLIENT REBOUND TO SERVICE");
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d("SightService", "CLIENT UNBOUND FROM SERVICE");
+        return true;
     }
 
     private class ConnectionThread extends Thread {
@@ -128,11 +140,16 @@ public class SightService extends Service {
                 if (pairing) pipeline.establishPairing();
                 else pipeline.establishConnection();
                 timeoutTimer = new Timer();
+                final BluetoothSocket bluetoothSocket1 = bluetoothSocket;
                 if (!pairing) timeoutTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         Log.d("SightService", "TIMEOUT");
                         disconnect(true);
+                        try {
+                            bluetoothSocket1.close();
+                        } catch (IOException e) {
+                        }
                     }
                 }, 4000);
                 while (pipeline.getStatus() != Status.DISCONNECTED && !Thread.currentThread().isInterrupted())
@@ -200,7 +217,25 @@ public class SightService extends Service {
 
     private ISightService.Stub binder = new ISightService.Stub() {
         @Override
-        public void pair(String mac, boolean connected) throws RemoteException {
+        public void pair(String mac, final IBinder binder) throws RemoteException {
+            if (!connectedClients.containsKey(binder)) {
+                Log.d("SightService", "CLIENT CONNECTS TO PUMP");
+                if (disconnectTimer != null) disconnectTimer.cancel();
+                disconnectTimer = new Timer();
+                DeathRecipient deathRecipient = new DeathRecipient() {
+                    @Override
+                    public void binderDied() {
+                        Log.d("SightService", "CLIENT DIED - CONNECT");
+                        try {
+                            disconnect(binder);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                connectedClients.put(binder, deathRecipient);
+                binder.linkToDeath(deathRecipient, 0);
+            }
             SightService.this.disconnect(false);
             getDataStorage().clear();
             tempMac = mac;
@@ -219,42 +254,75 @@ public class SightService extends Service {
 
         @Override
         public void requestMessage(byte[] message, IMessageCallback callback) throws RemoteException {
-            MessageRequest messageRequest = new MessageRequest((AppLayerMessage) SerializationUtils.deserialize(message), callback);
+            MessageRequest messageRequest = new MessageRequest((AppLayerMessage) SerializationUtils.deserialize(message), callback, callback.asBinder());
             if (pipeline != null && status == Status.CONNECTED) pipeline.requestMessage(messageRequest);
         }
 
         @Override
-        public long registerStatusCallback(IStatusCallback callback) throws RemoteException {
-            callback.onStatusChange("DISCONNECTED");
-            long id = statusCallbackID++;
-            statusCallbacks.put(id, callback);
+        public long registerStatusCallback(final IStatusCallback callback) throws RemoteException {
+            final long id = ++statusIdCounter;
+            DeathRecipient deathRecipient = new DeathRecipient() {
+                @Override
+                public void binderDied() {
+                    Log.d("SightService", "CLIENT DIED - STATUS");
+                    callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
+                    statusCallbackDeathRecipients.remove(callback);
+                    statusCallbackIds.remove(id);
+                }
+            };
+            statusCallbackDeathRecipients.put(callback, deathRecipient);
+            statusCallbackIds.put(id, callback);
+            callback.asBinder().linkToDeath(deathRecipient, 0);
             return id;
         }
 
         @Override
         public void unregisterStatusCallback(long id) throws RemoteException {
-            statusCallbacks.remove(id);
+            IStatusCallback callback = statusCallbackIds.get(id);
+            callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
+            statusCallbackDeathRecipients.remove(callback);
+            statusCallbackIds.remove(id);
         }
 
         @Override
-        public void connect() throws RemoteException {
-            if (disconnectTimer != null) disconnectTimer.cancel();
-            disconnectTimer = new Timer();
-            clientsConnected++;
-            if (getDataStorage().contains("DEVICEMAC"))
-                SightService.this.connect(getDataStorage().get("DEVICEMAC"), false);
-        }
-
-        @Override
-        public void disconnect() throws RemoteException {
-            if (--clientsConnected == 0 && connectionThread != null) {
+        public void connect(final IBinder binder) throws RemoteException {
+            if (!connectedClients.containsKey(binder)) {
+                Log.d("SightService", "CLIENT CONNECTS TO PUMP");
+                if (disconnectTimer != null) disconnectTimer.cancel();
                 disconnectTimer = new Timer();
-                disconnectTimer.schedule(new TimerTask() {
+                DeathRecipient deathRecipient = new DeathRecipient() {
                     @Override
-                    public void run() {
-                        SightService.this.disconnect(false);
+                    public void binderDied() {
+                        Log.d("SightService", "CLIENT DIED - CONNECT");
+                        try {
+                            disconnect(binder);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }, DISCONNECT_DELAY);
+                };
+                connectedClients.put(binder, deathRecipient);
+                binder.linkToDeath(deathRecipient, 0);
+                if (getDataStorage().contains("DEVICEMAC"))
+                    SightService.this.connect(getDataStorage().get("DEVICEMAC"), false);
+            }
+        }
+
+        @Override
+        public void disconnect(IBinder binder) throws RemoteException {
+            if (connectedClients.containsKey(binder)) {
+                Log.d("SightService", "CLIENT DISCONNECTS FROM PUMP");
+                binder.unlinkToDeath(connectedClients.get(binder), 0);
+                connectedClients.remove(binder);
+                if (connectedClients.size() == 0 && connectionThread != null) {
+                    disconnectTimer = new Timer();
+                    disconnectTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            SightService.this.disconnect(false);
+                        }
+                    }, DISCONNECT_DELAY);
+                }
             }
         }
     };

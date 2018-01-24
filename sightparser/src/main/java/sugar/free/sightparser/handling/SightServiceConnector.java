@@ -4,8 +4,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +19,15 @@ import sugar.free.sightparser.pipeline.Status;
 
 public class SightServiceConnector {
 
+    private long statusCallbackId = -1;
     private Context context;
     private ServiceConnectionCallback connectionCallback;
-    private IBinder binder;
+    private Binder localBinder = new Binder();
     private List<StatusCallback> statusCallbacks = new ArrayList<>();
     private ISightService boundService;
-    private long statusCallbackID;
     private boolean connectedToService;
     private boolean connectingToService;
     private CountDownLatch connectLatch;
-    private boolean connected;
 
     public SightServiceConnector(Context context) {
         this.context = context;
@@ -39,13 +40,13 @@ public class SightServiceConnector {
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            binder = service;
             connectedToService = true;
             boundService = ISightService.Stub.asInterface(service);
             try {
-                statusCallbackID = boundService.registerStatusCallback(new IStatusCallback.Stub() {
+                statusCallbackId = boundService.registerStatusCallback(new IStatusCallback.Stub() {
                     @Override
                     public void onStatusChange(String status) throws RemoteException {
+                        if (!connectedToService) return;
                         Status enumStatus = Status.valueOf(status);
                         synchronized (statusCallbacks) {
                             for (StatusCallback statusCallback : new ArrayList<>(statusCallbacks)) {
@@ -91,10 +92,7 @@ public class SightServiceConnector {
 
     public void connect() {
         try {
-            if (!connected) {
-                connected = true;
-                boundService.connect();
-            }
+            boundService.connect(localBinder);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -102,10 +100,7 @@ public class SightServiceConnector {
 
     public void disconnect() {
         try {
-            if (connected) {
-                connected = false;
-                boundService.disconnect();
-            }
+            boundService.disconnect(localBinder);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -113,16 +108,18 @@ public class SightServiceConnector {
 
     public void disconnectFromService() {
         if (connectingToService) {
-            try {
-                if (boundService != null) {
-                    boundService.unregisterStatusCallback(statusCallbackID);
-                    disconnect();
-                }
+            if (statusCallbackId != -1) try {
+                boundService.unregisterStatusCallback(statusCallbackId);
+                statusCallbackId = -1;
             } catch (RemoteException e) {
+                e.printStackTrace();
             }
+            disconnect();
             context.unbindService(serviceConnection);
+            disconnectFromService();
         }
         connectingToService = false;
+        connectedToService = false;
     }
 
     public void addStatusCallback(StatusCallback statusCallback) {
@@ -139,8 +136,7 @@ public class SightServiceConnector {
 
     public void pair(String mac) {
         try {
-            boundService.pair(mac, connected);
-            connected = true;
+            boundService.pair(mac, localBinder);
         } catch (RemoteException e) {
         }
     }
@@ -167,12 +163,14 @@ public class SightServiceConnector {
             boundService.requestMessage(SerializationUtils.serialize(message), new IMessageCallback.Stub() {
                 @Override
                 public void onMessage(byte[] bytes) throws RemoteException {
-                    callback.onMessage((AppLayerMessage) SerializationUtils.deserialize(bytes));
+                    if (connectedToService)
+                        callback.onMessage((AppLayerMessage) SerializationUtils.deserialize(bytes));
                 }
 
                 @Override
                 public void onError(byte[] error) throws RemoteException {
-                    callback.onError((Exception) SerializationUtils.deserialize(error));
+                    if (connectedToService)
+                        callback.onError((Exception) SerializationUtils.deserialize(error));
                 }
             });
         } catch (RemoteException e) {
