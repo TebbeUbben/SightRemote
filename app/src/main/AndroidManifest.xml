@@ -15,6 +15,7 @@
         android:theme="@style/AppTheme">
         <service
             android:name="sugar.free.sightparser.handling.SightService"
+            android:process="sugar.free.sightparser.handling.SightService"
             android:exported="true" />
         <activity android:name=".activities.LauncherActivity">
             <intent-filter>

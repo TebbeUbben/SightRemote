@@ -125,14 +125,14 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         sightServiceConnector.disconnectFromService();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         sightServiceConnector.connectToService();
     }
 

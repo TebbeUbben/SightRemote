@@ -24,6 +24,7 @@ public class SightServiceConnector {
     private ISightService boundService;
     private long statusCallbackID;
     private boolean connectedToService;
+    private boolean connectingToService;
     private CountDownLatch connectLatch;
     private boolean connected;
 
@@ -35,29 +36,24 @@ public class SightServiceConnector {
         this.connectionCallback = connectionCallback;
     }
 
-    private StatusCallback statusRedirector = new StatusCallback() {
-        @Override
-        public void onStatusChange(Status status) {
-            synchronized (statusCallbacks) {
-                for (StatusCallback statusCallback : new ArrayList<StatusCallback>(statusCallbacks)) {
-                    statusCallback.onStatusChange(status);
-                }
-            }
-        }
-
-        @Override
-        public IBinder asBinder() {
-            return binder;
-        }
-    };
-
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             binder = service;
+            connectedToService = true;
             boundService = ISightService.Stub.asInterface(service);
             try {
-                statusCallbackID = boundService.registerStatusCallback(statusRedirector);
+                statusCallbackID = boundService.registerStatusCallback(new IStatusCallback.Stub() {
+                    @Override
+                    public void onStatusChange(String status) throws RemoteException {
+                        Status enumStatus = Status.valueOf(status);
+                        synchronized (statusCallbacks) {
+                            for (StatusCallback statusCallback : new ArrayList<>(statusCallbacks)) {
+                                statusCallback.onStatusChange(enumStatus);
+                            }
+                        }
+                    }
+                });
             } catch (RemoteException e) {
             }
             if (connectLatch != null) connectLatch.countDown();
@@ -67,25 +63,29 @@ public class SightServiceConnector {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             boundService = null;
+            connectedToService = false;
             if (connectionCallback != null) connectionCallback.onServiceDisconnected();
         }
     };
 
     public void connectToService() {
-        if (!connectedToService) context.bindService(new Intent(context, SightService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-        connectedToService = true;
+        if (!connectingToService) {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("sugar.free.sightremote", "sugar.free.sightparser.handling.SightService"));
+            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        }
+        connectingToService = true;
     }
 
     public void connectToServiceBlockingCall() {
-        if (!connectedToService) {
-            connectLatch = new CountDownLatch(1);
-            connectToService();
-            try {
-                connectLatch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (connectedToService) return;
+        if (connectLatch == null) connectLatch = new CountDownLatch(1);
+        if (!connectingToService) connectToService();
+        try {
+            connectLatch.await();
             connectLatch = null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -112,7 +112,7 @@ public class SightServiceConnector {
     }
 
     public void disconnectFromService() {
-        if (connectedToService) {
+        if (connectingToService) {
             try {
                 if (boundService != null) {
                     boundService.unregisterStatusCallback(statusCallbackID);
@@ -122,7 +122,7 @@ public class SightServiceConnector {
             }
             context.unbindService(serviceConnection);
         }
-        connectedToService = false;
+        connectingToService = false;
     }
 
     public void addStatusCallback(StatusCallback statusCallback) {
@@ -162,9 +162,19 @@ public class SightServiceConnector {
         return null;
     }
 
-    public void requestMessage(AppLayerMessage message, MessageCallback callback) {
+    public void requestMessage(AppLayerMessage message, final MessageCallback callback) {
         try {
-            boundService.requestMessage(SerializationUtils.serialize(message), callback);
+            boundService.requestMessage(SerializationUtils.serialize(message), new IMessageCallback.Stub() {
+                @Override
+                public void onMessage(byte[] bytes) throws RemoteException {
+                    callback.onMessage((AppLayerMessage) SerializationUtils.deserialize(bytes));
+                }
+
+                @Override
+                public void onError(byte[] error) throws RemoteException {
+                    callback.onError((Exception) SerializationUtils.deserialize(error));
+                }
+            });
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -172,5 +182,9 @@ public class SightServiceConnector {
 
     public boolean isConnectedToService() {
         return connectedToService;
+    }
+
+    public boolean isConnectingToService() {
+        return connectingToService;
     }
 }

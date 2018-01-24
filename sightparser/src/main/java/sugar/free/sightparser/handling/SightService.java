@@ -46,7 +46,7 @@ public class SightService extends Service {
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
         public void onStatusChange(Status status) {
-            Log.d(getPackageName(), "STATUS: " + status);
+            Log.d("SightService", "STATUS: " + status);
             SightService.this.status = status;
             if (status == Status.CONNECTED) {
                 timeoutTimer.cancel();
@@ -59,9 +59,20 @@ public class SightService extends Service {
                     public void run() {
                         if (received) {
                             received = false;
-                            pipeline.requestMessage(new MessageRequest(new PumpStatusMessage(), new MessageCallback() {
+                            pipeline.requestMessage(new MessageRequest(new PumpStatusMessage(), new IMessageCallback() {
+
                                 @Override
-                                public void onMessage(AppLayerMessage message) {
+                                public IBinder asBinder() {
+                                    return null;
+                                }
+
+                                @Override
+                                public void onMessage(byte[] getClass) throws RemoteException {
+                                    received = true;
+                                }
+
+                                @Override
+                                public void onError(byte[] error) throws RemoteException {
                                     received = true;
                                 }
                             }));
@@ -120,7 +131,7 @@ public class SightService extends Service {
                 if (!pairing) timeoutTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        Log.d(getPackageName(), "TIMEOUT");
+                        Log.d("SightService", "TIMEOUT");
                         disconnect(true);
                     }
                 }, 4000);
@@ -157,7 +168,7 @@ public class SightService extends Service {
 
     public void connect(String mac, boolean pairing) {
         reconnect = !pairing;
-        Log.d(getPackageName(), "CONNECT");
+        Log.d("SightService", "CONNECT");
         if (connectionThread == null) {
             connectionThread = new ConnectionThread(mac, pairing);
             connectionThread.start();
@@ -166,7 +177,7 @@ public class SightService extends Service {
 
     public void disconnect(boolean reconnect) {
         this.reconnect = reconnect;
-        Log.d(getPackageName(), "DISCONNECT");
+        Log.d("SightService", "DISCONNECT");
         if (connectionThread != null) {
             connectionThread.interrupt();
         }
@@ -214,6 +225,7 @@ public class SightService extends Service {
 
         @Override
         public long registerStatusCallback(IStatusCallback callback) throws RemoteException {
+            callback.onStatusChange("DISCONNECTED");
             long id = statusCallbackID++;
             statusCallbacks.put(id, callback);
             return id;

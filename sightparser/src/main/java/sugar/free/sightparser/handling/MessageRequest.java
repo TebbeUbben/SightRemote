@@ -15,7 +15,7 @@ public class MessageRequest {
         this.messageCallback = messageCallback;
     }
 
-    public MessageRequest(Serializable deserialize) {
+    public MessageRequest(Serializable deserialize, MessageCallback messageCallback) {
 
     }
 
