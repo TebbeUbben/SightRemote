@@ -7,6 +7,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class BolusMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private short bolusId;
 

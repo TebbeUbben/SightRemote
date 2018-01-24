@@ -8,6 +8,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 @Getter
 public class AvailableBolusesMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     private boolean standardAvailable;
     private boolean extendedAvailable;
     private boolean multiwaveAvailable;

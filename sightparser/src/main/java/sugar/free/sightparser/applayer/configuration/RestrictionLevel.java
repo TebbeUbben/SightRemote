@@ -28,6 +28,8 @@ public enum RestrictionLevel {
     DEVICE_LEVEL_4H((short) 0x6C1D),
     FACTORY((short) 0x731D);
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private short value;
 

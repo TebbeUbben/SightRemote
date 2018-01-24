@@ -10,6 +10,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class ActiveBolusesMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private ActiveBolus bolus1;
     @Getter

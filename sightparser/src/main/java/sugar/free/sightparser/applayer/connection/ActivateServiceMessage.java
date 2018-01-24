@@ -10,6 +10,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class ActivateServiceMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     @Setter
     private byte serviceID;

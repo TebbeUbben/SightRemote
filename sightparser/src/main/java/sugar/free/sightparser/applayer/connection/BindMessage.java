@@ -11,6 +11,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class BindMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private byte[] modelNumber;
 

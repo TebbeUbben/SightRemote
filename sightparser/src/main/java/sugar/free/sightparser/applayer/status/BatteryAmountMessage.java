@@ -9,6 +9,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class BatteryAmountMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private int batteryAmount;
 

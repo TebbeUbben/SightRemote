@@ -10,6 +10,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class CurrentTBRMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private int percentage = 100;
     @Getter

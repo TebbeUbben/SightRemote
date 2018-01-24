@@ -9,6 +9,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class SetTBRMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Setter
     private short amount;
     @Setter

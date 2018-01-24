@@ -10,6 +10,8 @@ public enum PumpStatus {
         this.value = value;
     }
 
+    private static final long serialVersionUID = 1L;
+
     private short value;
 
     public short getValue() {

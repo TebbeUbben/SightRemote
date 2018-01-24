@@ -4,6 +4,8 @@ import lombok.Getter;
 
 public class UnknownAppMessageError extends SightError {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private byte service;
     @Getter

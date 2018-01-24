@@ -11,6 +11,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class DateTimeMesssage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private Date dateTime;
 

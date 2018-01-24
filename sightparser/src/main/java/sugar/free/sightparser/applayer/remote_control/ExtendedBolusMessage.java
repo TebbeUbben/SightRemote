@@ -5,6 +5,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class ExtendedBolusMessage extends BolusMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Setter
     private float amount;
     @Setter

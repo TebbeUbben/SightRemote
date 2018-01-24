@@ -10,6 +10,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class DisconnectMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     public Service getService() {
         return Service.CONNECTION;

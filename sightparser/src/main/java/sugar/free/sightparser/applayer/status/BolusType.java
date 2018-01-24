@@ -6,6 +6,8 @@ public enum  BolusType {
     EXTENDED((short) 0xFC00),
     MULTIWAVE((short) 0x2503);
 
+    private static final long serialVersionUID = 1L;
+
     private short value;
 
     BolusType(short value) {

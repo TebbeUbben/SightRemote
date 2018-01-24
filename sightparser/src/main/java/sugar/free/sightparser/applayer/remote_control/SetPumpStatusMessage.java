@@ -8,6 +8,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class SetPumpStatusMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Setter
     private PumpStatus pumpStatus;
 

@@ -6,6 +6,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class FactoryMinBolusAmountBlock extends ConfigurationBlock {
 
+    private static final long serialVersionUID = 1L;
+
     public static final short ID = 0x17EB;
 
     @Getter

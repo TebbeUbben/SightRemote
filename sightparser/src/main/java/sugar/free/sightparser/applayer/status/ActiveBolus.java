@@ -7,6 +7,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class ActiveBolus implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private short bolusID;
     @Getter

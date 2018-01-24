@@ -10,6 +10,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class ReadConfigurationBlockMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     @Setter
     @Getter
     private short configurationBlockID;

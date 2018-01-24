@@ -4,6 +4,8 @@ import lombok.Getter;
 
 public class InvalidAuthCRCError extends SightError {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private short received;
     @Getter

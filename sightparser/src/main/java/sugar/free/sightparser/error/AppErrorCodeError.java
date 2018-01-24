@@ -3,7 +3,7 @@ package sugar.free.sightparser.error;
 import lombok.Getter;
 import sugar.free.sightparser.applayer.AppLayerMessage;
 
-public class AppErrorCodeError extends SightError {
+public abstract class AppErrorCodeError extends SightError {
 
     @Getter
     private Class<? extends AppLayerMessage> clazz;
