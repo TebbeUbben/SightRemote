@@ -70,4 +70,5 @@
     <string name="stop_pump_confirmation">Bist du dir sicher, dass du deine Pumpe stoppen möchtest?</string>
     <string name="start_pump_confirmation">Bist du dir sicher, dass du deine Pumpe starten möchtest?</string>
     <string name="duration_formatter">%1$02d:%2$02d</string>
+    <string name="bluetooth_not_found">Dein Gerät hat kein Bluetooth-Modul.</string>
 </resources>

@@ -68,6 +68,6 @@
     <string name="set_tbr">Set TBR</string>
     <string name="boluses">Boluses</string>
     <string name="basal_rate">Basal rate</string>
-    <string name="bluetooth_not_found">Bluetooth not found!</string>
+    <string name="bluetooth_not_found">Your device has no bluetooth module.</string>
     <string name="duration_formatter">%1$02d:%2$02d</string>
 </resources>
