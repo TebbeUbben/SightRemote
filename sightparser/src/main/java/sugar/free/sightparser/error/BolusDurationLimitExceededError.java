@@ -1,4 +1,9 @@
 package sugar.free.sightparser.error;
 
-public class BolusDurationLimitExceededError extends SightError {
+import sugar.free.sightparser.applayer.AppLayerMessage;
+
+public class BolusDurationLimitExceededError extends AppErrorCodeError {
+    public BolusDurationLimitExceededError(Class<? extends AppLayerMessage> clazz, short error) {
+        super(clazz, error);
+    }
 }

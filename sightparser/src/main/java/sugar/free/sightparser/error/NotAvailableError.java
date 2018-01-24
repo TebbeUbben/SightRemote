@@ -1,4 +1,9 @@
 package sugar.free.sightparser.error;
 
-public class NotAvailableError extends SightError {
+import sugar.free.sightparser.applayer.AppLayerMessage;
+
+public class NotAvailableError extends AppErrorCodeError {
+    public NotAvailableError(Class<? extends AppLayerMessage> clazz, short error) {
+        super(clazz, error);
+    }
 }

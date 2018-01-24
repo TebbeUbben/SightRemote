@@ -31,6 +31,7 @@ import sugar.free.sightparser.applayer.status.FirmwareVersionMessage;
 import sugar.free.sightparser.applayer.status.PumpStatusMessage;
 import sugar.free.sightparser.applayer.status.WarrantyTimerMessage;
 import sugar.free.sightparser.crypto.Cryptograph;
+import sugar.free.sightparser.error.AppErrorCodeError;
 import sugar.free.sightparser.error.InvalidAppCRCError;
 import sugar.free.sightparser.error.InvalidAppVersionError;
 import sugar.free.sightparser.error.SightError;
@@ -122,8 +123,8 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         Class<? extends AppLayerMessage> clazz = MESSAGES.get(service).get(command);
         if (clazz == null) throw new UnknownAppMessageError(service, command);
         if (error != 0x0000) {
-            Class<? extends SightError> errorClass = Errors.ERRORS.get(error);
-            if (errorClass != null) throw errorClass.newInstance();
+            Class<? extends AppErrorCodeError> errorClass = Errors.ERRORS.get(error);
+            if (errorClass != null) throw errorClass.getConstructor(Class.class, short.class).newInstance(clazz, error);
             else throw new UnknownAppErrorCodeError(clazz, error);
         }
         AppLayerMessage message = clazz.newInstance();
