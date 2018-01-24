@@ -1,24 +1,24 @@
 package sugar.free.sightremote.activities;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.AppLayerMessage;
@@ -216,7 +216,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
             noActiveProcesses.setVisibility(activeProcesses == 0 ? View.VISIBLE : View.GONE);
             noActiveProcesses.setText(R.string.no_active_processes);
         }
-        if (startPump != null) {
+        if (startPump != null && stopPump != null) {
             if (pumpStatus == PumpStatus.STARTED) {
                 stopPump.setVisible(true);
                 startPump.setVisible(false);
@@ -345,6 +345,28 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                         .show();
             }
             return true;
+        } else if (item.getItemId() == R.id.status_nav_delete_pairing) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.confirmation)
+                    .setMessage(R.string.delete_pairing_confirmation)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {;
+                        getServiceConnector().reset();
+                        Intent intent = new Intent(this, SetupActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        } else if (item.getItemId() == R.id.status_nav_enter_password) {
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            new AlertDialog.Builder(this)
+                    .setView(input)
+                    .setTitle(R.string.enter_password)
+                    .setPositiveButton(R.string.okay, (dialog, which) -> getServiceConnector().setPassword(input.getText().toString()))
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
         }
         return super.onOptionsItemSelected(item);
     }

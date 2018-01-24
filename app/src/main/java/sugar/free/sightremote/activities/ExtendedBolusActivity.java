@@ -116,6 +116,7 @@ public class ExtendedBolusActivity extends SightActivity implements TaskRunner.R
         int minutes = durationPicker.getPickerValue() % 60;
         int hours = (durationPicker.getPickerValue() - minutes) / 60;
         new AlertDialog.Builder(this)
+                .setTitle(R.string.confirmation)
                 .setMessage(getString(R.string.extended_bolus_confirmation, decimalFormat.format(bolusAmountPicker.getPickerValue()), hours, minutes))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     showManualOverlay();

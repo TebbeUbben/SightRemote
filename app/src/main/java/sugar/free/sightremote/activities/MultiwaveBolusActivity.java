@@ -132,6 +132,7 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
         int minutes = durationPicker.getPickerValue() % 60;
         int hours = (durationPicker.getPickerValue() - minutes) / 60;
         new AlertDialog.Builder(this)
+                .setTitle(R.string.confirmation)
                 .setMessage(getString(R.string.multiwave_bolus_confirmation, decimalFormat.format(immediateBolusAmountPicker.getPickerValue()), decimalFormat.format(delayedBolusAmountPicker.getPickerValue()), hours, minutes))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     showManualOverlay();

@@ -71,4 +71,9 @@
     <string name="start_pump_confirmation">Bist du dir sicher, dass du deine Pumpe starten möchtest?</string>
     <string name="duration_formatter">%1$02d:%2$02d</string>
     <string name="bluetooth_not_found">Dein Gerät hat kein Bluetooth-Modul.</string>
+    <string name="confirmation">Bestätigung</string>
+    <string name="enter_password">Passwort eingeben</string>
+    <string name="delete_pairing">Verbindung löschen</string>
+    <string name="delete_pairing_confirmation">Bist du dir sicher, dass du die Verbindung zu deiner Pumpe löschen möchtest?</string>
+    <string name="okay">Okay</string>
 </resources>

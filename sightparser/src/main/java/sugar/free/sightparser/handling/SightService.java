@@ -201,6 +201,8 @@ public class SightService extends Service {
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (getDataStorage().contains("PASSWORD"))
+            sugar.free.sightparser.applayer.Service.REMOTE_CONTROL.setServicePassword(getDataStorage().get("PASSWORD"));
         return START_STICKY;
     }
 
@@ -237,7 +239,7 @@ public class SightService extends Service {
                 binder.linkToDeath(deathRecipient, 0);
             }
             SightService.this.disconnect(false);
-            getDataStorage().clear();
+            reset();
             tempMac = mac;
             SightService.this.connect(mac, true);
         }
@@ -324,6 +326,23 @@ public class SightService extends Service {
                     }, DISCONNECT_DELAY);
                 }
             }
+        }
+
+        @Override
+        public void setPassword(String password) throws RemoteException {
+            getDataStorage().set("PASSWORD", password);
+            sugar.free.sightparser.applayer.Service.REMOTE_CONTROL.setServicePassword(password);
+        }
+
+        @Override
+        public void reset() throws RemoteException {
+            SightService.this.disconnect(false);
+            getDataStorage().remove("INCOMINGKEY");
+            getDataStorage().remove("OUTGOINGKEY");
+            getDataStorage().remove("COMMID");
+            getDataStorage().remove("LASTNONCESENT");
+            getDataStorage().remove("LASTNONCERECEIVED");
+            getDataStorage().remove("DEVICEMAC");
         }
     };
 }

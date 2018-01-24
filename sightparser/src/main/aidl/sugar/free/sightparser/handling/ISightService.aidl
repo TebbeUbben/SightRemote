@@ -13,5 +13,6 @@ interface ISightService {
     void unregisterStatusCallback(long id);
     void connect(IBinder binder);
     void disconnect(IBinder binder);
-
+    void setPassword(String password);
+    void reset();
 }

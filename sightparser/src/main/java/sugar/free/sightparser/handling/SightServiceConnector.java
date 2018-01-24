@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import lombok.Getter;
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.AppLayerMessage;
 import sugar.free.sightparser.pipeline.Status;
@@ -25,7 +26,9 @@ public class SightServiceConnector {
     private Binder localBinder = new Binder();
     private List<StatusCallback> statusCallbacks = new ArrayList<>();
     private ISightService boundService;
+    @Getter
     private boolean connectedToService;
+    @Getter
     private boolean connectingToService;
     private CountDownLatch connectLatch;
 
@@ -116,7 +119,7 @@ public class SightServiceConnector {
             }
             disconnect();
             context.unbindService(serviceConnection);
-            disconnectFromService();
+            if (connectionCallback != null) connectionCallback.onServiceDisconnected();
         }
         connectingToService = false;
         connectedToService = false;
@@ -178,11 +181,19 @@ public class SightServiceConnector {
         }
     }
 
-    public boolean isConnectedToService() {
-        return connectedToService;
+    public void setPassword(String password) {
+        try {
+            boundService.setPassword(password);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
-    public boolean isConnectingToService() {
-        return connectingToService;
+    public void reset() {
+        try {
+            boundService.reset();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }

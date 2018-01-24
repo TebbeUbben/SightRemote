@@ -22,7 +22,7 @@ public class DataStorage {
         return sharedPreferences.contains(key);
     }
 
-    public void clear() {
-        sharedPreferences.edit().clear().apply();
+    public void remove(String key) {
+        sharedPreferences.edit().remove(key).apply();
     }
 }

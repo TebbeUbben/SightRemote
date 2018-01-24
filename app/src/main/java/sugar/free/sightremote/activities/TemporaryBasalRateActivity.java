@@ -78,6 +78,7 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
         int minutes = duration % 60;
         int hours = (duration - minutes) / 60;
         new AlertDialog.Builder(this)
+                .setTitle(R.string.confirmation)
                 .setMessage(getString(R.string.tbr_confirmation, amount, hours, minutes))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     showManualOverlay();

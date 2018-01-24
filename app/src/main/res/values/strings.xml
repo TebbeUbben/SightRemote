@@ -70,4 +70,9 @@
     <string name="basal_rate">Basal rate</string>
     <string name="bluetooth_not_found">Your device has no bluetooth module.</string>
     <string name="duration_formatter">%1$02d:%2$02d</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="enter_password">Enter password</string>
+    <string name="delete_pairing">Delete pairing</string>
+    <string name="delete_pairing_confirmation">Are you sure you want to delete the pairing to your pump?</string>
+    <string name="okay">Okay</string>
 </resources>

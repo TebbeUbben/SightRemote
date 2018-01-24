@@ -104,6 +104,7 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
         decimalFormat.setMinimumFractionDigits(1);
         decimalFormat.setMaximumFractionDigits(2);
         new AlertDialog.Builder(this)
+                .setTitle(R.string.confirmation)
                 .setMessage(getString(R.string.standard_bolus_confirmation, decimalFormat.format(bolusAmountPicker.getPickerValue())))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     showManualOverlay();
