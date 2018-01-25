@@ -1,7 +1,5 @@
 package sugar.free.sightparser.handling.taskrunners;
 
-import android.util.Log;
-
 import java.io.Serializable;
 
 import lombok.Getter;
@@ -11,7 +9,7 @@ import sugar.free.sightparser.applayer.status.BatteryAmountMessage;
 import sugar.free.sightparser.applayer.status.CartridgeAmountMessage;
 import sugar.free.sightparser.applayer.status.CurrentBasalMessage;
 import sugar.free.sightparser.applayer.status.CurrentTBRMessage;
-import sugar.free.sightparser.applayer.status.PumpStatus;
+import sugar.free.sightparser.applayer.descriptors.PumpStatus;
 import sugar.free.sightparser.applayer.status.PumpStatusMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;

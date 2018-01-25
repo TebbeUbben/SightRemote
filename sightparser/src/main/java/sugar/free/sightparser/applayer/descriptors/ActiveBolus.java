@@ -1,4 +1,4 @@
-package sugar.free.sightparser.applayer.status;
+package sugar.free.sightparser.applayer.descriptors;
 
 import java.io.Serializable;
 

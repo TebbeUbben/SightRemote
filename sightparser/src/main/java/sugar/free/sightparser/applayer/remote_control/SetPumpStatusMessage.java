@@ -3,7 +3,7 @@ package sugar.free.sightparser.applayer.remote_control;
 import lombok.Setter;
 import sugar.free.sightparser.applayer.AppLayerMessage;
 import sugar.free.sightparser.applayer.Service;
-import sugar.free.sightparser.applayer.status.PumpStatus;
+import sugar.free.sightparser.applayer.descriptors.PumpStatus;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class SetPumpStatusMessage extends AppLayerMessage {

@@ -227,14 +227,14 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     }
 
     private int getBolusTitle(BolusType bolusType) {
-        if (bolusType == BolusType.STABDARD) return R.string.standard_bolus;
+        if (bolusType == BolusType.STANDARD) return R.string.standard_bolus;
         else if (bolusType == BolusType.EXTENDED) return R.string.extended_bolus;
         else if (bolusType == BolusType.MULTIWAVE) return R.string.multiwave_bolus;
         return 0;
     }
 
     private String getBolusText(ActiveBolus activeBolus) {
-        if (activeBolus.getBolusType() == BolusType.STABDARD) return getString(R.string.normal_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount());
+        if (activeBolus.getBolusType() == BolusType.STANDARD) return getString(R.string.normal_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount());
         else return getString(R.string.extended_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount(), formatTime(activeBolus.getDuration()));
     }
 

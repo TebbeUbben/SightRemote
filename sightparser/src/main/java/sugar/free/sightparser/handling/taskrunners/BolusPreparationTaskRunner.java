@@ -8,7 +8,7 @@ import sugar.free.sightparser.applayer.configuration.ReadConfigurationBlockMessa
 import sugar.free.sightparser.applayer.configuration.blocks.FactoryMinBolusAmountBlock;
 import sugar.free.sightparser.applayer.configuration.blocks.MaxBolusAmountBlock;
 import sugar.free.sightparser.applayer.remote_control.AvailableBolusesMessage;
-import sugar.free.sightparser.applayer.status.PumpStatus;
+import sugar.free.sightparser.applayer.descriptors.PumpStatus;
 import sugar.free.sightparser.applayer.status.PumpStatusMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;

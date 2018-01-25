@@ -1,8 +1,8 @@
-package sugar.free.sightparser.applayer.status;
+package sugar.free.sightparser.applayer.descriptors;
 
 public enum  BolusType {
 
-    INSTANT((short) 0xE300),
+    STANDARD((short) 0xE300),
     EXTENDED((short) 0xFC00),
     MULTIWAVE((short) 0x2503);
 

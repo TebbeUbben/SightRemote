@@ -1,4 +1,4 @@
-package sugar.free.sightparser.applayer.status;
+package sugar.free.sightparser.applayer.descriptors;
 
 public enum PumpStatus {
 
