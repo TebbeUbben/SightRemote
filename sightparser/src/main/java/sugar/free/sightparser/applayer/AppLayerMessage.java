@@ -12,6 +12,7 @@ import sugar.free.sightparser.applayer.configuration.CloseWriteSessionMessage;
 import sugar.free.sightparser.applayer.configuration.OpenWriteSessionMessage;
 import sugar.free.sightparser.applayer.configuration.ReadConfigurationBlockMessage;
 import sugar.free.sightparser.applayer.configuration.WriteConfigurationBlockMessage;
+import sugar.free.sightparser.applayer.configuration.WriteDateTimeMessage;
 import sugar.free.sightparser.applayer.connection.ActivateServiceMessage;
 import sugar.free.sightparser.applayer.connection.BindMessage;
 import sugar.free.sightparser.applayer.connection.ConnectMessage;
@@ -35,6 +36,7 @@ import sugar.free.sightparser.applayer.status.DateTimeMesssage;
 import sugar.free.sightparser.applayer.status.FirmwareVersionMessage;
 import sugar.free.sightparser.applayer.status.PumpStatusMessage;
 import sugar.free.sightparser.applayer.status.WarrantyTimerMessage;
+import sugar.free.sightparser.applayer.status_param.ReadDateTimeMessage;
 import sugar.free.sightparser.crypto.Cryptograph;
 import sugar.free.sightparser.error.AppErrorCodeError;
 import sugar.free.sightparser.error.InvalidAppCRCError;
@@ -86,14 +88,18 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         configurationMessages.put((short) 0x491E, OpenWriteSessionMessage.class);
         configurationMessages.put((short) 0x50C3, CloseWriteSessionMessage.class);
         configurationMessages.put((short) 0xAA1E, WriteConfigurationBlockMessage.class);
+        configurationMessages.put((short) 0xFF1B, WriteDateTimeMessage.class);
         MESSAGES.put(Service.CONFIGURATION.getServiceID(), configurationMessages);
 
-        Map<Short, Class<? extends AppLayerMessage>> historyMessage = new HashMap<>();
-        historyMessage.put((short) 0xFF7F, CloseHistoryReadingSessionMessage.class);
-        historyMessage.put((short) 0x5428, OpenWriteSessionMessage.class);
-        historyMessage.put((short) 0xA828, ReadHistoryFramesMessage.class);
-        MESSAGES.put(Service.HISTORY.getServiceID(), historyMessage);
+        Map<Short, Class<? extends AppLayerMessage>> historyMessages = new HashMap<>();
+        historyMessages.put((short) 0xFF7F, CloseHistoryReadingSessionMessage.class);
+        historyMessages.put((short) 0x5428, OpenWriteSessionMessage.class);
+        historyMessages.put((short) 0xA828, ReadHistoryFramesMessage.class);
+        MESSAGES.put(Service.HISTORY.getServiceID(), historyMessages);
 
+        Map<Short, Class<? extends AppLayerMessage>> statusParamMessages = new HashMap<>();
+        statusParamMessages.put((short) 0xE300, ReadDateTimeMessage.class);
+        MESSAGES.put(Service.STATUS_PARAM.getServiceID(), statusParamMessages);
     }
 
     protected byte[] getData() throws Exception {
