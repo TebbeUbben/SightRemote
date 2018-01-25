@@ -351,9 +351,7 @@ public class ByteBuf {
 
     public String readUTF16LE(int length) {
         try {
-            String string = new String(readBytes(length), "UTF-16LE");
-            shift(length);
-            return string;
+           return new String(readBytes(length), "UTF-16LE").replace(Character.toString((char) 0), "");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -362,7 +360,7 @@ public class ByteBuf {
 
     public String getUTF16LE(int position, int length) {
         try {
-            return new String(getBytes(position, length), "UTF-16LE");
+            return new String(getBytes(position, length), "UTF-16LE").replace(Character.toString((char) 0), "");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -371,6 +369,20 @@ public class ByteBuf {
 
     public String getUTF16LE(int length) {
         return getUTF16LE(0, length);
+    }
+
+    public void putUTF16LE(String string, int length) {
+        try {
+            byte[] bytes = string.getBytes("UTF-16LE");
+            putBytes(bytes);
+            putBytes((byte) 0x00, length - bytes.length);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void putUTF16LE(String string) {
+        putUTF16LE(string, 0);
     }
 
     public String readASCII(int length) {

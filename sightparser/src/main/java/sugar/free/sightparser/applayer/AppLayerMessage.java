@@ -8,7 +8,10 @@ import java.util.Map;
 
 import sugar.free.sightparser.Errors;
 import sugar.free.sightparser.Message;
+import sugar.free.sightparser.applayer.configuration.CloseWriteSessionMessage;
+import sugar.free.sightparser.applayer.configuration.OpenWriteSessionMessage;
 import sugar.free.sightparser.applayer.configuration.ReadConfigurationBlockMessage;
+import sugar.free.sightparser.applayer.configuration.WriteConfigurationBlockMessage;
 import sugar.free.sightparser.applayer.connection.ActivateServiceMessage;
 import sugar.free.sightparser.applayer.connection.BindMessage;
 import sugar.free.sightparser.applayer.connection.ConnectMessage;
@@ -34,7 +37,6 @@ import sugar.free.sightparser.crypto.Cryptograph;
 import sugar.free.sightparser.error.AppErrorCodeError;
 import sugar.free.sightparser.error.InvalidAppCRCError;
 import sugar.free.sightparser.error.InvalidAppVersionError;
-import sugar.free.sightparser.error.SightError;
 import sugar.free.sightparser.error.UnknownAppErrorCodeError;
 import sugar.free.sightparser.error.UnknownAppMessageError;
 import sugar.free.sightparser.error.UnknownServiceError;
@@ -79,6 +81,9 @@ public abstract class AppLayerMessage extends Message implements Serializable {
 
         Map<Short, Class<? extends AppLayerMessage>> configurationMessages = new HashMap<>();
         configurationMessages.put((short) 0x561E, ReadConfigurationBlockMessage.class);
+        configurationMessages.put((short) 0x491E, OpenWriteSessionMessage.class);
+        configurationMessages.put((short) 0x50C3, CloseWriteSessionMessage.class);
+        configurationMessages.put((short) 0xAA1E, WriteConfigurationBlockMessage.class);
         MESSAGES.put(Service.CONFIGURATION.getServiceID(), configurationMessages);
     }
 
