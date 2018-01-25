@@ -3,8 +3,6 @@ package sugar.free.sightparser.applayer.status;
 import lombok.Getter;
 import sugar.free.sightparser.applayer.AppLayerMessage;
 import sugar.free.sightparser.applayer.Service;
-import sugar.free.sightparser.error.SightError;
-import sugar.free.sightparser.error.UnknownAppErrorCodeError;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class FirmwareVersionMessage extends AppLayerMessage {
@@ -44,12 +42,12 @@ public class FirmwareVersionMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        releaseSwVersion = byteBuf.readUTF8(14);
-        uiProcSwVersion = byteBuf.readUTF8(12);
-        pcProcSwVersion = byteBuf.readUTF8(12);
-        mdTelProcSwVersion = byteBuf.readUTF8(12);
-        btInfoPageVersion = byteBuf.readUTF8(12);
-        safetyProcSwVersion = byteBuf.readUTF8(12);
+        releaseSwVersion = byteBuf.readUTF16LE(14);
+        uiProcSwVersion = byteBuf.readUTF16LE(12);
+        pcProcSwVersion = byteBuf.readUTF16LE(12);
+        mdTelProcSwVersion = byteBuf.readUTF16LE(12);
+        btInfoPageVersion = byteBuf.readUTF16LE(12);
+        safetyProcSwVersion = byteBuf.readUTF16LE(12);
         configIndex = byteBuf.readShortLE();
         historyIndex = byteBuf.readShortLE();
         stateIndex = byteBuf.readShortLE();

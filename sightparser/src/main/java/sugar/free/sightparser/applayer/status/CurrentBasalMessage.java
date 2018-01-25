@@ -3,9 +3,6 @@ package sugar.free.sightparser.applayer.status;
 import lombok.Getter;
 import sugar.free.sightparser.applayer.AppLayerMessage;
 import sugar.free.sightparser.applayer.Service;
-import sugar.free.sightparser.error.NotAvailableError;
-import sugar.free.sightparser.error.SightError;
-import sugar.free.sightparser.error.UnknownAppErrorCodeError;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class CurrentBasalMessage extends AppLayerMessage {
@@ -35,7 +32,7 @@ public class CurrentBasalMessage extends AppLayerMessage {
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
         byteBuf.shift(2);
-        currentBasalName = byteBuf.readUTF8(62);
+        currentBasalName = byteBuf.readUTF16LE(62);
         currentBasalAmount = ((float) byteBuf.readShortLE()) /  100F;
     }
 }

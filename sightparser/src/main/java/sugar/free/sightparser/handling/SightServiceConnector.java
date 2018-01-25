@@ -67,7 +67,9 @@ public class SightServiceConnector {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             boundService = null;
+            connectingToService = false;
             connectedToService = false;
+            statusCallbackId = -1;
             if (connectionCallback != null) connectionCallback.onServiceDisconnected();
         }
     };

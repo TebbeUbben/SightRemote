@@ -349,9 +349,9 @@ public class ByteBuf {
         return stringBuilder.toString();
     }
 
-    public String readUTF8(int length) {
+    public String readUTF16LE(int length) {
         try {
-            String string = new String(readBytes(length), "UTF-8").replace(Character.toString((char) 0), "");
+            String string = new String(readBytes(length), "UTF-16LE");
             shift(length);
             return string;
         } catch (UnsupportedEncodingException e) {
@@ -360,17 +360,17 @@ public class ByteBuf {
         return null;
     }
 
-    public String getUTF8(int position, int length) {
+    public String getUTF16LE(int position, int length) {
         try {
-            return new String(getBytes(position, length), "UTF-8").replace(Character.toString((char) 0), "");
+            return new String(getBytes(position, length), "UTF-16LE");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public String getUTF8(int length) {
-        return getUTF8(0, length);
+    public String getUTF16LE(int length) {
+        return getUTF16LE(0, length);
     }
 
     public String readASCII(int length) {
