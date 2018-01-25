@@ -10,7 +10,7 @@ public enum  Service {
     STATUSPARAM((byte) 0x33, (short) 0x0200, null),
     PUMP_DATA((byte) 0x3C, (short) 0x0200, null),
     CONFIGURATION((byte) 0x55, (short) 0x0200, "u+5Fhz6Gw4j1Kkas"),
-    REMOTE_CONTROL((byte) 0x66, (short) 0x0100, null);
+    REMOTE_CONTROL((byte) 0x66, (short) 0x0100, "");
 
     @Getter
     private byte serviceID;

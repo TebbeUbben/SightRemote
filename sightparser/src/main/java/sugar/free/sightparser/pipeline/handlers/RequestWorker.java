@@ -14,6 +14,7 @@ import sugar.free.sightparser.applayer.connection.ActivateServiceMessage;
 import sugar.free.sightparser.applayer.connection.ServiceChallengeMessage;
 import sugar.free.sightparser.crypto.Cryptograph;
 import sugar.free.sightparser.error.DisconnectedError;
+import sugar.free.sightparser.error.InvalidServicePasswordError;
 import sugar.free.sightparser.handling.MessageRequest;
 import sugar.free.sightparser.handling.MessageStatus;
 import sugar.free.sightparser.pipeline.DuplexHandler;
@@ -91,10 +92,14 @@ public class RequestWorker implements DuplexHandler {
         if (!pipeline.getActivatedServices().contains(service)) {
             messageRequest.setMessageStatus(MessageStatus.ACTIVATING_SERVICE);
             if (service.getServicePassword() != null) {
-                ServiceChallengeMessage serviceChallenge = new ServiceChallengeMessage();
-                serviceChallenge.setServiceID(service.getServiceID());
-                serviceChallenge.setVersion(service.getVersion());
-                pipeline.send(serviceChallenge);
+                if (service.getServicePassword().length() != 16)
+                    pipeline.receive(new InvalidServicePasswordError(messageRequest.getAppLayerMessage().getClass(), (short) 0x99F0));
+                else {
+                    ServiceChallengeMessage serviceChallenge = new ServiceChallengeMessage();
+                    serviceChallenge.setServiceID(service.getServiceID());
+                    serviceChallenge.setVersion(service.getVersion());
+                    pipeline.send(serviceChallenge);
+                }
             } else {
                 ActivateServiceMessage activateService = new ActivateServiceMessage();
                 activateService.setServiceID(service.getServiceID());
@@ -104,7 +109,9 @@ public class RequestWorker implements DuplexHandler {
             }
         } else {
             messageRequest.setMessageStatus(MessageStatus.PENDING);
-            pipeline.send(messageRequest.getAppLayerMessage());
+            if (service.getServicePassword() != null && service.getServicePassword().length() != 16)
+                pipeline.receive(new InvalidServicePasswordError(messageRequest.getAppLayerMessage().getClass(), (short) 0x99F0));
+            else pipeline.send(messageRequest.getAppLayerMessage());
         }
     }
 
