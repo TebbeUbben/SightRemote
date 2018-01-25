@@ -25,7 +25,7 @@ import sugar.free.sightparser.applayer.remote_control.CancelBolusMessage;
 import sugar.free.sightparser.applayer.remote_control.CancelTBRMessage;
 import sugar.free.sightparser.applayer.remote_control.SetPumpStatusMessage;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolus;
-import sugar.free.sightparser.applayer.descriptors.BolusType;
+import sugar.free.sightparser.applayer.descriptors.ActiveBolusType;
 import sugar.free.sightparser.applayer.descriptors.PumpStatus;
 import sugar.free.sightparser.error.CancelledException;
 import sugar.free.sightparser.error.DisconnectedError;
@@ -226,15 +226,15 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         }
     }
 
-    private int getBolusTitle(BolusType bolusType) {
-        if (bolusType == BolusType.STANDARD) return R.string.standard_bolus;
-        else if (bolusType == BolusType.EXTENDED) return R.string.extended_bolus;
-        else if (bolusType == BolusType.MULTIWAVE) return R.string.multiwave_bolus;
+    private int getBolusTitle(ActiveBolusType bolusType) {
+        if (bolusType == ActiveBolusType.STANDARD) return R.string.standard_bolus;
+        else if (bolusType == ActiveBolusType.EXTENDED) return R.string.extended_bolus;
+        else if (bolusType == ActiveBolusType.MULTIWAVE) return R.string.multiwave_bolus;
         return 0;
     }
 
     private String getBolusText(ActiveBolus activeBolus) {
-        if (activeBolus.getBolusType() == BolusType.STANDARD) return getString(R.string.normal_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount());
+        if (activeBolus.getBolusType() == ActiveBolusType.STANDARD) return getString(R.string.normal_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount());
         else return getString(R.string.extended_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount(), formatTime(activeBolus.getDuration()));
     }
 

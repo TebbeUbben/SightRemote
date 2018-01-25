@@ -1,6 +1,6 @@
 package sugar.free.sightparser.applayer.descriptors;
 
-public enum  BolusType {
+public enum ActiveBolusType {
 
     STANDARD((short) 0xE300),
     EXTENDED((short) 0xFC00),
@@ -10,12 +10,12 @@ public enum  BolusType {
 
     private short value;
 
-    BolusType(short value) {
+    ActiveBolusType(short value) {
         this.value = value;
     }
 
-    public static BolusType getBolusType(short value) {
-        for (BolusType bolusType : values()) if (bolusType.value == value) return bolusType;
+    public static ActiveBolusType getBolusType(short value) {
+        for (ActiveBolusType bolusType : values()) if (bolusType.value == value) return bolusType;
         return null;
     }
 

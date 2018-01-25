@@ -17,6 +17,8 @@ import sugar.free.sightparser.applayer.connection.BindMessage;
 import sugar.free.sightparser.applayer.connection.ConnectMessage;
 import sugar.free.sightparser.applayer.connection.DisconnectMessage;
 import sugar.free.sightparser.applayer.connection.ServiceChallengeMessage;
+import sugar.free.sightparser.applayer.history.CloseHistoryReadingSessionMessage;
+import sugar.free.sightparser.applayer.history.ReadHistoryFramesMessage;
 import sugar.free.sightparser.applayer.remote_control.AvailableBolusesMessage;
 import sugar.free.sightparser.applayer.remote_control.BolusMessage;
 import sugar.free.sightparser.applayer.remote_control.CancelBolusMessage;
@@ -85,6 +87,13 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         configurationMessages.put((short) 0x50C3, CloseWriteSessionMessage.class);
         configurationMessages.put((short) 0xAA1E, WriteConfigurationBlockMessage.class);
         MESSAGES.put(Service.CONFIGURATION.getServiceID(), configurationMessages);
+
+        Map<Short, Class<? extends AppLayerMessage>> historyMessage = new HashMap<>();
+        historyMessage.put((short) 0xFF7F, CloseHistoryReadingSessionMessage.class);
+        historyMessage.put((short) 0x5428, OpenWriteSessionMessage.class);
+        historyMessage.put((short) 0xA828, ReadHistoryFramesMessage.class);
+        MESSAGES.put(Service.HISTORY.getServiceID(), historyMessage);
+
     }
 
     protected byte[] getData() throws Exception {

@@ -12,7 +12,7 @@ public class ActiveBolus implements Serializable {
     @Getter
     private short bolusID;
     @Getter
-    private BolusType bolusType;
+    private ActiveBolusType bolusType;
     @Getter
     private float initialAmount;
     @Getter
@@ -23,7 +23,7 @@ public class ActiveBolus implements Serializable {
     public static ActiveBolus parse(ByteBuf byteBuf) {
         ActiveBolus activeBolus = new ActiveBolus();
         activeBolus.bolusID = byteBuf.readShortLE();
-        activeBolus.bolusType = BolusType.getBolusType(byteBuf.readShort());
+        activeBolus.bolusType = ActiveBolusType.getBolusType(byteBuf.readShort());
         byteBuf.shift(2);
         byteBuf.shift(2);
         activeBolus.initialAmount = ((float) byteBuf.readShortLE()) / 100F;
