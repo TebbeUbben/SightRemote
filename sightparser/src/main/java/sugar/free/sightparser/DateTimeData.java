@@ -1,4 +1,4 @@
-package sugar.free.sightparser.applayer.status;
+package sugar.free.sightparser;
 
 import java.util.Calendar;
 import java.util.Date;
