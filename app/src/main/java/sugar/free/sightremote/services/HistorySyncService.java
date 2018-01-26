@@ -122,6 +122,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             Offset.setOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.THERAPY, entries.get(entries.size() - 1).getEventNumber());
             historyFrames.addAll(entries);
             status = 0;
+            connector.disconnect();
             connector.disconnectFromService();
             processHistoryFrames();
             historyFrames = new ArrayList<>();
