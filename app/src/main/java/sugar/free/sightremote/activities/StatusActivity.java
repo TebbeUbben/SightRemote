@@ -29,6 +29,7 @@ import sugar.free.sightparser.applayer.descriptors.ActiveBolusType;
 import sugar.free.sightparser.applayer.descriptors.PumpStatus;
 import sugar.free.sightparser.error.CancelledException;
 import sugar.free.sightparser.error.DisconnectedError;
+import sugar.free.sightparser.handling.HistoryBroadcast;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
 import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.pipeline.Status;
@@ -269,7 +270,9 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
 
     @Override
     protected void statusChanged(Status status) {
-        if (status == Status.CONNECTED) taskRunnerRunnable.run();
+        if (status == Status.CONNECTED) {
+            taskRunnerRunnable.run();
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".SightRemote"
@@ -15,11 +16,13 @@
         android:theme="@style/AppTheme">
         <service
             android:name="sugar.free.sightparser.handling.SightService"
-            android:process="sugar.free.sightparser.handling.SightService"
-            android:exported="true" />
+            android:exported="true"
+            android:process="sugar.free.sightparser.handling.SightService" />
+
         <activity android:name=".activities.LauncherActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -30,14 +33,23 @@
             android:name=".activities.StatusActivity"
             android:label="@string/status"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus" />
-        <activity android:name=".activities.StandardBolusActivity"
+        <activity
+            android:name=".activities.StandardBolusActivity"
             android:label="@string/standard_bolus" />
-        <activity android:name=".activities.ExtendedBolusActivity"
+        <activity
+            android:name=".activities.ExtendedBolusActivity"
             android:label="@string/extended_bolus" />
-        <activity android:name=".activities.MultiwaveBolusActivity"
+        <activity
+            android:name=".activities.MultiwaveBolusActivity"
             android:label="@string/multiwave_bolus" />
-        <activity android:name=".activities.TemporaryBasalRateActivity"
+        <activity
+            android:name=".activities.TemporaryBasalRateActivity"
             android:label="@string/temporary_basalrate" />
+
+        <service
+            android:name=".services.HistorySyncService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>

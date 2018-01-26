@@ -19,6 +19,7 @@ import sugar.free.sightparser.applayer.connection.ConnectMessage;
 import sugar.free.sightparser.applayer.connection.DisconnectMessage;
 import sugar.free.sightparser.applayer.connection.ServiceChallengeMessage;
 import sugar.free.sightparser.applayer.history.CloseHistoryReadingSessionMessage;
+import sugar.free.sightparser.applayer.history.OpenHistoryReadingSessionMessage;
 import sugar.free.sightparser.applayer.history.ReadHistoryFramesMessage;
 import sugar.free.sightparser.applayer.remote_control.AvailableBolusesMessage;
 import sugar.free.sightparser.applayer.remote_control.BolusMessage;
@@ -32,11 +33,11 @@ import sugar.free.sightparser.applayer.status.BatteryAmountMessage;
 import sugar.free.sightparser.applayer.status.CartridgeAmountMessage;
 import sugar.free.sightparser.applayer.status.CurrentBasalMessage;
 import sugar.free.sightparser.applayer.status.CurrentTBRMessage;
-import sugar.free.sightparser.applayer.status.DateTimeMesssage;
 import sugar.free.sightparser.applayer.status.FirmwareVersionMessage;
 import sugar.free.sightparser.applayer.status.PumpStatusMessage;
+import sugar.free.sightparser.applayer.status.ReadDateTimeMessage;
 import sugar.free.sightparser.applayer.status.WarrantyTimerMessage;
-import sugar.free.sightparser.applayer.status_param.ReadDateTimeMessage;
+import sugar.free.sightparser.applayer.status_param.ReadStatusParamBlockMessage;
 import sugar.free.sightparser.crypto.Cryptograph;
 import sugar.free.sightparser.error.AppErrorCodeError;
 import sugar.free.sightparser.error.InvalidAppCRCError;
@@ -70,7 +71,7 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         statusMessages.put((short) 0x6F06, ActiveBolusesMessage.class);
         statusMessages.put((short) 0xD82E, FirmwareVersionMessage.class);
         statusMessages.put((short) 0x4A05, WarrantyTimerMessage.class);
-        statusMessages.put((short) 0xE300, DateTimeMesssage.class);
+        statusMessages.put((short) 0xE300, ReadDateTimeMessage.class);
         MESSAGES.put(Service.STATUS.getServiceID(), statusMessages);
 
         Map<Short, Class<? extends AppLayerMessage>> insulinControlMessages = new HashMap<>();
@@ -92,13 +93,13 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         MESSAGES.put(Service.CONFIGURATION.getServiceID(), configurationMessages);
 
         Map<Short, Class<? extends AppLayerMessage>> historyMessages = new HashMap<>();
-        historyMessages.put((short) 0xFF7F, CloseHistoryReadingSessionMessage.class);
-        historyMessages.put((short) 0x5428, OpenWriteSessionMessage.class);
+        historyMessages.put((short) 0xE797, CloseHistoryReadingSessionMessage.class);
+        historyMessages.put((short) 0x5428, OpenHistoryReadingSessionMessage.class);
         historyMessages.put((short) 0xA828, ReadHistoryFramesMessage.class);
         MESSAGES.put(Service.HISTORY.getServiceID(), historyMessages);
 
         Map<Short, Class<? extends AppLayerMessage>> statusParamMessages = new HashMap<>();
-        statusParamMessages.put((short) 0xE300, ReadDateTimeMessage.class);
+        statusParamMessages.put((short) 0x561E, ReadStatusParamBlockMessage.class);
         MESSAGES.put(Service.STATUS_PARAM.getServiceID(), statusParamMessages);
     }
 

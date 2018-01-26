@@ -14,6 +14,6 @@ public class CloseHistoryReadingSessionMessage extends AppLayerMessage {
 
     @Override
     public short getCommand() {
-        return (short) 0xFF7F;
+        return (short) 0xE797;
     }
 }

@@ -4,8 +4,8 @@ import lombok.Getter;
 
 public enum HistoryType {
 
-    BOLUS((short) 0xE300),
-    TBR((short) 0x2503);
+    TBR((short) 0x2503),
+    THERAPY((short) 0x1F00);
 
     private static final long serialVersionUID = 1L;
 

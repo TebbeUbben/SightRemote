@@ -9,6 +9,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 @Setter
 public class WriteDateTimeMessage extends AppLayerMessage {
 
+    private static final long serialVersionUID = 1L;
+
     private int year;
     private int month;
     private int day;

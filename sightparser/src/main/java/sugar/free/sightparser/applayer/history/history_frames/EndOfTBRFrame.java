@@ -1,5 +1,9 @@
 package sugar.free.sightparser.applayer.history.history_frames;
 
+import android.util.Log;
+
+import org.spongycastle.util.encoders.Hex;
+
 import lombok.Getter;
 import sugar.free.sightparser.BOCUtils;
 import sugar.free.sightparser.applayer.history.HistoryFrame;

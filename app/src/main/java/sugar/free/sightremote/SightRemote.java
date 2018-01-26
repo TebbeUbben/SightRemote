@@ -4,13 +4,14 @@ import android.app.Application;
 import android.content.Intent;
 
 import sugar.free.sightparser.handling.SightService;
+import sugar.free.sightremote.services.HistorySyncService;
 
 public class SightRemote extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Intent intent = new Intent(this, SightService.class);
-        startService(intent);
+        startService(new Intent(this, SightService.class));
+        startService(new Intent(this, HistorySyncService.class));
     }
 }

@@ -1,5 +1,9 @@
 package sugar.free.sightparser.applayer.history;
 
+import android.util.Log;
+
+import org.spongycastle.util.encoders.Hex;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +41,7 @@ public class ReadHistoryFramesMessage extends AppLayerMessage {
         int frameCount = byteBuf.readShortLE();
         for (int i = 0; i < frameCount; i++) {
             short length = byteBuf.readShortLE();
-            short eventType = byteBuf.readShortLE();
+            short eventType = byteBuf.readShort();
             ByteBuf eventBuf = new ByteBuf(length - 2);
             eventBuf.putBytes(byteBuf.readBytes(length - 2));
             Class<? extends HistoryFrame> clazz = HistoryFrame.HISTORY_FRAMES.get(eventType);

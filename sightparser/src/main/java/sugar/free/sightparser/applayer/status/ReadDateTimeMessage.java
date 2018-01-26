@@ -1,19 +1,21 @@
 package sugar.free.sightparser.applayer.status;
 
-import java.util.Date;
-
 import lombok.Getter;
-import sugar.free.sightparser.DateTimeData;
 import sugar.free.sightparser.applayer.AppLayerMessage;
 import sugar.free.sightparser.applayer.Service;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
-public class DateTimeMesssage extends AppLayerMessage {
+@Getter
+public class ReadDateTimeMessage extends AppLayerMessage {
 
     private static final long serialVersionUID = 1L;
 
-    @Getter
-    private Date dateTime;
+    private int year;
+    private int month;
+    private int day;
+    private int hour;
+    private int minute;
+    private int second;
 
     @Override
     public Service getService() {
@@ -26,7 +28,17 @@ public class DateTimeMesssage extends AppLayerMessage {
     }
 
     @Override
+    protected boolean inCRC() {
+        return true;
+    }
+
+    @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        dateTime = DateTimeData.parseDateTime(byteBuf);
+        year = byteBuf.readShortLE();
+        month = byteBuf.readByte();
+        day = byteBuf.readByte();
+        hour = byteBuf.readByte();
+        minute = byteBuf.readByte();
+        second = byteBuf.readByte();
     }
 }

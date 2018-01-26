@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 import lombok.Getter;
 import sugar.free.sightparser.applayer.AppLayerMessage;
-import sugar.free.sightparser.applayer.status.DateTimeMesssage;
 import sugar.free.sightparser.applayer.status.FirmwareVersionMessage;
+import sugar.free.sightparser.applayer.status.ReadDateTimeMessage;
 import sugar.free.sightparser.applayer.status.WarrantyTimerMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;
@@ -20,9 +20,9 @@ public class InfoTaskRunner extends TaskRunner {
 
     @Override
     protected AppLayerMessage run(AppLayerMessage message) throws Exception {
-        if (message == null) return new DateTimeMesssage();
-        else if (message instanceof DateTimeMesssage) {
-            infoResult.dateTimeMesssage = (DateTimeMesssage) message;
+        if (message == null) return new ReadDateTimeMessage();
+        else if (message instanceof ReadDateTimeMessage) {
+            infoResult.dateTimeMesssage = (ReadDateTimeMessage) message;
             return new FirmwareVersionMessage();
         } else if (message instanceof FirmwareVersionMessage) {
             infoResult.firmwareVersionMessage = (FirmwareVersionMessage) message;
@@ -36,7 +36,7 @@ public class InfoTaskRunner extends TaskRunner {
 
     @Getter
     public static final class InfoResult implements Serializable {
-        private DateTimeMesssage dateTimeMesssage;
+        private ReadDateTimeMessage dateTimeMesssage;
         private FirmwareVersionMessage firmwareVersionMessage;
         private WarrantyTimerMessage warrantyTimerMessage;
     }

@@ -1,5 +1,7 @@
 package sugar.free.sightparser.applayer.history.history_frames;
 
+import android.util.Log;
+
 import lombok.Getter;
 import sugar.free.sightparser.BOCUtils;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
@@ -12,9 +14,6 @@ public class BolusProgrammedFrame extends HistoryFrame {
     private static final long serialVersionUID = 1L;
 
     private HistoryBolusType bolusType;
-    private int startHour;
-    private int startMinute;
-    private int startSecond;
     private float immediateAmount;
     private float extendedAmount;
     private short duration;
@@ -23,12 +22,10 @@ public class BolusProgrammedFrame extends HistoryFrame {
     @Override
     public void parse(ByteBuf byteBuf) {
         bolusType = HistoryBolusType.getBolusType(byteBuf.readShort());
-        startHour = BOCUtils.parseBOC(byteBuf.readByte());
-        startMinute = BOCUtils.parseBOC(byteBuf.readByte());
-        startSecond = BOCUtils.parseBOC(byteBuf.readByte());
         immediateAmount = ((float) byteBuf.readShortLE()) / 100F;
         extendedAmount = ((float) byteBuf.readShortLE()) / 100F;
         duration = byteBuf.readShortLE();
+        byteBuf.shift(4);
         bolusId = byteBuf.readShortLE();
     }
 }
