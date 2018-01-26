@@ -188,7 +188,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             for (PumpStatusChanged pumpStatusChanged : pumpStatusChangedEntries) {
                 getDatabaseHelper().getPumpStatusChangedDao().create(pumpStatusChanged);
                 Intent intent = new Intent();
-                intent.setAction(HistoryBroadcast.ACTION_END_OF_TBR);
+                intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
                 intent.putExtra(HistoryBroadcast.EXTRA_OLD_STATUS, pumpStatusChanged.getOldValue().toString());
                 intent.putExtra(HistoryBroadcast.EXTRA_NEW_STATUS, pumpStatusChanged.getNewValue().toString());
                 intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, pumpStatusChanged.getEventNumber());
