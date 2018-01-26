@@ -30,6 +30,9 @@ import sugar.free.sightparser.pipeline.Status;
 public class SightService extends Service {
 
     private static final int DISCONNECT_DELAY = 5000;
+    private static final int MIN_TIMEOUT_WAIT = 4000;
+    private static final int MAX_TIMEOUT_WAIT = 60000;
+    private static final int TIMEOUT_WAIT_STEP = 1000;
 
     private long statusIdCounter = 0;
     private String tempMac;
@@ -44,6 +47,9 @@ public class SightService extends Service {
     private Timer timeoutTimer;
     private boolean reconnect;
     private Timer pingTimer;
+    private long timeoutWait = MIN_TIMEOUT_WAIT;
+    private volatile BluetoothSocket bluetoothSocket = null;
+
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
         public void onStatusChange(Status status) {
@@ -118,6 +124,7 @@ public class SightService extends Service {
         private String mac;
         private boolean pairing;
 
+
         public ConnectionThread(String mac, boolean pairing) {
             this.pairing = pairing;
             this.mac = mac;
@@ -126,47 +133,81 @@ public class SightService extends Service {
         @SuppressLint("MissingPermission")
         @Override
         public void run() {
-            BluetoothSocket bluetoothSocket = null;
+
             try {
                 pipeline = new Pipeline(getDataStorage(), statusCallback);
                 pipeline.setStatus(Status.CONNECTING);
                 BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
                 BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(mac);
+
                 if (pairing) removeBond(bluetoothDevice);
-                bluetoothSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
+                if (bluetoothSocket == null) {
+                    bluetoothSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
+                }
+                if (bluetoothAdapter.isDiscovering()) {
+                    Log.d("SightService", "Cancelling someone elses discovery!");
+                    bluetoothAdapter.cancelDiscovery();
+                }
                 bluetoothSocket.connect();
+                if (timeoutWait != MIN_TIMEOUT_WAIT) {
+                    Log.d("SightService", "Resetting timeout from " + timeoutWait + " to " + MIN_TIMEOUT_WAIT);
+                    timeoutWait = 4000;
+                }
                 pipeline.setChannels(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
                 if (pairing) pipeline.establishPairing();
                 else pipeline.establishConnection();
                 timeoutTimer = new Timer();
-                final BluetoothSocket bluetoothSocket1 = bluetoothSocket;
+                //  final BluetoothSocket bluetoothSocket1 = bluetoothSocket;
                 if (!pairing) timeoutTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         Log.d("SightService", "TIMEOUT");
                         disconnect(true);
                         try {
-                            bluetoothSocket1.close();
+                            bluetoothSocket.close();
+                            bluetoothSocket = null;
+                            timeoutWait = Math.min(timeoutWait + TIMEOUT_WAIT_STEP, MAX_TIMEOUT_WAIT);
                         } catch (IOException e) {
                         }
                     }
-                }, 4000);
+                }, timeoutWait);
                 while (pipeline.getStatus() != Status.DISCONNECTED && !Thread.currentThread().isInterrupted())
                     pipeline.loopCall();
                 timeoutTimer.cancel();
                 pipeline.disconnect();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.d("SightService", "IO Exception in state " + pipeline.getStatus() + " " + e);
+                //e.printStackTrace();
             } finally {
                 pipeline.receive(new DisconnectedError());
-                if (pipeline.getStatus() != Status.DISCONNECTED) pipeline.setStatus(Status.DISCONNECTED);
+
+                try {
+                    // don't close socket if we were connecting
+                    if ((pipeline.getStatus() != Status.CONNECTING) && (bluetoothSocket != null)) {
+                        Log.d("SightService", "Closing socket");
+                        bluetoothSocket.close();
+                        bluetoothSocket = null;
+                    } else {
+                        Log.d("SightService", "Not closing socket");
+                        timeoutWait = Math.min(timeoutWait + TIMEOUT_WAIT_STEP, MAX_TIMEOUT_WAIT);
+                        Log.d("SightService", "sleeping " + timeoutWait);
+                        try {
+                            Thread.sleep(timeoutWait);
+                        } catch (InterruptedException e) {
+                            //
+                        }
+                        Log.d("SightService", "waking");
+                    }
+                } catch (IOException e1) {
+                    //
+                }
+
+                if (pipeline.getStatus() != Status.DISCONNECTED)
+                    pipeline.setStatus(Status.DISCONNECTED);
                 pipeline = null;
                 connectionThread = null;
-                try {
-                    if (bluetoothSocket != null) bluetoothSocket.close();
-                } catch (IOException e1) {
-                }
+
                 if (reconnect) {
                     connect(mac, pairing);
                 }
@@ -330,6 +371,9 @@ public class SightService extends Service {
 
         @Override
         public void setPassword(String password) throws RemoteException {
+            if (password.length() != 16) {
+                password = null;
+            }
             getDataStorage().set("PASSWORD", password);
             sugar.free.sightparser.applayer.Service.REMOTE_CONTROL.setServicePassword(password);
         }
