@@ -145,10 +145,13 @@ public class SightService extends Service {
                 if (bluetoothSocket == null) {
                     bluetoothSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
                 }
+                /*
+                // recommended by android reference but could easily stomp over other things for example G5 discovery
                 if (bluetoothAdapter.isDiscovering()) {
                     Log.d("SightService", "Cancelling someone elses discovery!");
                     bluetoothAdapter.cancelDiscovery();
                 }
+                */
                 bluetoothSocket.connect();
                 if (timeoutWait != MIN_TIMEOUT_WAIT) {
                     Log.d("SightService", "Resetting timeout from " + timeoutWait + " to " + MIN_TIMEOUT_WAIT);
@@ -371,9 +374,6 @@ public class SightService extends Service {
 
         @Override
         public void setPassword(String password) throws RemoteException {
-            if (password.length() != 16) {
-                password = null;
-            }
             getDataStorage().set("PASSWORD", password);
             sugar.free.sightparser.applayer.Service.REMOTE_CONTROL.setServicePassword(password);
         }
