@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Getter;
-import sugar.free.sightparser.BOCUtils;
+import sugar.free.sightparser.BOCUtil;
 import sugar.free.sightparser.applayer.history.history_frames.BolusDeliveredFrame;
 import sugar.free.sightparser.applayer.history.history_frames.BolusProgrammedFrame;
 import sugar.free.sightparser.applayer.history.history_frames.CannulaFilledFrame;
@@ -37,13 +37,13 @@ public abstract class HistoryFrame implements Serializable {
     private int eventNumber;
 
     public final void parseHeader(ByteBuf byteBuf) {
-        eventYear = BOCUtils.parseBOC(byteBuf.readByte()) * 100 + BOCUtils.parseBOC(byteBuf.readByte());
-        eventMonth = BOCUtils.parseBOC(byteBuf.readByte());
-        eventDay = BOCUtils.parseBOC(byteBuf.readByte());
+        eventYear = BOCUtil.parseBOC(byteBuf.readByte()) * 100 + BOCUtil.parseBOC(byteBuf.readByte());
+        eventMonth = BOCUtil.parseBOC(byteBuf.readByte());
+        eventDay = BOCUtil.parseBOC(byteBuf.readByte());
         byteBuf.shift(1);
-        eventHour = BOCUtils.parseBOC(byteBuf.readByte());
-        eventMinute = BOCUtils.parseBOC(byteBuf.readByte());
-        eventSecond = BOCUtils.parseBOC(byteBuf.readByte());
+        eventHour = BOCUtil.parseBOC(byteBuf.readByte());
+        eventMinute = BOCUtil.parseBOC(byteBuf.readByte());
+        eventSecond = BOCUtil.parseBOC(byteBuf.readByte());
         eventNumber = byteBuf.readIntLE();
     }
 

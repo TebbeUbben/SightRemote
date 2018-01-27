@@ -3,6 +3,7 @@ package sugar.free.sightparser.applayer.descriptors;
 import java.io.Serializable;
 
 import lombok.Getter;
+import sugar.free.sightparser.RoundingUtil;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class ActiveBolus implements Serializable {
@@ -26,8 +27,8 @@ public class ActiveBolus implements Serializable {
         activeBolus.bolusType = ActiveBolusType.getBolusType(byteBuf.readShort());
         byteBuf.shift(2);
         byteBuf.shift(2);
-        activeBolus.initialAmount = ((float) byteBuf.readShortLE()) / 100F;
-        activeBolus.leftoverAmount = ((float) byteBuf.readShortLE()) / 100F;
+        activeBolus.initialAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
+        activeBolus.leftoverAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
         activeBolus.duration = byteBuf.readShortLE();
         return activeBolus;
     }

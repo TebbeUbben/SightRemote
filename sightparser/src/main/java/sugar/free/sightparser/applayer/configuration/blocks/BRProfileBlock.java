@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import sugar.free.sightparser.RoundingUtil;
 import sugar.free.sightparser.applayer.configuration.ConfigurationBlock;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
@@ -57,7 +58,7 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
     public float getTotalAmount() {
         float total = 0;
         for (ProfileBlock profileBlock : profileBlocks)
-            total += profileBlock.getAmount() / 60 * profileBlock.getDuration();
+            total += RoundingUtil.roundFloat(profileBlock.getAmount() / 60 * profileBlock.getDuration(), 2);
         return total;
     }
 }

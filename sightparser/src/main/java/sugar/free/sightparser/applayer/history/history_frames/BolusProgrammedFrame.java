@@ -1,9 +1,6 @@
 package sugar.free.sightparser.applayer.history.history_frames;
 
-import android.util.Log;
-
 import lombok.Getter;
-import sugar.free.sightparser.BOCUtils;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
 import sugar.free.sightparser.applayer.history.HistoryFrame;
 import sugar.free.sightparser.pipeline.ByteBuf;

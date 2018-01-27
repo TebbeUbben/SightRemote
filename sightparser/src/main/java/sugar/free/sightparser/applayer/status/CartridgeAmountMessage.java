@@ -1,6 +1,7 @@
 package sugar.free.sightparser.applayer.status;
 
 import lombok.Getter;
+import sugar.free.sightparser.RoundingUtil;
 import sugar.free.sightparser.applayer.AppLayerMessage;
 import sugar.free.sightparser.applayer.Service;
 import sugar.free.sightparser.error.NotAvailableError;
@@ -27,6 +28,6 @@ public class CartridgeAmountMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        cartridgeAmount = ((float) byteBuf.getShortLE(6)) / 100F;
+        cartridgeAmount = RoundingUtil.roundFloat(((float) byteBuf.getShortLE(6)) / 100F, 2);
     }
 }

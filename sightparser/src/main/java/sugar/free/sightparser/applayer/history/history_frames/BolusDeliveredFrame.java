@@ -1,9 +1,8 @@
 package sugar.free.sightparser.applayer.history.history_frames;
 
-import android.util.Log;
-
 import lombok.Getter;
-import sugar.free.sightparser.BOCUtils;
+import sugar.free.sightparser.BOCUtil;
+import sugar.free.sightparser.RoundingUtil;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
 import sugar.free.sightparser.applayer.history.HistoryFrame;
 import sugar.free.sightparser.pipeline.ByteBuf;
@@ -26,11 +25,11 @@ public class BolusDeliveredFrame extends HistoryFrame {
     public void parse(ByteBuf byteBuf) {
         bolusType = HistoryBolusType.getBolusType(byteBuf.readShort());
         byteBuf.shift(1);
-        startHour = BOCUtils.parseBOC(byteBuf.readByte());
-        startMinute = BOCUtils.parseBOC(byteBuf.readByte());
-        startSecond = BOCUtils.parseBOC(byteBuf.readByte());
-        immediateAmount = ((float) byteBuf.readShortLE()) / 100F;
-        extendedAmount = ((float) byteBuf.readShortLE()) / 100F;
+        startHour = BOCUtil.parseBOC(byteBuf.readByte());
+        startMinute = BOCUtil.parseBOC(byteBuf.readByte());
+        startSecond = BOCUtil.parseBOC(byteBuf.readByte());
+        immediateAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
+        extendedAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
         duration = byteBuf.readShortLE();
         byteBuf.shift(2);
         bolusId = byteBuf.readShortLE();

@@ -2,6 +2,7 @@ package sugar.free.sightparser.applayer.configuration.blocks;
 
 import lombok.Getter;
 import lombok.Setter;
+import sugar.free.sightparser.RoundingUtil;
 import sugar.free.sightparser.applayer.configuration.ConfigurationBlock;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
@@ -22,7 +23,7 @@ public class MaxBRAmountBlock extends ConfigurationBlock {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        maximumAmount = byteBuf.readShortLE() / 100F;
+        maximumAmount = RoundingUtil.roundFloat(byteBuf.readShortLE() / 100F, 2);
     }
 
     @Override
