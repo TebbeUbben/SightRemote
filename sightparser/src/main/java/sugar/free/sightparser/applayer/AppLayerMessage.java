@@ -87,7 +87,7 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         Map<Short, Class<? extends AppLayerMessage>> configurationMessages = new HashMap<>();
         configurationMessages.put((short) 0x561E, ReadConfigurationBlockMessage.class);
         configurationMessages.put((short) 0x491E, OpenWriteSessionMessage.class);
-        configurationMessages.put((short) 0x50C3, CloseWriteSessionMessage.class);
+        configurationMessages.put((short) 0xB51E, CloseWriteSessionMessage.class);
         configurationMessages.put((short) 0xAA1E, WriteConfigurationBlockMessage.class);
         configurationMessages.put((short) 0xFF1B, WriteDateTimeMessage.class);
         MESSAGES.put(Service.CONFIGURATION.getServiceID(), configurationMessages);

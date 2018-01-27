@@ -75,4 +75,8 @@
     <string name="delete_pairing">Delete pairing</string>
     <string name="delete_pairing_confirmation">Are you sure you want to delete the pairing to your pump?</string>
     <string name="okay">Okay</string>
+    <string name="unit_formatter">%1$sU</string>
+    <string name="profiles">Profiles</string>
+    <string name="default_br_name">Basal Profile %1$d</string>
+    <string name="change_br_profile_confirmation">Are you sure you want to change the active basal profile?</string>
 </resources>

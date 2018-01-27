@@ -4,7 +4,7 @@ public class BRProfile3Block extends BRProfileBlock {
 
     private static final long serialVersionUID = 1L;
 
-    public static final short ID = (short) 0x6C1F;
+    public static final short ID = (short) 0x6C1D;
 
     @Override
     public short getID() {

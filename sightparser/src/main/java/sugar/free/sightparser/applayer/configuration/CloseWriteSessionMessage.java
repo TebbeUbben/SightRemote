@@ -11,6 +11,6 @@ public class CloseWriteSessionMessage extends AppLayerMessage {
 
     @Override
     public short getCommand() {
-        return 0x50C3;
+        return (short) 0xB51E;
     }
 }

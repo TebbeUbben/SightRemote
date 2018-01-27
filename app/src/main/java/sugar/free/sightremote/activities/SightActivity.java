@@ -52,6 +52,7 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
         else if (id == R.id.nav_extended_bolus) startActivity(ExtendedBolusActivity.class);
         else if (id == R.id.nav_multiwave_bolus) startActivity(MultiwaveBolusActivity.class);
         else if (id == R.id.nav_tbr) startActivity(TemporaryBasalRateActivity.class);
+        else if (id == R.id.nav_br_profiles) startActivity(ChangeActiveBRProfileActivity.class);
 
         if (finishAfterNavigationClick()) finish();
         drawerLayout.closeDrawers();

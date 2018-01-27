@@ -33,7 +33,7 @@ public abstract class ConfigurationBlock implements Serializable {
         CONFIGURATIONBLOCKS.put(FactoryMaxBolusAmountBlock.ID, FactoryMaxBolusAmountBlock.class);
         CONFIGURATIONBLOCKS.put(FactoryMinBolusAmountBlock.ID, FactoryMinBolusAmountBlock.class);
         CONFIGURATIONBLOCKS.put(MaxBolusAmountBlock.ID, MaxBolusAmountBlock.class);
-        CONFIGURATIONBLOCKS.put(ActiveProfileBlock.ID, MaxBolusAmountBlock.class);
+        CONFIGURATIONBLOCKS.put(ActiveProfileBlock.ID, ActiveProfileBlock.class);
         CONFIGURATIONBLOCKS.put(BRName1Block.ID, BRName1Block.class);
         CONFIGURATIONBLOCKS.put(BRName2Block.ID, BRName2Block.class);
         CONFIGURATIONBLOCKS.put(BRName3Block.ID, BRName3Block.class);

@@ -53,4 +53,11 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
             this.amount = amount;
         }
     }
+
+    public float getTotalAmount() {
+        float total = 0;
+        for (ProfileBlock profileBlock : profileBlocks)
+            total += profileBlock.getAmount() / 60 * profileBlock.getDuration();
+        return total;
+    }
 }

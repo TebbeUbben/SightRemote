@@ -45,11 +45,13 @@
         <activity
             android:name=".activities.TemporaryBasalRateActivity"
             android:label="@string/temporary_basalrate" />
+        <activity
+            android:name=".activities.ChangeActiveBRProfileActivity"
+            android:label="@string/profiles" />
 
         <service
             android:name=".services.HistorySyncService"
-            android:enabled="true"
-            android:exported="false"></service>
+            android:enabled="true" />
     </application>
 
 </manifest>

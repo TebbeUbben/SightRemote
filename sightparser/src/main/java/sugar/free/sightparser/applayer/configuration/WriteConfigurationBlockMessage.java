@@ -15,7 +15,7 @@ public class WriteConfigurationBlockMessage extends AppLayerMessage {
     @Getter
     private short configurationBlockId;
     @Setter
-    private RestrictionLevel restrictionLevel = RestrictionLevel.PUMP;
+    private RestrictionLevel restrictionLevel = RestrictionLevel.CALYPSO;
 
 
     @Override

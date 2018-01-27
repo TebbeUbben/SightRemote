@@ -24,6 +24,9 @@
                 <item
                     android:id="@+id/nav_tbr"
                     android:title="@string/temporary_basalrate" />
+                <item
+                    android:id="@+id/nav_br_profiles"
+                    android:title="@string/profiles" />
             </group>
         </menu>
     </item>

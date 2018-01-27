@@ -76,4 +76,8 @@
     <string name="delete_pairing">Verbindung löschen</string>
     <string name="delete_pairing_confirmation">Bist du dir sicher, dass du die Verbindung zu deiner Pumpe löschen möchtest?</string>
     <string name="okay">Okay</string>
+    <string name="unit_formatter">%1$sU</string>
+    <string name="profiles">BR-Profile</string>
+    <string name="default_br_name">BR-Profil %1$d</string>
+    <string name="change_br_profile_confirmation">Bist du dir sicher, dass du das aktive BR-Profil ändern möchstest?</string>
 </resources>
