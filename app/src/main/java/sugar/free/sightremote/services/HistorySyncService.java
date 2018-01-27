@@ -106,20 +106,20 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     }
 
     @Override
-    public void onResult(Object result) {
+    public void onResult(Object result){
         if (result instanceof ReadStatusParamBlockMessage) {
             pumpSerialNumber = ((SystemIdentificationBlock) ((ReadStatusParamBlockMessage) result).getStatusBlock()).getSerialNumber();
             status = 1;
             new ReadHistoryTaskRunner(connector, createOpenMessage(HistoryType.TBR)).fetch(this);
         } else if (result instanceof List && status == 1) {
             List<HistoryFrame> entries = (List<HistoryFrame>) result;
-            Offset.setOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.TBR, entries.get(entries.size() - 1).getEventNumber());
+            if (entries.size() > 0) Offset.setOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.TBR, entries.get(entries.size() - 1).getEventNumber());
             historyFrames.addAll(entries);
             status = 2;
             new ReadHistoryTaskRunner(connector, createOpenMessage(HistoryType.THERAPY)).fetch(this);
         } else if (result instanceof List && status == 2) {
             List<HistoryFrame> entries = (List<HistoryFrame>) result;
-            Offset.setOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.THERAPY, entries.get(entries.size() - 1).getEventNumber());
+            if (entries.size() > 0) Offset.setOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.THERAPY, entries.get(entries.size() - 1).getEventNumber());
             historyFrames.addAll(entries);
             status = 0;
             connector.disconnect();
@@ -318,9 +318,12 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
 
     @Override
     public void onServiceConnected() {
-        connector.connect();
-        if (connector.getStatus() == Status.CONNECTED) {
-            onStatusChange(Status.CONNECTED);
+        if (!connector.isUseable()) connector.disconnectFromService();
+        else {
+            connector.connect();
+            if (connector.getStatus() == Status.CONNECTED) {
+                onStatusChange(Status.CONNECTED);
+            }
         }
     }
 

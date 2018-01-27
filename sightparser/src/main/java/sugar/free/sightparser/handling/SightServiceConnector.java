@@ -97,7 +97,7 @@ public class SightServiceConnector {
 
     public void connect() {
         try {
-            boundService.connect(localBinder);
+            if (boundService != null) boundService.connect(localBinder);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -105,7 +105,7 @@ public class SightServiceConnector {
 
     public void disconnect() {
         try {
-            boundService.disconnect(localBinder);
+            if (boundService != null) boundService.disconnect(localBinder);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -142,12 +142,13 @@ public class SightServiceConnector {
 
     public void pair(String mac) {
         try {
-            boundService.pair(mac, localBinder);
+            if (boundService != null) boundService.pair(mac, localBinder);
         } catch (RemoteException e) {
         }
     }
 
     public boolean isUseable() {
+        if (boundService == null) return false;
         try {
             return boundService.isUseable();
         } catch (RemoteException e) {
@@ -156,7 +157,8 @@ public class SightServiceConnector {
     }
 
     public Status getStatus() {
-        try {
+        if (boundService == null) return null;
+            try {
             return Status.valueOf(boundService.getStatus());
         } catch (RemoteException e) {
             e.printStackTrace();
