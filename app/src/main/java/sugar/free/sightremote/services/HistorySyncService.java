@@ -14,11 +14,15 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
+import java.sql.Time;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import sugar.free.sightparser.applayer.descriptors.HistoryReadingDirection;
 import sugar.free.sightparser.applayer.descriptors.HistoryType;
@@ -26,8 +30,10 @@ import sugar.free.sightparser.applayer.history.HistoryFrame;
 import sugar.free.sightparser.applayer.history.OpenHistoryReadingSessionMessage;
 import sugar.free.sightparser.applayer.history.history_frames.BolusDeliveredFrame;
 import sugar.free.sightparser.applayer.history.history_frames.BolusProgrammedFrame;
+import sugar.free.sightparser.applayer.history.history_frames.CannulaFilledFrame;
 import sugar.free.sightparser.applayer.history.history_frames.EndOfTBRFrame;
 import sugar.free.sightparser.applayer.history.history_frames.PumpStatusChangedFrame;
+import sugar.free.sightparser.applayer.history.history_frames.TimeChangedFrame;
 import sugar.free.sightparser.applayer.status_param.ReadStatusParamBlockMessage;
 import sugar.free.sightparser.applayer.status_param.blocks.SystemIdentificationBlock;
 import sugar.free.sightparser.handling.HistoryBroadcast;
@@ -40,10 +46,12 @@ import sugar.free.sightparser.handling.taskrunners.ReadHistoryTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.database.BolusProgrammed;
+import sugar.free.sightremote.database.CannulaFilled;
 import sugar.free.sightremote.database.DatabaseHelper;
 import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.Offset;
 import sugar.free.sightremote.database.PumpStatusChanged;
+import sugar.free.sightremote.database.TimeChanged;
 
 public class HistorySyncService extends Service implements StatusCallback, TaskRunner.ResultCallback, ServiceConnectionCallback {
 
@@ -53,8 +61,6 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     private AlarmManager alarmManager;
     private PowerManager.WakeLock wakeLock;
     private String pumpSerialNumber;
-    private int status;
-    private List<HistoryFrame> historyFrames = new ArrayList<>();
     private boolean syncing;
 
     @Override
@@ -109,32 +115,27 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     public void onResult(Object result){
         if (result instanceof ReadStatusParamBlockMessage) {
             pumpSerialNumber = ((SystemIdentificationBlock) ((ReadStatusParamBlockMessage) result).getStatusBlock()).getSerialNumber();
-            status = 1;
-            new ReadHistoryTaskRunner(connector, createOpenMessage(HistoryType.TBR)).fetch(this);
-        } else if (result instanceof List && status == 1) {
-            List<HistoryFrame> entries = (List<HistoryFrame>) result;
-            if (entries.size() > 0) Offset.setOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.TBR, entries.get(entries.size() - 1).getEventNumber());
-            historyFrames.addAll(entries);
-            status = 2;
-            new ReadHistoryTaskRunner(connector, createOpenMessage(HistoryType.THERAPY)).fetch(this);
-        } else if (result instanceof List && status == 2) {
-            List<HistoryFrame> entries = (List<HistoryFrame>) result;
-            if (entries.size() > 0) Offset.setOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.THERAPY, entries.get(entries.size() - 1).getEventNumber());
-            historyFrames.addAll(entries);
-            status = 0;
+            new ReadHistoryTaskRunner(connector, createOpenMessage(HistoryType.ALL)).fetch(this);
+        } else if (result instanceof ReadHistoryTaskRunner.HistoryResult) {
+            ReadHistoryTaskRunner.HistoryResult historyResult = (ReadHistoryTaskRunner.HistoryResult) result;
+            List<HistoryFrame> historyFrames = historyResult.getHistoryFrames();
+            if (historyResult.getLatestEventNumber() > 0) Offset.setOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.ALL, historyResult.getLatestEventNumber());
+            historyFrames.addAll(historyFrames);
             connector.disconnect();
             connector.disconnectFromService();
-            processHistoryFrames();
-            historyFrames = new ArrayList<>();
+            processHistoryFrames(historyFrames);
         }
     }
 
-    private void processHistoryFrames() {
+    private void processHistoryFrames(List<HistoryFrame> historyFrames) {
         List<BolusDelivered> bolusDeliveredEntries = new ArrayList<>();
         List<BolusProgrammed> bolusProgrammedEntries = new ArrayList<>();
         List<EndOfTBR> endOfTBREntries = new ArrayList<>();
         List<PumpStatusChanged> pumpStatusChangedEntries = new ArrayList<>();
+        List<CannulaFilled> cannulaFilledEntries = new ArrayList<>();
+        List<TimeChanged> timeChangedEntries = new ArrayList<>();
         for (HistoryFrame historyFrame : historyFrames) {
+            Log.d("HistorySyncService", "Received " + historyFrame.getClass().getSimpleName());
             if (historyFrame instanceof BolusDeliveredFrame)
                 bolusDeliveredEntries.add(processBolusDeliveredFrame((BolusDeliveredFrame) historyFrame));
             else if (historyFrame instanceof BolusProgrammedFrame)
@@ -143,6 +144,10 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 endOfTBREntries.add(processEndOfTBRFrame((EndOfTBRFrame) historyFrame));
             else if (historyFrame instanceof PumpStatusChangedFrame)
                 pumpStatusChangedEntries.add(processPumpStatusChangedFrame((PumpStatusChangedFrame) historyFrame));
+            else if (historyFrame instanceof TimeChangedFrame)
+                timeChangedEntries.add(processTimeChangedFrame((TimeChangedFrame) historyFrame));
+            else if (historyFrame instanceof CannulaFilledFrame)
+                cannulaFilledEntries.add(processCannulaFilledFrame((CannulaFilledFrame) historyFrame));
         }
         try {
             for (BolusProgrammed bolusProgrammed : bolusProgrammedEntries) {
@@ -195,6 +200,26 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, pumpStatusChanged.getEventNumber());
                 intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, pumpStatusChanged.getPump());
                 intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, pumpStatusChanged.getDateTime());
+                sendBroadcast(intent);
+            }
+            for (TimeChanged timeChanged : timeChangedEntries) {
+                getDatabaseHelper().getTimeChangedDao().create(timeChanged);
+                Intent intent = new Intent();
+                intent.setAction(HistoryBroadcast.ACTION_TIME_CHANGED);
+                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, timeChanged.getDateTime());
+                intent.putExtra(HistoryBroadcast.EXTRA_TIME_BEFORE, timeChanged.getTimeBefore());
+                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, timeChanged.getPump());
+                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, timeChanged.getEventNumber());
+                sendBroadcast(intent);
+            }
+            for (CannulaFilled cannulaFilled : cannulaFilledEntries) {
+                getDatabaseHelper().getCannulaFilledDao().create(cannulaFilled);
+                Intent intent = new Intent();
+                intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
+                intent.putExtra(HistoryBroadcast.EXTRA_FILL_AMOUNT, cannulaFilled.getAmount());
+                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, cannulaFilled.getEventNumber());
+                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, cannulaFilled.getPump());
+                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, cannulaFilled.getDateTime());
                 sendBroadcast(intent);
             }
         } catch (SQLException e) {
@@ -273,22 +298,57 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         return bolusProgrammed;
     }
 
+    private TimeChanged processTimeChangedFrame(TimeChangedFrame frame) {
+        Log.d("HistorySyncService", "TIME CHANGED");
+        TimeChanged timeChanged = new TimeChanged();
+        timeChanged.setEventNumber(frame.getEventNumber());
+        timeChanged.setPump(pumpSerialNumber);
+
+        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        timeChanged.setDateTime(eventTime);
+
+        Date beforeTime = parseDateTime(frame.getBeforeYear(), frame.getBeforeMonth(), frame.getBeforeDay(), frame.getBeforeHour(), frame.getBeforeMinute(), frame.getBeforeSecond());
+        timeChanged.setTimeBefore(beforeTime);
+
+        return timeChanged;
+    }
+
+    private CannulaFilled processCannulaFilledFrame(CannulaFilledFrame frame) {
+        Log.d("HistorySyncService", "CANNULLA FILLED");
+        CannulaFilled cannulaFilled = new CannulaFilled();
+        cannulaFilled.setEventNumber(frame.getEventNumber());
+        cannulaFilled.setPump(pumpSerialNumber);
+        cannulaFilled.setAmount(frame.getAmount());
+
+        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        cannulaFilled.setDateTime(eventTime);
+
+        return cannulaFilled;
+    }
+
     private OpenHistoryReadingSessionMessage createOpenMessage(HistoryType historyType) {
         OpenHistoryReadingSessionMessage openMessage = new OpenHistoryReadingSessionMessage();
         openMessage.setHistoryType(historyType);
-        openMessage.setOffset(Offset.getOffset(getDatabaseHelper(), pumpSerialNumber, historyType) + 1);
-        openMessage.setReadingDirection(HistoryReadingDirection.FORWARD);
+        int offset = Offset.getOffset(getDatabaseHelper(), pumpSerialNumber, historyType);
+        if (offset != -1) {
+            openMessage.setOffset(offset + 1);
+            openMessage.setReadingDirection(HistoryReadingDirection.FORWARD);
+        } else {
+            openMessage.setOffset(0xFFFFFFFF);
+            openMessage.setReadingDirection(HistoryReadingDirection.BACKWARD);
+        }
         return openMessage;
     }
 
     private Date parseDateTime(int year, int month, int day, int hour, int minute, int second) {
-        Calendar calendar = new GregorianCalendar();
+        Calendar calendar = new GregorianCalendar(TimeZone.getDefault(), Locale.getDefault());
         calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.HOUR, hour);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, second);
+        calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
 

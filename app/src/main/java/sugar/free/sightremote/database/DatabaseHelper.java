@@ -24,6 +24,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<EndOfTBR, Integer> endOfTBRDao;
     private Dao<Offset, Integer> offsetDao;
     private Dao<PumpStatusChanged, Integer> pumpStatusChangedDao;
+    private Dao<TimeChanged, Integer> timeChangedDao;
+    private Dao<CannulaFilled, Integer> cannulaFilledDao;
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
@@ -33,6 +35,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, EndOfTBR.class);
             TableUtils.createTable(connectionSource, Offset.class);
             TableUtils.createTable(connectionSource, PumpStatusChanged.class);
+            TableUtils.createTable(connectionSource, TimeChanged.class);
+            TableUtils.createTable(connectionSource, CannulaFilled.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -86,5 +90,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             e.printStackTrace();
         }
         return pumpStatusChangedDao;
+    }
+
+    public Dao<TimeChanged, Integer> getTimeChangedDao() {
+        try {
+            if (timeChangedDao == null) timeChangedDao = getDao(TimeChanged.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return timeChangedDao;
+    }
+
+    public Dao<CannulaFilled, Integer> getCannulaFilledDao() {
+        try {
+            if (cannulaFilledDao == null) cannulaFilledDao = getDao(CannulaFilled.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cannulaFilledDao;
     }
 }

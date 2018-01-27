@@ -39,7 +39,7 @@ public class Offset {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0;
+        return -1;
     };
 
     public static void setOffset(DatabaseHelper helper, String pump, HistoryType historyType, int offset) {

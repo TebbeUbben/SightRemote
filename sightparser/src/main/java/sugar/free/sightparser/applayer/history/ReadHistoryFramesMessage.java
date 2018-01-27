@@ -18,6 +18,8 @@ public class ReadHistoryFramesMessage extends AppLayerMessage {
 
     @Getter
     private List<HistoryFrame> historyFrames;
+    @Getter
+    private int latestEventNumber = -1;
 
     @Override
     public Service getService() {
@@ -44,13 +46,17 @@ public class ReadHistoryFramesMessage extends AppLayerMessage {
             short eventType = byteBuf.readShort();
             ByteBuf eventBuf = new ByteBuf(length - 2);
             eventBuf.putBytes(byteBuf.readBytes(length - 2));
+
+            int eventNumber = eventBuf.getIntLE(8);
+            if (eventNumber > latestEventNumber) latestEventNumber = eventNumber;
+
             Class<? extends HistoryFrame> clazz = HistoryFrame.HISTORY_FRAMES.get(eventType);
             if (clazz != null) {
                 HistoryFrame historyFrame = clazz.newInstance();
                 historyFrame.parseHeader(eventBuf);
                 historyFrame.parse(eventBuf);
                 historyFrames.add(historyFrame);
-            }
+            } else Log.d("SightServiceHistory", "UNKNOWN HISTORY FRAME: EVENT TYPE: " + eventType + " CONTENT: " + Hex.toHexString(eventBuf.getBytes()));
         }
     }
 }

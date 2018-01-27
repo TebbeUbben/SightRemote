@@ -36,7 +36,6 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContent(R.layout.activity_standard_bolus);
-        disconnectedFromService();
 
         showManualOverlay();
 

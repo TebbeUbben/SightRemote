@@ -8,8 +8,10 @@ import lombok.Getter;
 import sugar.free.sightparser.BOCUtils;
 import sugar.free.sightparser.applayer.history.history_frames.BolusDeliveredFrame;
 import sugar.free.sightparser.applayer.history.history_frames.BolusProgrammedFrame;
+import sugar.free.sightparser.applayer.history.history_frames.CannulaFilledFrame;
 import sugar.free.sightparser.applayer.history.history_frames.EndOfTBRFrame;
 import sugar.free.sightparser.applayer.history.history_frames.PumpStatusChangedFrame;
+import sugar.free.sightparser.applayer.history.history_frames.TimeChangedFrame;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 @Getter
@@ -22,6 +24,8 @@ public abstract class HistoryFrame implements Serializable {
         HISTORY_FRAMES.put((short) 0x6A03, BolusProgrammedFrame.class);
         HISTORY_FRAMES.put((short) 0x9503, BolusDeliveredFrame.class);
         HISTORY_FRAMES.put((short) 0xC300, PumpStatusChangedFrame.class);
+        HISTORY_FRAMES.put((short) 0xA500, TimeChangedFrame.class);
+        HISTORY_FRAMES.put((short) 0xCF0C, CannulaFilledFrame.class);
     }
 
     private int eventYear;

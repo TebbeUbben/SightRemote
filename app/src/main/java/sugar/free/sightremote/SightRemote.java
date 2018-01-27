@@ -14,6 +14,5 @@ public class SightRemote extends Application {
         super.onCreate();
         startService(new Intent(this, SightService.class));
         startService(new Intent(this, HistorySyncService.class));
-        sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
     }
 }

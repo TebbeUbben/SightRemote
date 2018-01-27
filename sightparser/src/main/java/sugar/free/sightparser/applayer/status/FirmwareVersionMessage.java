@@ -42,12 +42,12 @@ public class FirmwareVersionMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        releaseSwVersion = byteBuf.readUTF16LE(14);
-        uiProcSwVersion = byteBuf.readUTF16LE(12);
-        pcProcSwVersion = byteBuf.readUTF16LE(12);
-        mdTelProcSwVersion = byteBuf.readUTF16LE(12);
-        btInfoPageVersion = byteBuf.readUTF16LE(12);
-        safetyProcSwVersion = byteBuf.readUTF16LE(12);
+        releaseSwVersion = byteBuf.readASCII(14);
+        uiProcSwVersion = byteBuf.readASCII(12);
+        pcProcSwVersion = byteBuf.readASCII(12);
+        mdTelProcSwVersion = byteBuf.readASCII(12);
+        btInfoPageVersion = byteBuf.readASCII(12);
+        safetyProcSwVersion = byteBuf.readASCII(12);
         configIndex = byteBuf.readShortLE();
         historyIndex = byteBuf.readShortLE();
         stateIndex = byteBuf.readShortLE();
