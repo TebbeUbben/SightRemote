@@ -164,26 +164,38 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         }
         try {
             for (BolusDelivered bolusDelivered : bolusDeliveredEntries) {
+                if (getDatabaseHelper().getBolusDeliveredDao().queryBuilder().where()
+                        .eq("eventNumber", bolusDelivered.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusDeliveredDao().create(bolusDelivered);
                 HistorySendIntent.sendBolusDelivered(getApplicationContext(), bolusDelivered);
             }
             for (BolusProgrammed bolusProgrammed : bolusProgrammedEntries) {
+                if (getDatabaseHelper().getBolusProgrammedDao().queryBuilder().where()
+                        .eq("eventNumber", bolusProgrammed.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusProgrammedDao().create(bolusProgrammed);
                 HistorySendIntent.sendBolusProgrammed(getApplicationContext(),bolusProgrammed);
             }
             for (EndOfTBR endOfTBR : endOfTBREntries) {
+                if (getDatabaseHelper().getEndOfTBRDao().queryBuilder().where()
+                        .eq("eventNumber", endOfTBR.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getEndOfTBRDao().create(endOfTBR);
                 HistorySendIntent.sendEndOfTBR(getApplicationContext(), endOfTBR);
             }
             for (PumpStatusChanged pumpStatusChanged : pumpStatusChangedEntries) {
+                if (getDatabaseHelper().getPumpStatusChangedDao().queryBuilder().where()
+                        .eq("eventNumber", pumpStatusChanged.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getPumpStatusChangedDao().create(pumpStatusChanged);
                 HistorySendIntent.sendPumpStatusChanged(getApplicationContext(), pumpStatusChanged);
             }
             for (TimeChanged timeChanged : timeChangedEntries) {
+                if (getDatabaseHelper().getTimeChangedDao().queryBuilder().where()
+                        .eq("eventNumber", timeChanged.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getTimeChangedDao().create(timeChanged);
                 HistorySendIntent.sendTimeChanged(getApplicationContext(), timeChanged);
             }
             for (CannulaFilled cannulaFilled : cannulaFilledEntries) {
+                if (getDatabaseHelper().getCannulaFilledDao().queryBuilder().where()
+                        .eq("eventNumber", cannulaFilled.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getCannulaFilledDao().create(cannulaFilled);
                 HistorySendIntent.sendCannulaFilled(getApplicationContext(),cannulaFilled);
             }
@@ -298,7 +310,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         openMessage.setHistoryType(historyType);
         int offset = Offset.getOffset(getDatabaseHelper(), pumpSerialNumber, historyType);
         if (offset != -1) {
-            openMessage.setOffset(offset + 1);
+            openMessage.setOffset(offset);
             openMessage.setReadingDirection(HistoryReadingDirection.FORWARD);
         } else {
             openMessage.setOffset(0xFFFFFFFF);
