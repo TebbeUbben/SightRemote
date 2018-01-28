@@ -81,7 +81,7 @@ class HistorySendIntent {
 
     static void sendCannulaFilled(Context context, CannulaFilled cannulaFilled) {
         Intent intent = new Intent();
-        intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
+        intent.setAction(HistoryBroadcast.ACTION_CANNULA_FILLED);
         intent.putExtra(HistoryBroadcast.EXTRA_FILL_AMOUNT, cannulaFilled.getAmount());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, cannulaFilled.getEventNumber());
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, cannulaFilled.getPump());
