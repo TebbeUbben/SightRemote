@@ -14,6 +14,8 @@ What's working:
 * Show battery amount
 * Show current TBR
 * Show active boluses
+* Show history
+* Change active basal profile
 
 What's implemented, but still not working because the remote control password is missing:
 * Issue boluses
