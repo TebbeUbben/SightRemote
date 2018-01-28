@@ -17,7 +17,7 @@ public class CannulaFilled {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField
+    @DatabaseField(index = true)
     private int eventNumber;
 
     @DatabaseField

@@ -18,7 +18,7 @@ public class BolusProgrammed {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField
+    @DatabaseField(index = true)
     private int eventNumber;
 
     @DatabaseField
@@ -40,7 +40,7 @@ public class BolusProgrammed {
     @DatabaseField
     private int duration;
 
-    @DatabaseField
+    @DatabaseField(index = true)
     private int bolusId;
 
 }

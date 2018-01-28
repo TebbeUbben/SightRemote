@@ -17,7 +17,7 @@ public class EndOfTBR {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField
+    @DatabaseField(index = true)
     private int eventNumber;
 
     @DatabaseField
@@ -33,7 +33,7 @@ public class EndOfTBR {
     @DatabaseField
     private int amount;
 
-    @DatabaseField
+    @DatabaseField(index = true)
     private int duration;
 
 }
