@@ -24,7 +24,7 @@ public class TimeChanged {
     @DatabaseField
     private String pump;
 
-    @DatabaseField(dataType = DataType.DATE_LONG)
+    @DatabaseField(dataType = DataType.DATE_LONG, index = true)
     private Date dateTime;
 
     @DatabaseField(dataType = DataType.DATE_LONG)
