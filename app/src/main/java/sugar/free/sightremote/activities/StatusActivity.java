@@ -1,7 +1,10 @@
 package sugar.free.sightremote.activities;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,8 +22,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.SQLException;
+import java.text.DateFormat;
+
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
 import sugar.free.sightparser.applayer.remote_control.CancelBolusMessage;
 import sugar.free.sightparser.applayer.remote_control.CancelTBRMessage;
 import sugar.free.sightparser.applayer.remote_control.SetPumpStatusMessage;
@@ -35,6 +42,8 @@ import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightparser.handling.taskrunners.StatusTaskRunner;
+import sugar.free.sightremote.database.BolusDelivered;
+import sugar.free.sightremote.utils.UnitFormatter;
 
 public class StatusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener {
 
@@ -53,8 +62,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     private TextView cartridge;
     private TextView battery;
     private TextView basalAmount;
-    private TextView tbrDuration;
-    private ProgressBar tbrProgress;
+    private TextView latestBolus;
     private CardView temporaryBasalrate;
     private TextView tbrText;
     private ProgressBar tbrProgress2;
@@ -86,8 +94,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         cartridge = findViewById(R.id.catridge);
         battery = findViewById(R.id.battery);
         basalAmount = findViewById(R.id.basal_amount);
-        tbrDuration = findViewById(R.id.tbr_duration);
-        tbrProgress = findViewById(R.id.tbr_progress);
+        latestBolus = findViewById(R.id.latest_bolus);
         temporaryBasalrate = findViewById(R.id.tempory_basalrate);
         tbrText = findViewById(R.id.tbr_text);
         tbrProgress2 = findViewById(R.id.tbr_progress2);
@@ -150,8 +157,6 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         battery.setText(getString(R.string.battery_formatter, statusResult.getBatteryAmountMessage().getBatteryAmount()));
         if (pumpStatus == PumpStatus.STOPPED) {
             basalAmount.setVisibility(View.GONE);
-            tbrDuration.setVisibility(View.GONE);
-            tbrProgress.setVisibility(View.INVISIBLE);
             temporaryBasalrate.setVisibility(View.GONE);
             bolus1.setVisibility(View.GONE);
             bolus2.setVisibility(View.GONE);
@@ -161,8 +166,6 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         } else {
             int activeProcesses = 0;
             if (statusResult.getCurrentTBRMessage().getPercentage() == 100) {
-                tbrDuration.setVisibility(View.GONE);
-                tbrProgress.setVisibility(View.INVISIBLE);
                 basalAmount.setVisibility(View.VISIBLE);
                 basalAmount.setTypeface(basalAmount.getTypeface(), Typeface.NORMAL);
                 basalAmount.setText(getString(R.string.basal_amount_formatter, statusResult.getCurrentBasalMessage().getCurrentBasalName(), statusResult.getCurrentBasalMessage().getCurrentBasalAmount()));
@@ -170,15 +173,11 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
             } else {
                 activeProcesses++;
                 cancelTBR.setVisibility(View.VISIBLE);
-                tbrDuration.setVisibility(View.VISIBLE);
-                tbrProgress.setVisibility(View.VISIBLE);
                 temporaryBasalrate.setVisibility(View.VISIBLE);
                 basalAmount.setVisibility(View.VISIBLE);
                 basalAmount.setText(getString(R.string.basal_amount_formatter, statusResult.getCurrentBasalMessage().getCurrentBasalName(), statusResult.getCurrentBasalMessage().getCurrentBasalAmount() / 100F * ((float) statusResult.getCurrentTBRMessage().getPercentage())));
                 basalAmount.setTypeface(basalAmount.getTypeface(), Typeface.ITALIC);
-                tbrDuration.setText(getString(R.string.tbr_duration_formatter, formatTime(statusResult.getCurrentTBRMessage().getLeftoverTime()), statusResult.getCurrentTBRMessage().getPercentage()));
                 int progress = (int) (100F / ((float) statusResult.getCurrentTBRMessage().getInitialTime()) * ((float) statusResult.getCurrentTBRMessage().getLeftoverTime()));
-                tbrProgress.setProgress(progress);
                 tbrProgress2.setProgress(progress);
                 tbrText.setText(getString(R.string.tbr_text, statusResult.getCurrentTBRMessage().getPercentage(), formatTime(statusResult.getCurrentTBRMessage().getLeftoverTime()), formatTime(statusResult.getCurrentTBRMessage().getInitialTime())));
             }
@@ -246,10 +245,17 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     }
 
     @Override
-    protected void onPause() {
+    protected void onStop() {
         if (taskRunner != null) taskRunner.cancel();
         handler.removeCallbacks(taskRunnerRunnable);
-        super.onPause();
+        unregisterReceiver(historyBroadcastReceiver);
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerReceiver(historyBroadcastReceiver, new IntentFilter(HistoryBroadcast.ACTION_SYNC_FINISHED));
     }
 
     @Override
@@ -272,6 +278,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     protected void statusChanged(Status status) {
         if (status == Status.CONNECTED) {
             taskRunnerRunnable.run();
+            sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
         }
     }
 
@@ -413,4 +420,38 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         taskRunner.fetch(errorToastResultCallback);
         handler.postDelayed(taskRunnerRunnable, 500);
     }
+
+    private BroadcastReceiver historyBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                BolusDelivered dbLatestBolus = getDatabaseHelper().getBolusDeliveredDao().queryBuilder().orderBy("dateTime", false).queryForFirst();
+                if (dbLatestBolus == null) return;
+                if (System.currentTimeMillis() - dbLatestBolus.getDateTime().getTime() >= 24 * 60 * 60 * 1000)
+                    runOnUiThread(() -> latestBolus.setVisibility(View.GONE));
+                else {
+                    if (dbLatestBolus.getBolusType() == HistoryBolusType.STANDARD) {
+                        runOnUiThread(() -> latestBolus.setText(getString(R.string.latest_bolus_standard,
+                                DateFormat.getTimeInstance(DateFormat.SHORT).format(dbLatestBolus.getDateTime()),
+                                UnitFormatter.format(dbLatestBolus.getImmediateAmount()))));
+                    } else {
+                        int minutes = dbLatestBolus.getDuration() % 60;
+                        int hours = (dbLatestBolus.getDuration() - minutes) / 60;
+                        if (dbLatestBolus.getBolusType() == HistoryBolusType.MULTIWAVE)
+                            runOnUiThread(() -> latestBolus.setText(getString(R.string.latest_bolus_multiwave,
+                                    DateFormat.getTimeInstance(DateFormat.SHORT).format(dbLatestBolus.getDateTime()),
+                                    UnitFormatter.format(dbLatestBolus.getImmediateAmount()),
+                                    UnitFormatter.format(dbLatestBolus.getExtendedAmount()),
+                                    hours, minutes)));
+                        else runOnUiThread(() -> latestBolus.setText(getString(R.string.latest_bolus_extended,
+                                DateFormat.getTimeInstance(DateFormat.SHORT).format(dbLatestBolus.getDateTime()),
+                                UnitFormatter.format(dbLatestBolus.getExtendedAmount()),
+                                hours, minutes)));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 }

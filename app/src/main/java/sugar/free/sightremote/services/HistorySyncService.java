@@ -158,7 +158,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         try {
             for (BolusDelivered bolusDelivered : bolusDeliveredEntries) {
                 if (getDatabaseHelper().getBolusDeliveredDao().queryBuilder()
-                        .where().eq("eventNumber", bolusDelivered.getEventNumber()).countOf() > 0) continue;
+                        .where().eq("eventNumber", bolusDelivered.getEventNumber())
+                        .and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusDeliveredDao().create(bolusDelivered);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_BOLUS_DELIVERED);
@@ -175,7 +176,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             }
             for (BolusProgrammed bolusProgrammed : bolusProgrammedEntries) {
                 if (getDatabaseHelper().getBolusProgrammedDao().queryBuilder()
-                        .where().eq("eventNumber", bolusProgrammed.getEventNumber()).query().size() > 0) continue;
+                        .where().eq("eventNumber", bolusProgrammed.getEventNumber())
+                        .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getBolusProgrammedDao().create(bolusProgrammed);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_BOLUS_PROGRAMMED);
@@ -191,7 +193,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             }
             for (EndOfTBR endOfTBR : endOfTBREntries) {
                 if (getDatabaseHelper().getEndOfTBRDao().queryBuilder()
-                        .where().eq("eventNumber", endOfTBR.getEventNumber()).query().size() > 0) continue;
+                        .where().eq("eventNumber", endOfTBR.getEventNumber())
+                        .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getEndOfTBRDao().create(endOfTBR);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_END_OF_TBR);
@@ -205,7 +208,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             }
             for (PumpStatusChanged pumpStatusChanged : pumpStatusChangedEntries) {
                 if (getDatabaseHelper().getPumpStatusChangedDao().queryBuilder()
-                        .where().eq("eventNumber", pumpStatusChanged.getEventNumber()).query().size() > 0) continue;
+                        .where().eq("eventNumber", pumpStatusChanged.getEventNumber())
+                        .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getPumpStatusChangedDao().create(pumpStatusChanged);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
@@ -218,7 +222,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             }
             for (TimeChanged timeChanged : timeChangedEntries) {
                 if (getDatabaseHelper().getTimeChangedDao().queryBuilder().
-                        where().eq("eventNumber", timeChanged.getEventNumber()).query().size() > 0) continue;
+                        where().eq("eventNumber", timeChanged.getEventNumber())
+                        .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getTimeChangedDao().create(timeChanged);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_TIME_CHANGED);
@@ -230,7 +235,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             }
             for (CannulaFilled cannulaFilled : cannulaFilledEntries) {
                 if (getDatabaseHelper().getCannulaFilledDao().queryBuilder()
-                        .where().eq("eventNumber", cannulaFilled.getEventNumber()).query().size() > 0) continue;
+                        .where().eq("eventNumber", cannulaFilled.getEventNumber())
+                        .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getCannulaFilledDao().create(cannulaFilled);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);

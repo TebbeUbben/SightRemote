@@ -18,13 +18,13 @@ public class TimeChanged {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField(index = true)
+    @DatabaseField
     private int eventNumber;
 
     @DatabaseField
     private String pump;
 
-    @DatabaseField(dataType = DataType.DATE_LONG, index = true)
+    @DatabaseField(dataType = DataType.DATE_LONG)
     private Date dateTime;
 
     @DatabaseField(dataType = DataType.DATE_LONG)

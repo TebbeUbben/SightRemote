@@ -133,7 +133,7 @@
                         android:id="@+id/basal_amount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_above="@+id/tbr_progress"
+                        android:layout_alignParentBottom="true"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
                         android:layout_marginBottom="8dp"
@@ -142,28 +142,17 @@
                         android:textColor="#FFFFFF" />
 
                     <TextView
-                        android:id="@+id/tbr_duration"
+                        android:id="@+id/latest_bolus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBaseline="@+id/basal_amount"
                         android:layout_alignBottom="@+id/basal_amount"
+                        android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="16dp"
                         android:text="@string/Loading"
-                        android:textColor="#FFFFFF"
-                        android:textStyle="italic"
-                        android:visibility="gone" />
-
-                    <ProgressBar
-                        android:id="@+id/tbr_progress"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="4dp"
-                        android:layout_alignParentBottom="true"
-                        android:layout_weight="1"
-                        android:progress="50"
-                        android:visibility="invisible" />
+                        android:textColor="#FFFFFF" />
                 </RelativeLayout>
 
             </LinearLayout>
