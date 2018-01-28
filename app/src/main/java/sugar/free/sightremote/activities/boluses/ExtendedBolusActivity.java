@@ -1,4 +1,4 @@
-package sugar.free.sightremote.activities;
+package sugar.free.sightremote.activities.boluses;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -12,19 +12,18 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 
 import sugar.free.sightparser.applayer.remote_control.ExtendedBolusMessage;
-import sugar.free.sightparser.applayer.remote_control.MultiwaveBolusMessage;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
 import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.BolusPreparationTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
+import sugar.free.sightremote.activities.SightActivity;
 import sugar.free.sightremote.utils.BolusAmountPicker;
 import sugar.free.sightremote.utils.DurationPicker;
 
-public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener, BolusAmountPicker.OnAmountChangeListener, DurationPicker.OnDurationChangeListener {
+public class ExtendedBolusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener, BolusAmountPicker.OnAmountChangeListener, DurationPicker.OnDurationChangeListener {
 
-    private BolusAmountPicker immediateBolusAmountPicker;
-    private BolusAmountPicker delayedBolusAmountPicker;
+    private BolusAmountPicker bolusAmountPicker;
     private DurationPicker durationPicker;
 
     private BolusPreparationTaskRunner.PreperationResult preperationResult;
@@ -35,16 +34,12 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
     private NumberPicker digit4;
     private NumberPicker digit5;
     private NumberPicker digit6;
-    private NumberPicker digit7;
-    private NumberPicker digit8;
-    private NumberPicker digit9;
-    private NumberPicker digit10;
     private Button deliver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContent(R.layout.activity_multiwave_bolus);
+        setContent(R.layout.activity_extended_bolus);
         disconnectedFromService();
 
         showManualOverlay();
@@ -55,18 +50,11 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
         digit4 = findViewById(R.id.digit4);
         digit5 = findViewById(R.id.digit5);
         digit6 = findViewById(R.id.digit6);
-        digit7 = findViewById(R.id.digit7);
-        digit8 = findViewById(R.id.digit8);
-        digit9 = findViewById(R.id.digit9);
-        digit10 = findViewById(R.id.digit10);
 
-        immediateBolusAmountPicker = new BolusAmountPicker(digit1, digit2, digit3, digit4);
-        immediateBolusAmountPicker.setOnAmountChangeListener(this);
+        bolusAmountPicker = new BolusAmountPicker(digit1, digit2, digit3, digit4);
+        bolusAmountPicker.setOnAmountChangeListener(this);
 
-        delayedBolusAmountPicker = new BolusAmountPicker(digit5, digit6, digit7, digit8);
-        delayedBolusAmountPicker.setOnAmountChangeListener(this);
-
-        durationPicker = new DurationPicker(digit9, digit10);
+        durationPicker = new DurationPicker(digit5, digit6);
         durationPicker.setOnDurationChangeListener(this);
 
         deliver = findViewById(R.id.deliver);
@@ -78,12 +66,9 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
     public void onResult(Object result) {
         if (result instanceof BolusPreparationTaskRunner.PreperationResult) {
             preperationResult = (BolusPreparationTaskRunner.PreperationResult) result;
-            runOnUiThread(() -> {
-                immediateBolusAmountPicker.adjustNumberPickers(preperationResult.getMaxBolusAmount());
-                delayedBolusAmountPicker.adjustNumberPickers(preperationResult.getMaxBolusAmount());
-            });
+            runOnUiThread(() -> bolusAmountPicker.adjustNumberPickers(preperationResult.getMaxBolusAmount()));
             if (preperationResult.isPumpStarted()) {
-                if (preperationResult.getAvailableBoluses().isMultiwaveAvailable()) {
+                if (preperationResult.getAvailableBoluses().isExtendedAvailable()) {
                     hideManualOverlay();
                     dismissSnackbar();
                 } else {
@@ -121,9 +106,8 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
 
     @Override
     public void onClick(View view) {
-        MultiwaveBolusMessage message = new MultiwaveBolusMessage();
-        message.setAmount(immediateBolusAmountPicker.getPickerValue());
-        message.setDelayedAmount(delayedBolusAmountPicker.getPickerValue());
+        ExtendedBolusMessage message = new ExtendedBolusMessage();
+        message.setAmount(bolusAmountPicker.getPickerValue());
         message.setDuration((short) durationPicker.getPickerValue());
         SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
         DecimalFormat decimalFormat = new DecimalFormat("0");
@@ -133,10 +117,10 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
         int hours = (durationPicker.getPickerValue() - minutes) / 60;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.confirmation)
-                .setMessage(getString(R.string.multiwave_bolus_confirmation, decimalFormat.format(immediateBolusAmountPicker.getPickerValue()), decimalFormat.format(delayedBolusAmountPicker.getPickerValue()), hours, minutes))
+                .setMessage(getString(R.string.extended_bolus_confirmation, decimalFormat.format(bolusAmountPicker.getPickerValue()), hours, minutes))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     showManualOverlay();
-                    taskRunner.fetch(MultiwaveBolusActivity.this);
+                    taskRunner.fetch(ExtendedBolusActivity.this);
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
@@ -144,23 +128,16 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
 
     @Override
     protected int getSelectedNavItemID() {
-        return R.id.nav_multiwave_bolus;
+        return R.id.nav_extended_bolus;
     }
 
     @Override
     public void onAmountChange(BolusAmountPicker bolusAmountPicker, float newValue) {
-        float total = immediateBolusAmountPicker.getPickerValue() + delayedBolusAmountPicker.getPickerValue();
-        if (total > preperationResult.getMaxBolusAmount()) {
-            if (bolusAmountPicker == immediateBolusAmountPicker)
-                delayedBolusAmountPicker.setValue(delayedBolusAmountPicker.getPickerValue() - (total - preperationResult.getMaxBolusAmount()));
-            else
-                immediateBolusAmountPicker.setValue(immediateBolusAmountPicker.getPickerValue() - (total - preperationResult.getMaxBolusAmount()));
-        }
-        deliver.setEnabled(immediateBolusAmountPicker.getPickerValue() >= preperationResult.getMinBolusAmount() && delayedBolusAmountPicker.getPickerValue() >= preperationResult.getMinBolusAmount() && durationPicker.getPickerValue() > 0);
+        deliver.setEnabled(newValue >= preperationResult.getMinBolusAmount() && durationPicker.getPickerValue() > 0);
     }
 
     @Override
     public void onDurationChange(int newValue) {
-        deliver.setEnabled(immediateBolusAmountPicker.getPickerValue() >= preperationResult.getMinBolusAmount() && delayedBolusAmountPicker.getPickerValue() >= preperationResult.getMinBolusAmount() && newValue > 0);
+        deliver.setEnabled(bolusAmountPicker.getPickerValue() >= preperationResult.getMinBolusAmount() && newValue > 0);
     }
 }

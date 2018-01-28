@@ -108,6 +108,9 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         } else if (status == Status.DISCONNECTED) {
             connector.disconnect();
             connector.disconnectFromService();
+            syncing = false;
+            sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
+            if (wakeLock.isHeld()) wakeLock.release();
         }
     }
 
@@ -124,6 +127,9 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             connector.disconnect();
             connector.disconnectFromService();
             processHistoryFrames(historyFrames);
+            syncing = false;
+            sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
+            if (wakeLock.isHeld()) wakeLock.release();
         }
     }
 
@@ -150,21 +156,9 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 cannulaFilledEntries.add(processCannulaFilledFrame((CannulaFilledFrame) historyFrame));
         }
         try {
-            for (BolusProgrammed bolusProgrammed : bolusProgrammedEntries) {
-                getDatabaseHelper().getBolusProgrammedDao().create(bolusProgrammed);
-                Intent intent = new Intent();
-                intent.setAction(HistoryBroadcast.ACTION_BOLUS_PROGRAMMED);
-                intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_ID, bolusProgrammed.getBolusId());
-                intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_TYPE, bolusProgrammed.getBolusType().toString());
-                intent.putExtra(HistoryBroadcast.EXTRA_DURATION, bolusProgrammed.getDuration());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, bolusProgrammed.getEventNumber());
-                intent.putExtra(HistoryBroadcast.EXTRA_EXTENDED_AMOUNT, bolusProgrammed.getExtendedAmount());
-                intent.putExtra(HistoryBroadcast.EXTRA_IMMEDIATE_AMOUNT, bolusProgrammed.getImmediateAmount());
-                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, bolusProgrammed.getPump());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, bolusProgrammed.getDateTime());
-                sendBroadcast(intent);
-            }
             for (BolusDelivered bolusDelivered : bolusDeliveredEntries) {
+                if (getDatabaseHelper().getBolusDeliveredDao().queryBuilder()
+                        .where().eq("eventNumber", bolusDelivered.getEventNumber()).countOf() > 0) continue;
                 getDatabaseHelper().getBolusDeliveredDao().create(bolusDelivered);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_BOLUS_DELIVERED);
@@ -179,7 +173,25 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 intent.putExtra(HistoryBroadcast.EXTRA_START_TIME, bolusDelivered.getStartTime());
                 sendBroadcast(intent);
             }
+            for (BolusProgrammed bolusProgrammed : bolusProgrammedEntries) {
+                if (getDatabaseHelper().getBolusProgrammedDao().queryBuilder()
+                        .where().eq("eventNumber", bolusProgrammed.getEventNumber()).query().size() > 0) continue;
+                getDatabaseHelper().getBolusProgrammedDao().create(bolusProgrammed);
+                Intent intent = new Intent();
+                intent.setAction(HistoryBroadcast.ACTION_BOLUS_PROGRAMMED);
+                intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_ID, bolusProgrammed.getBolusId());
+                intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_TYPE, bolusProgrammed.getBolusType().toString());
+                intent.putExtra(HistoryBroadcast.EXTRA_DURATION, bolusProgrammed.getDuration());
+                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, bolusProgrammed.getEventNumber());
+                intent.putExtra(HistoryBroadcast.EXTRA_EXTENDED_AMOUNT, bolusProgrammed.getExtendedAmount());
+                intent.putExtra(HistoryBroadcast.EXTRA_IMMEDIATE_AMOUNT, bolusProgrammed.getImmediateAmount());
+                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, bolusProgrammed.getPump());
+                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, bolusProgrammed.getDateTime());
+                sendBroadcast(intent);
+            }
             for (EndOfTBR endOfTBR : endOfTBREntries) {
+                if (getDatabaseHelper().getEndOfTBRDao().queryBuilder()
+                        .where().eq("eventNumber", endOfTBR.getEventNumber()).query().size() > 0) continue;
                 getDatabaseHelper().getEndOfTBRDao().create(endOfTBR);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_END_OF_TBR);
@@ -192,6 +204,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 sendBroadcast(intent);
             }
             for (PumpStatusChanged pumpStatusChanged : pumpStatusChangedEntries) {
+                if (getDatabaseHelper().getPumpStatusChangedDao().queryBuilder()
+                        .where().eq("eventNumber", pumpStatusChanged.getEventNumber()).query().size() > 0) continue;
                 getDatabaseHelper().getPumpStatusChangedDao().create(pumpStatusChanged);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
@@ -203,6 +217,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 sendBroadcast(intent);
             }
             for (TimeChanged timeChanged : timeChangedEntries) {
+                if (getDatabaseHelper().getTimeChangedDao().queryBuilder().
+                        where().eq("eventNumber", timeChanged.getEventNumber()).query().size() > 0) continue;
                 getDatabaseHelper().getTimeChangedDao().create(timeChanged);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_TIME_CHANGED);
@@ -213,6 +229,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 sendBroadcast(intent);
             }
             for (CannulaFilled cannulaFilled : cannulaFilledEntries) {
+                if (getDatabaseHelper().getCannulaFilledDao().queryBuilder()
+                        .where().eq("eventNumber", cannulaFilled.getEventNumber()).query().size() > 0) continue;
                 getDatabaseHelper().getCannulaFilledDao().create(cannulaFilled);
                 Intent intent = new Intent();
                 intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
@@ -293,34 +311,36 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         bolusProgrammed.setImmediateAmount(frame.getImmediateAmount());
         bolusProgrammed.setPump(pumpSerialNumber);
 
-        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
         bolusProgrammed.setDateTime(eventTime);
         return bolusProgrammed;
     }
 
     private TimeChanged processTimeChangedFrame(TimeChangedFrame frame) {
-        Log.d("HistorySyncService", "TIME CHANGED");
         TimeChanged timeChanged = new TimeChanged();
         timeChanged.setEventNumber(frame.getEventNumber());
         timeChanged.setPump(pumpSerialNumber);
 
-        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
         timeChanged.setDateTime(eventTime);
 
-        Date beforeTime = parseDateTime(frame.getBeforeYear(), frame.getBeforeMonth(), frame.getBeforeDay(), frame.getBeforeHour(), frame.getBeforeMinute(), frame.getBeforeSecond());
+        Date beforeTime = parseDateTime(frame.getBeforeYear(), frame.getBeforeMonth(),
+                frame.getBeforeDay(), frame.getBeforeHour(), frame.getBeforeMinute(), frame.getBeforeSecond());
         timeChanged.setTimeBefore(beforeTime);
 
         return timeChanged;
     }
 
     private CannulaFilled processCannulaFilledFrame(CannulaFilledFrame frame) {
-        Log.d("HistorySyncService", "CANNULLA FILLED");
         CannulaFilled cannulaFilled = new CannulaFilled();
         cannulaFilled.setEventNumber(frame.getEventNumber());
         cannulaFilled.setPump(pumpSerialNumber);
         cannulaFilled.setAmount(frame.getAmount());
 
-        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
         cannulaFilled.setDateTime(eventTime);
 
         return cannulaFilled;
@@ -357,10 +377,13 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         e.printStackTrace();
         connector.disconnect();
         connector.disconnectFromService();
+        syncing = false;
+        sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
+        if (wakeLock.isHeld()) wakeLock.release();
     }
 
     private void startSync() {
-        wakeLock.acquire();
+        if (!wakeLock.isHeld()) wakeLock.acquire(60000);
         syncing = true;
         connector.connectToService();
         if (syncing) sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_STARTED));
@@ -390,7 +413,6 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     @Override
     public void onServiceDisconnected() {
         syncing = false;
-        sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
-        wakeLock.release();
+        if (wakeLock.isHeld()) wakeLock.release();
     }
 }

@@ -1,10 +1,9 @@
-package sugar.free.sightremote.activities;
+package sugar.free.sightremote.activities.boluses;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
@@ -18,6 +17,7 @@ import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.BolusPreparationTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
+import sugar.free.sightremote.activities.SightActivity;
 import sugar.free.sightremote.utils.BolusAmountPicker;
 
 public class StandardBolusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener, BolusAmountPicker.OnAmountChangeListener {

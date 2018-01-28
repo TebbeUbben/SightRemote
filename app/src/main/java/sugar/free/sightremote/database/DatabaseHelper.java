@@ -58,7 +58,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public Dao<BolusProgrammed, Integer> getBolusProgrammedDao() {
         try {
-            if (bolusDeliveredDao == null) bolusProgrammedDao = getDao(BolusProgrammed.class);
+            if (bolusProgrammedDao == null) bolusProgrammedDao = getDao(BolusProgrammed.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }

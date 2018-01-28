@@ -65,7 +65,7 @@
     <string name="start_pump">Pumpenstart</string>
     <string name="set_percentage">Prozentsatz einstellen:</string>
     <string name="set_tbr">TBR einstellen</string>
-    <string name="boluses">Boli</string>
+    <string name="bolus">Bolus</string>
     <string name="basal_rate">Basalrate</string>
     <string name="stop_pump_confirmation">Bist du dir sicher, dass du deine Pumpe stoppen möchtest?</string>
     <string name="start_pump_confirmation">Bist du dir sicher, dass du deine Pumpe starten möchtest?</string>
@@ -80,4 +80,10 @@
     <string name="profiles">BR-Profile</string>
     <string name="default_br_name">BR-Profil %1$d</string>
     <string name="change_br_profile_confirmation">Bist du dir sicher, dass du das aktive BR-Profil ändern möchstest?</string>
+    <string name="history_immediate_amount">Sofort: %1$s</string>
+    <string name="history_extended_amount">Verzögert: %1$s %2$02d:%3$02d Stunden</string>
+    <string name="history">Pumpendaten</string>
+    <string name="bolus_data">Bolusdaten</string>
+    <string name="history_tbr_amount">%1$d%% für %2$02d:%3$02d Stunden</string>
+    <string name="tbr_data">TBR-Daten</string>
 </resources>

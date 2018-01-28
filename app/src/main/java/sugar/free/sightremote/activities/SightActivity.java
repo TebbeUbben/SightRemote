@@ -15,14 +15,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import sugar.free.sightparser.applayer.remote_control.MultiwaveBolusMessage;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+
 import sugar.free.sightparser.handling.ServiceConnectionCallback;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.StatusCallback;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
+import sugar.free.sightremote.activities.boluses.ExtendedBolusActivity;
+import sugar.free.sightremote.activities.boluses.MultiwaveBolusActivity;
+import sugar.free.sightremote.activities.boluses.StandardBolusActivity;
+import sugar.free.sightremote.activities.history.BolusHistoryActivity;
+import sugar.free.sightremote.activities.history.TBRHistoryActivity;
+import sugar.free.sightremote.database.DatabaseHelper;
 
 public abstract class SightActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private DatabaseHelper databaseHelper;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -53,6 +62,8 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
         else if (id == R.id.nav_multiwave_bolus) startActivity(MultiwaveBolusActivity.class);
         else if (id == R.id.nav_tbr) startActivity(TemporaryBasalRateActivity.class);
         else if (id == R.id.nav_br_profiles) startActivity(ChangeActiveBRProfileActivity.class);
+        else if (id == R.id.nav_bolus_data) startActivity(BolusHistoryActivity.class);
+        else if (id == R.id.nav_tbr_data) startActivity(TBRHistoryActivity.class);
 
         if (finishAfterNavigationClick()) finish();
         drawerLayout.closeDrawers();
@@ -168,12 +179,14 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
     }
 
     private void updateOverlay(Status status) {
-        if (status == Status.CONNECTED) {
-            autoOverlay = false;
-            hideOverlay();
-        } else {
-            autoOverlay = true;
-            showOverlay();
+        if (useOverlay()) {
+            if (status == Status.CONNECTED) {
+                autoOverlay = false;
+                hideOverlay();
+            } else {
+                autoOverlay = true;
+                showOverlay();
+            }
         }
     }
 
@@ -192,13 +205,10 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
         });
     }
 
-    private StatusCallback statusCallback = new StatusCallback() {
-        @Override
-        public void onStatusChange(Status status) {
-            updateSnackbar(status);
-            updateOverlay(status);
-            statusChanged(status);
-        }
+    private StatusCallback statusCallback = status -> {
+        updateSnackbar(status);
+        updateOverlay(status);
+        statusChanged(status);
     };
 
     public SightServiceConnector getServiceConnector() {
@@ -214,7 +224,7 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
     }
 
     protected View getOverlay() {
-        return useOverlay() ? findViewById(R.id.overlay) : null;
+        return findViewById(R.id.overlay);
     }
 
     protected boolean useOverlay() {
@@ -261,5 +271,21 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
     protected void hideManualOverlay() {
         manualOverlay = false;
         hideOverlay();
+    }
+
+    protected DatabaseHelper getDatabaseHelper() {
+        if (databaseHelper == null) {
+            databaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
+        }
+        return databaseHelper;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (databaseHelper == null) {
+            OpenHelperManager.releaseHelper();
+            databaseHelper = null;
+        }
     }
 }

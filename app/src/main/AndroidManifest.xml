@@ -34,13 +34,13 @@
             android:label="@string/status"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus" />
         <activity
-            android:name=".activities.StandardBolusActivity"
+            android:name=".activities.boluses.StandardBolusActivity"
             android:label="@string/standard_bolus" />
         <activity
-            android:name=".activities.ExtendedBolusActivity"
+            android:name=".activities.boluses.ExtendedBolusActivity"
             android:label="@string/extended_bolus" />
         <activity
-            android:name=".activities.MultiwaveBolusActivity"
+            android:name=".activities.boluses.MultiwaveBolusActivity"
             android:label="@string/multiwave_bolus" />
         <activity
             android:name=".activities.TemporaryBasalRateActivity"
@@ -48,6 +48,12 @@
         <activity
             android:name=".activities.ChangeActiveBRProfileActivity"
             android:label="@string/profiles" />
+        <activity
+            android:name=".activities.history.BolusHistoryActivity"
+            android:label="@string/bolus_data" />
+        <activity
+            android:name=".activities.history.TBRHistoryActivity"
+            android:label="@string/tbr_data" />
 
         <service
             android:name=".services.HistorySyncService"

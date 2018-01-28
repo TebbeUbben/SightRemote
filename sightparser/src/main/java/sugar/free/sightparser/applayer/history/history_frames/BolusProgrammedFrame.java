@@ -1,6 +1,7 @@
 package sugar.free.sightparser.applayer.history.history_frames;
 
 import lombok.Getter;
+import sugar.free.sightparser.RoundingUtil;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
 import sugar.free.sightparser.applayer.history.HistoryFrame;
 import sugar.free.sightparser.pipeline.ByteBuf;
@@ -19,8 +20,8 @@ public class BolusProgrammedFrame extends HistoryFrame {
     @Override
     public void parse(ByteBuf byteBuf) {
         bolusType = HistoryBolusType.getBolusType(byteBuf.readShort());
-        immediateAmount = ((float) byteBuf.readShortLE()) / 100F;
-        extendedAmount = ((float) byteBuf.readShortLE()) / 100F;
+        immediateAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F,2 );
+        extendedAmount =  RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
         duration = byteBuf.readShortLE();
         byteBuf.shift(4);
         bolusId = byteBuf.readShortLE();
