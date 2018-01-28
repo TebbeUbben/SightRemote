@@ -4,6 +4,7 @@ public class HistoryBroadcast {
 
     //Sent to service
     public static final String ACTION_START_SYNC = "sugar.free.sightremote.services.HistorySyncService.START_SYNC";
+    public static final String ACTION_START_RESYNC = "sugar.free.sightremote.services.HistorySyncService.START_RESYNC";
 
     //Sent from service
     public static final String ACTION_BOLUS_DELIVERED = "sugar.free.sightremote.services.HistorySyncService.BOLUS_DELIVERED";
