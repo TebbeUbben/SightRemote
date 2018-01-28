@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
@@ -14,8 +15,6 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
-import java.sql.Time;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -56,9 +55,12 @@ import sugar.free.sightremote.database.TimeChanged;
 public class HistorySyncService extends Service implements StatusCallback, TaskRunner.ResultCallback, ServiceConnectionCallback {
 
     private DatabaseHelper databaseHelper = null;
+    private HistoryResync historyResync = null;
     private SightServiceConnector connector;
     private PowerManager powerManager;
     private AlarmManager alarmManager;
+    private SharedPreferences activityPreferences;
+    private PendingIntent pendingIntent;
     private PowerManager.WakeLock wakeLock;
     private String pumpSerialNumber;
     private boolean syncing;
@@ -88,13 +90,19 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     public int onStartCommand(Intent intent, int flags, int startId) {
         powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        if (pendingIntent == null) PendingIntent.getBroadcast(this, 0, new Intent(HistoryBroadcast.ACTION_START_SYNC), 0);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "HistorySyncService");
         connector = new SightServiceConnector(this);
         connector.addStatusCallback(this);
         connector.setConnectionCallback(this);
-        getApplicationContext().registerReceiver(broadcastReceiver, new IntentFilter(HistoryBroadcast.ACTION_START_SYNC));
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_FIFTEEN_MINUTES,
-                PendingIntent.getBroadcast(this, 0, new Intent(HistoryBroadcast.ACTION_START_SYNC), 0));
+        final IntentFilter intentFilter = new IntentFilter(HistoryBroadcast.ACTION_START_SYNC);
+        intentFilter.addAction(HistoryBroadcast.ACTION_START_RESYNC);
+        getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
+        alarmManager.cancel(pendingIntent);
+        if (getActivityPreferences().getBoolean("background_sync_enabled", false)) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+                    pendingIntent);
+        }
         return START_STICKY;
     }
 
@@ -161,90 +169,42 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                         .where().eq("eventNumber", bolusDelivered.getEventNumber())
                         .and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusDeliveredDao().create(bolusDelivered);
-                Intent intent = new Intent();
-                intent.setAction(HistoryBroadcast.ACTION_BOLUS_DELIVERED);
-                intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_ID, bolusDelivered.getBolusId());
-                intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_TYPE, bolusDelivered.getBolusType().toString());
-                intent.putExtra(HistoryBroadcast.EXTRA_DURATION, bolusDelivered.getDuration());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, bolusDelivered.getEventNumber());
-                intent.putExtra(HistoryBroadcast.EXTRA_EXTENDED_AMOUNT, bolusDelivered.getExtendedAmount());
-                intent.putExtra(HistoryBroadcast.EXTRA_IMMEDIATE_AMOUNT, bolusDelivered.getImmediateAmount());
-                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, bolusDelivered.getPump());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, bolusDelivered.getDateTime());
-                intent.putExtra(HistoryBroadcast.EXTRA_START_TIME, bolusDelivered.getStartTime());
-                sendBroadcast(intent);
+                HistorySendIntent.sendBolusDelivered(getApplicationContext(), bolusDelivered);
             }
             for (BolusProgrammed bolusProgrammed : bolusProgrammedEntries) {
                 if (getDatabaseHelper().getBolusProgrammedDao().queryBuilder()
                         .where().eq("eventNumber", bolusProgrammed.getEventNumber())
                         .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getBolusProgrammedDao().create(bolusProgrammed);
-                Intent intent = new Intent();
-                intent.setAction(HistoryBroadcast.ACTION_BOLUS_PROGRAMMED);
-                intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_ID, bolusProgrammed.getBolusId());
-                intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_TYPE, bolusProgrammed.getBolusType().toString());
-                intent.putExtra(HistoryBroadcast.EXTRA_DURATION, bolusProgrammed.getDuration());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, bolusProgrammed.getEventNumber());
-                intent.putExtra(HistoryBroadcast.EXTRA_EXTENDED_AMOUNT, bolusProgrammed.getExtendedAmount());
-                intent.putExtra(HistoryBroadcast.EXTRA_IMMEDIATE_AMOUNT, bolusProgrammed.getImmediateAmount());
-                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, bolusProgrammed.getPump());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, bolusProgrammed.getDateTime());
-                sendBroadcast(intent);
+                HistorySendIntent.sendBolusProgrammed(getApplicationContext(),bolusProgrammed);
             }
             for (EndOfTBR endOfTBR : endOfTBREntries) {
                 if (getDatabaseHelper().getEndOfTBRDao().queryBuilder()
                         .where().eq("eventNumber", endOfTBR.getEventNumber())
                         .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getEndOfTBRDao().create(endOfTBR);
-                Intent intent = new Intent();
-                intent.setAction(HistoryBroadcast.ACTION_END_OF_TBR);
-                intent.putExtra(HistoryBroadcast.EXTRA_DURATION, endOfTBR.getDuration());
-                intent.putExtra(HistoryBroadcast.EXTRA_TBR_AMOUNT, endOfTBR.getAmount());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, endOfTBR.getEventNumber());
-                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, endOfTBR.getPump());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, endOfTBR.getDateTime());
-                intent.putExtra(HistoryBroadcast.EXTRA_START_TIME, endOfTBR.getStartTime());
-                sendBroadcast(intent);
+                HistorySendIntent.sendEndOfTBR(getApplicationContext(), endOfTBR);
             }
             for (PumpStatusChanged pumpStatusChanged : pumpStatusChangedEntries) {
                 if (getDatabaseHelper().getPumpStatusChangedDao().queryBuilder()
                         .where().eq("eventNumber", pumpStatusChanged.getEventNumber())
                         .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getPumpStatusChangedDao().create(pumpStatusChanged);
-                Intent intent = new Intent();
-                intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
-                intent.putExtra(HistoryBroadcast.EXTRA_OLD_STATUS, pumpStatusChanged.getOldValue().toString());
-                intent.putExtra(HistoryBroadcast.EXTRA_NEW_STATUS, pumpStatusChanged.getNewValue().toString());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, pumpStatusChanged.getEventNumber());
-                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, pumpStatusChanged.getPump());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, pumpStatusChanged.getDateTime());
-                sendBroadcast(intent);
+              HistorySendIntent.sendPumpStatusChanged(getApplicationContext(), pumpStatusChanged);
             }
             for (TimeChanged timeChanged : timeChangedEntries) {
                 if (getDatabaseHelper().getTimeChangedDao().queryBuilder().
                         where().eq("eventNumber", timeChanged.getEventNumber())
                         .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getTimeChangedDao().create(timeChanged);
-                Intent intent = new Intent();
-                intent.setAction(HistoryBroadcast.ACTION_TIME_CHANGED);
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, timeChanged.getDateTime());
-                intent.putExtra(HistoryBroadcast.EXTRA_TIME_BEFORE, timeChanged.getTimeBefore());
-                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, timeChanged.getPump());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, timeChanged.getEventNumber());
-                sendBroadcast(intent);
+               HistorySendIntent.sendTimeChanged(getApplicationContext(), timeChanged);
             }
             for (CannulaFilled cannulaFilled : cannulaFilledEntries) {
                 if (getDatabaseHelper().getCannulaFilledDao().queryBuilder()
                         .where().eq("eventNumber", cannulaFilled.getEventNumber())
                         .and().eq("pump", pumpSerialNumber).query().size() > 0) continue;
                 getDatabaseHelper().getCannulaFilledDao().create(cannulaFilled);
-                Intent intent = new Intent();
-                intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
-                intent.putExtra(HistoryBroadcast.EXTRA_FILL_AMOUNT, cannulaFilled.getAmount());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, cannulaFilled.getEventNumber());
-                intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, cannulaFilled.getPump());
-                intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, cannulaFilled.getDateTime());
-                sendBroadcast(intent);
+              HistorySendIntent.sendCannulaFilled(getApplicationContext(),cannulaFilled);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -401,6 +361,10 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             if (intent.getAction().equals(HistoryBroadcast.ACTION_START_SYNC)) {
                 if (syncing) sendBroadcast(new Intent(HistoryBroadcast.ACTION_STILL_SYNCING));
                 else startSync();
+            } else if (intent.getAction().equals(HistoryBroadcast.ACTION_START_RESYNC)) {
+                if (historyResync == null)
+                    historyResync = new HistoryResync(getApplicationContext(), getDatabaseHelper());
+                historyResync.doResync();
             }
         }
     };
@@ -420,5 +384,11 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     public void onServiceDisconnected() {
         syncing = false;
         if (wakeLock.isHeld()) wakeLock.release();
+    }
+
+    protected SharedPreferences getActivityPreferences() {
+        if (activityPreferences == null)
+            activityPreferences = getSharedPreferences("sugar.free.sightremote.services.SIGHTREMOTE", MODE_PRIVATE);
+        return activityPreferences;
     }
 }

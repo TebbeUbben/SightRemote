@@ -9,6 +9,11 @@
         android:title="@string/start_pump"
         android:icon="@drawable/ic_start"
         app:showAsAction="ifRoom" />
+    <item android:id="@+id/status_nav_background_sync"
+        android:checkable="true"
+        android:onClick="backgroundSyncCheck"
+        android:title="@string/background_sync"
+        app:showAsAction="never" />
     <item android:id="@+id/status_nav_delete_pairing"
         android:title="@string/delete_pairing"
         app:showAsAction="never" />
