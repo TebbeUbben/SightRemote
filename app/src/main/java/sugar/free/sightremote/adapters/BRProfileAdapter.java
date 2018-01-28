@@ -27,6 +27,8 @@ public class BRProfileAdapter extends RecyclerView.Adapter<BRProfileAdapter.View
     private int activeProfile;
     @Setter
     private BRProfileChangeListener listener;
+    @Setter
+    private OnClickListener onClickListener;
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -46,6 +48,13 @@ public class BRProfileAdapter extends RecyclerView.Adapter<BRProfileAdapter.View
             if (listener != null)
                 listener.onProfileChange(position);
         });
+        holder.itemView.setOnLongClickListener(view -> {
+            if (onClickListener != null) {
+                onClickListener.onClick(position);
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -55,12 +64,14 @@ public class BRProfileAdapter extends RecyclerView.Adapter<BRProfileAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        View itemView;
         TextView name;
         TextView totalUnits;
         RadioButton activated;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            this.itemView = itemView;
             name = itemView.findViewById(R.id.name);
             totalUnits = itemView.findViewById(R.id.total_units);
             activated = itemView.findViewById(R.id.activated);
@@ -69,5 +80,9 @@ public class BRProfileAdapter extends RecyclerView.Adapter<BRProfileAdapter.View
 
     public interface BRProfileChangeListener {
         void onProfileChange(int profile);
+    }
+
+    public interface OnClickListener {
+        void onClick(int position);
     }
 }

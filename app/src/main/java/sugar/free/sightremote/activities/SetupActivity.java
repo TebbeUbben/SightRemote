@@ -29,14 +29,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import sugar.free.sightparser.handling.ServiceConnectionCallback;
+import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.StatusCallback;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.adapters.BluetoothDeviceAdapter;
 import sugar.free.sightremote.adapters.PairingProgressAdapter;
 import sugar.free.sightremote.utils.RecyclerItemClickListener;
-import sugar.free.sightparser.handling.ServiceConnectionCallback;
-import sugar.free.sightparser.handling.SightServiceConnector;
 
 
 public class SetupActivity extends AppCompatActivity implements View.OnClickListener {

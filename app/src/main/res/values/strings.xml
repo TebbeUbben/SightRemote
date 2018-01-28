@@ -76,6 +76,7 @@
     <string name="delete_pairing_confirmation">Are you sure you want to delete the pairing to your pump?</string>
     <string name="okay">Okay</string>
     <string name="unit_formatter">%1$sU</string>
+    <string name="br_unit_formatter">%1$sU/h</string>
     <string name="profiles">Profiles</string>
     <string name="default_br_name">Basal Profile %1$d</string>
     <string name="change_br_profile_confirmation">Are you sure you want to change the active basal profile?</string>
@@ -89,4 +90,16 @@
     <string name="latest_bolus_extended">%1$s: %2$s for %3$02d:%4$02d</string>
     <string name="latest_bolus_multiwave">%1$s: %2$s, %3$s for %4$02d:%5$02d</string>
     <string name="background_sync">Background Sync</string>
+    <string name="br_block_formatter">%1$s - %2$s</string>
+    <string name="br_start_time">Start time:</string>
+    <string name="br_end_time">End time:</string>
+    <string name="br_amount">Amount:</string>
+    <string name="edit_block">Edit block</string>
+    <string name="empty">Empty</string>
+    <string name="minimum_of">Minimum of %1$s</string>
+    <string name="maximum_of">Maximum of %1$s</string>
+    <string name="maximum_of_two_decimal_places">Maximum of two decimal places</string>
+    <string name="done">Done</string>
+    <string name="edit_name">Edit name</string>
+    <string name="leave_empty_for_default_value">Leave empty for default value</string>
 </resources>

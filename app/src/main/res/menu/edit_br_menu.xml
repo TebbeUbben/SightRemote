@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/edit_br_nav_edit_name"
+        android:icon="@drawable/ic_edit_white"
+        android:title="@string/done"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/edit_br_nav_done"
+        android:icon="@drawable/ic_done_white"
+        android:title="@string/done"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -20,6 +20,6 @@ public abstract class NameBlock extends ConfigurationBlock {
     public byte[] getData() {
         ByteBuf byteBuf = new ByteBuf(42);
         byteBuf.putUTF16LE(name, 42);
-        return name.getBytes();
+        return byteBuf.getBytes();
     }
 }

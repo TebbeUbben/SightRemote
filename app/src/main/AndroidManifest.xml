@@ -54,6 +54,8 @@
         <activity
             android:name=".activities.history.TBRHistoryActivity"
             android:label="@string/tbr_data" />
+        <activity
+            android:name=".activities.EditBRProfileActivity" />
 
         <service
             android:name=".services.HistorySyncService"

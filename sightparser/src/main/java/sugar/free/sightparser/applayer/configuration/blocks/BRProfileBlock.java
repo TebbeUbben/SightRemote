@@ -31,12 +31,12 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
     public byte[] getData() {
         ByteBuf byteBuf = new ByteBuf(96);
         for (int i = 0; i < 24; i++) {
-            if (profileBlocks.size() >= i)
+            if (i < profileBlocks.size())
                 byteBuf.putShortLE(profileBlocks.get(i).getDuration());
             else byteBuf.putShort((short) 0x0000);
         }
         for (int i = 0; i < 24; i++) {
-            if (profileBlocks.size() >= i)
+            if (i < profileBlocks.size())
                 byteBuf.putShortLE((short) (profileBlocks.get(i).getAmount() * 100F));
             else byteBuf.putShort((short) 0x0000);
         }

@@ -98,7 +98,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         final IntentFilter intentFilter = new IntentFilter(HistoryBroadcast.ACTION_START_SYNC);
         intentFilter.addAction(HistoryBroadcast.ACTION_START_RESYNC);
         getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
-        alarmManager.cancel(pendingIntent);
+        if (pendingIntent != null) alarmManager.cancel(pendingIntent);
         if (getActivityPreferences().getBoolean("background_sync_enabled", false)) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                     pendingIntent);

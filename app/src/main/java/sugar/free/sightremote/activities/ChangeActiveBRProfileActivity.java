@@ -1,16 +1,19 @@
 package sugar.free.sightremote.activities;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
+
+import com.j256.ormlite.stmt.query.In;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.configuration.ConfigurationBlock;
 import sugar.free.sightparser.applayer.configuration.blocks.ActiveProfileBlock;
 import sugar.free.sightparser.applayer.configuration.blocks.BRName1Block;
@@ -32,7 +35,7 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.adapters.BRProfileAdapter;
 
-public class ChangeActiveBRProfileActivity extends SightActivity implements TaskRunner.ResultCallback, BRProfileAdapter.BRProfileChangeListener {
+public class ChangeActiveBRProfileActivity extends SightActivity implements TaskRunner.ResultCallback, BRProfileAdapter.BRProfileChangeListener, BRProfileAdapter.OnClickListener {
 
     private RecyclerView profileList;
     private BRProfileAdapter adapter;
@@ -51,6 +54,7 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
         profileList.setLayoutManager(new LinearLayoutManager(this));
         profileList.setAdapter(adapter = new BRProfileAdapter());
         adapter.setListener(this);
+        adapter.setOnClickListener(this);
     }
 
     @Override
@@ -136,5 +140,13 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
                     adapter.notifyDataSetChanged();
                 })
                 .show();
+    }
+
+    @Override
+    public void onClick(int position) {
+        Intent intent = new Intent(this, EditBRProfileActivity.class);
+        intent.putExtra("nameBlock", SerializationUtils.serialize(nameBlocks.get(position)));
+        intent.putExtra("profileBlock", SerializationUtils.serialize(brProfileBlocks.get(position)));
+        startActivity(intent);
     }
 }
