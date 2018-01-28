@@ -2,6 +2,7 @@ package sugar.free.sightremote.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -32,6 +33,7 @@ import sugar.free.sightremote.database.DatabaseHelper;
 public abstract class SightActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DatabaseHelper databaseHelper;
+    private SharedPreferences sharedPreferences;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -287,5 +289,11 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
         }
+    }
+
+    protected SharedPreferences getPreferences() {
+        if (sharedPreferences == null)
+            sharedPreferences = getSharedPreferences("sugar.free.sightremote.services.SIGHTREMOTE", MODE_PRIVATE);
+        return sharedPreferences;
     }
 }

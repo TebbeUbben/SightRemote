@@ -81,6 +81,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     private TextView noActiveProcesses;
     private MenuItem startPump;
     private MenuItem stopPump;
+    private MenuItem backgroundSync;
     private Button cancelTBR;
     private Button cancelBolus1;
     private Button cancelBolus2;
@@ -316,6 +317,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         inflater.inflate(R.menu.status_menu, menu);
         startPump = menu.findItem(R.id.status_nav_start);
         stopPump = menu.findItem(R.id.status_nav_stop);
+        backgroundSync = menu.findItem(R.id.status_nav_background_sync);
         if (statusResult != null) {
             if (statusResult.getPumpStatusMessage().getPumpStatus() == PumpStatus.STARTED) startPump.setVisible(false);
             else stopPump.setVisible(false);
@@ -323,6 +325,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
             startPump.setVisible(false);
             stopPump.setVisible(false);
         }
+        updateBackgroundSyncMenu();
         return true;
     }
     @Override
@@ -463,4 +466,18 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
             }
         }
     };
+
+    public void backgroundSyncCheck(MenuItem item) {
+        getPreferences().edit().putBoolean("background_sync_enabled", !isBackGroundSyncEnabled()).apply();
+        updateBackgroundSyncMenu();
+        sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+    }
+
+    private boolean isBackGroundSyncEnabled() {
+        return getPreferences().getBoolean("background_sync_enabled",false);
+    }
+
+    private void updateBackgroundSyncMenu() {
+        backgroundSync.setChecked(isBackGroundSyncEnabled());
+    }
 }
