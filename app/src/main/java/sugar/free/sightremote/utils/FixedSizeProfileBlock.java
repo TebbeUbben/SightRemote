@@ -5,7 +5,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
-import sugar.free.sightparser.applayer.configuration.blocks.BRProfileBlock;
+import sugar.free.sightparser.applayer.descriptors.configuration_blocks.BRProfileBlock;
 
 @Setter
 @Getter

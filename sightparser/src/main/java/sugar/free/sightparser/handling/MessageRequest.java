@@ -2,11 +2,9 @@ package sugar.free.sightparser.handling;
 
 import android.os.IBinder;
 
-import java.io.Serializable;
-
 import lombok.Getter;
 import lombok.Setter;
-import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 
 public class MessageRequest {
 

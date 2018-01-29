@@ -1,6 +1,6 @@
 package sugar.free.sightparser.error;
 
-import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 
 public class BolusAmountLimitExceededError extends AppErrorCodeError {
 

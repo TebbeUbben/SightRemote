@@ -7,7 +7,6 @@ import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.concurrent.CountDownLatch;
 
 import lombok.Getter;
 import sugar.free.sightparser.SerializationUtils;
-import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.pipeline.Status;
 
 public class SightServiceConnector {

@@ -25,16 +25,16 @@ import java.util.TimeZone;
 
 import sugar.free.sightparser.applayer.descriptors.HistoryReadingDirection;
 import sugar.free.sightparser.applayer.descriptors.HistoryType;
-import sugar.free.sightparser.applayer.history.HistoryFrame;
-import sugar.free.sightparser.applayer.history.OpenHistoryReadingSessionMessage;
-import sugar.free.sightparser.applayer.history.history_frames.BolusDeliveredFrame;
-import sugar.free.sightparser.applayer.history.history_frames.BolusProgrammedFrame;
-import sugar.free.sightparser.applayer.history.history_frames.CannulaFilledFrame;
-import sugar.free.sightparser.applayer.history.history_frames.EndOfTBRFrame;
-import sugar.free.sightparser.applayer.history.history_frames.PumpStatusChangedFrame;
-import sugar.free.sightparser.applayer.history.history_frames.TimeChangedFrame;
-import sugar.free.sightparser.applayer.status_param.ReadStatusParamBlockMessage;
-import sugar.free.sightparser.applayer.status_param.blocks.SystemIdentificationBlock;
+import sugar.free.sightparser.applayer.descriptors.history_frames.HistoryFrame;
+import sugar.free.sightparser.applayer.messages.history.OpenHistoryReadingSessionMessage;
+import sugar.free.sightparser.applayer.descriptors.history_frames.BolusDeliveredFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.BolusProgrammedFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.CannulaFilledFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.EndOfTBRFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.PumpStatusChangedFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.TimeChangedFrame;
+import sugar.free.sightparser.applayer.messages.status_param.ReadStatusParamBlockMessage;
+import sugar.free.sightparser.applayer.descriptors.status_param_blocks.SystemIdentificationBlock;
 import sugar.free.sightparser.handling.HistoryBroadcast;
 import sugar.free.sightparser.handling.ServiceConnectionCallback;
 import sugar.free.sightparser.handling.SightServiceConnector;
@@ -73,7 +73,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     @Override
     public void onDestroy() {
         unregisterReceiver(broadcastReceiver);
-        if (databaseHelper == null) {
+        if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
         }

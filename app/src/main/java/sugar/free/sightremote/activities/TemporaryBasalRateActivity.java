@@ -10,7 +10,7 @@ import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import sugar.free.sightparser.applayer.descriptors.PumpStatus;
-import sugar.free.sightparser.applayer.status.PumpStatusMessage;
+import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
 import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.SetTBRTaskRunner;

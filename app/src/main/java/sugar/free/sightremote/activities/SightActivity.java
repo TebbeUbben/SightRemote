@@ -285,7 +285,7 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (databaseHelper == null) {
+        if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
         }

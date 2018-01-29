@@ -2,7 +2,7 @@ package sugar.free.sightparser.handling;
 
 import java.util.concurrent.CountDownLatch;
 
-import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.error.CancelledException;
 import sugar.free.sightparser.error.DisconnectedError;
 import sugar.free.sightparser.pipeline.Status;

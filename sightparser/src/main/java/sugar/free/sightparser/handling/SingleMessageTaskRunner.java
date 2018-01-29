@@ -1,6 +1,6 @@
 package sugar.free.sightparser.handling;
 
-import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 
 public class SingleMessageTaskRunner extends TaskRunner {
 

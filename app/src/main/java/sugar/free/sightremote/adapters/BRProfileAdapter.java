@@ -1,19 +1,17 @@
 package sugar.free.sightremote.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import lombok.Setter;
-import sugar.free.sightparser.applayer.configuration.blocks.BRProfileBlock;
-import sugar.free.sightparser.applayer.configuration.blocks.NameBlock;
+import sugar.free.sightparser.applayer.descriptors.configuration_blocks.BRProfileBlock;
+import sugar.free.sightparser.applayer.descriptors.configuration_blocks.NameBlock;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.utils.UnitFormatter;
 

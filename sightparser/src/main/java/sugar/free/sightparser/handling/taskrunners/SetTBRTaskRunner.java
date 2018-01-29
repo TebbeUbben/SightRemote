@@ -1,9 +1,9 @@
 package sugar.free.sightparser.handling.taskrunners;
 
-import sugar.free.sightparser.applayer.AppLayerMessage;
-import sugar.free.sightparser.applayer.remote_control.ChangeTBRMessage;
-import sugar.free.sightparser.applayer.remote_control.SetTBRMessage;
-import sugar.free.sightparser.applayer.status.CurrentTBRMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.remote_control.ChangeTBRMessage;
+import sugar.free.sightparser.applayer.messages.remote_control.SetTBRMessage;
+import sugar.free.sightparser.applayer.messages.status.CurrentTBRMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;
 

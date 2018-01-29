@@ -1,10 +1,6 @@
 package sugar.free.sightparser.handling;
 
-import android.os.IBinder;
-import android.os.RemoteException;
-
-import sugar.free.sightparser.SerializationUtils;
-import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 
 public interface MessageCallback {
 

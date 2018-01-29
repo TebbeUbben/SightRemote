@@ -2,7 +2,7 @@ package sugar.free.sightparser.pipeline.handlers;
 
 import android.util.Log;
 
-import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.authlayer.DataMessage;
 import sugar.free.sightparser.pipeline.ByteBuf;
 import sugar.free.sightparser.pipeline.DuplexHandler;

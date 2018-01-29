@@ -3,10 +3,10 @@ package sugar.free.sightparser.handling.taskrunners;
 import java.io.Serializable;
 
 import lombok.Getter;
-import sugar.free.sightparser.applayer.AppLayerMessage;
-import sugar.free.sightparser.applayer.status.FirmwareVersionMessage;
-import sugar.free.sightparser.applayer.status.ReadDateTimeMessage;
-import sugar.free.sightparser.applayer.status.WarrantyTimerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.status.FirmwareVersionMessage;
+import sugar.free.sightparser.applayer.messages.status.ReadDateTimeMessage;
+import sugar.free.sightparser.applayer.messages.status.WarrantyTimerMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;
 

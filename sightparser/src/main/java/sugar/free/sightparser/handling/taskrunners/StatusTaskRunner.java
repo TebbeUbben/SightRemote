@@ -3,14 +3,14 @@ package sugar.free.sightparser.handling.taskrunners;
 import java.io.Serializable;
 
 import lombok.Getter;
-import sugar.free.sightparser.applayer.AppLayerMessage;
-import sugar.free.sightparser.applayer.status.ActiveBolusesMessage;
-import sugar.free.sightparser.applayer.status.BatteryAmountMessage;
-import sugar.free.sightparser.applayer.status.CartridgeAmountMessage;
-import sugar.free.sightparser.applayer.status.CurrentBasalMessage;
-import sugar.free.sightparser.applayer.status.CurrentTBRMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.status.ActiveBolusesMessage;
+import sugar.free.sightparser.applayer.messages.status.BatteryAmountMessage;
+import sugar.free.sightparser.applayer.messages.status.CartridgeAmountMessage;
+import sugar.free.sightparser.applayer.messages.status.CurrentBasalMessage;
+import sugar.free.sightparser.applayer.messages.status.CurrentTBRMessage;
 import sugar.free.sightparser.applayer.descriptors.PumpStatus;
-import sugar.free.sightparser.applayer.status.PumpStatusMessage;
+import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;
 

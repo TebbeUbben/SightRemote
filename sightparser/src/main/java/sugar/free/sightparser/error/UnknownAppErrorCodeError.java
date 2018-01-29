@@ -1,7 +1,6 @@
 package sugar.free.sightparser.error;
 
-import lombok.Getter;
-import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 
 public class UnknownAppErrorCodeError extends AppErrorCodeError {
 

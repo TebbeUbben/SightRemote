@@ -21,8 +21,8 @@ import java.util.UUID;
 
 import sugar.free.sightparser.DataStorage;
 import sugar.free.sightparser.SerializationUtils;
-import sugar.free.sightparser.applayer.AppLayerMessage;
-import sugar.free.sightparser.applayer.status.PumpStatusMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
 import sugar.free.sightparser.error.DisconnectedError;
 import sugar.free.sightparser.pipeline.Pipeline;
 import sugar.free.sightparser.pipeline.Status;
@@ -246,7 +246,7 @@ public class SightService extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (getDataStorage().contains("PASSWORD"))
-            sugar.free.sightparser.applayer.Service.REMOTE_CONTROL.setServicePassword(getDataStorage().get("PASSWORD"));
+            sugar.free.sightparser.applayer.descriptors.Service.REMOTE_CONTROL.setServicePassword(getDataStorage().get("PASSWORD"));
         return START_STICKY;
     }
 
@@ -375,7 +375,7 @@ public class SightService extends Service {
         @Override
         public void setPassword(String password) throws RemoteException {
             getDataStorage().set("PASSWORD", password);
-            sugar.free.sightparser.applayer.Service.REMOTE_CONTROL.setServicePassword(password);
+            sugar.free.sightparser.applayer.descriptors.Service.REMOTE_CONTROL.setServicePassword(password);
         }
 
         @Override

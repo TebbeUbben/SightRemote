@@ -2,11 +2,11 @@ package sugar.free.sightparser.handling.taskrunners;
 
 import java.util.List;
 
-import sugar.free.sightparser.applayer.AppLayerMessage;
-import sugar.free.sightparser.applayer.configuration.CloseWriteSessionMessage;
-import sugar.free.sightparser.applayer.configuration.ConfigurationBlock;
-import sugar.free.sightparser.applayer.configuration.OpenWriteSessionMessage;
-import sugar.free.sightparser.applayer.configuration.WriteConfigurationBlockMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.configuration.CloseWriteSessionMessage;
+import sugar.free.sightparser.applayer.descriptors.configuration_blocks.ConfigurationBlock;
+import sugar.free.sightparser.applayer.messages.configuration.OpenWriteSessionMessage;
+import sugar.free.sightparser.applayer.messages.configuration.WriteConfigurationBlockMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;
 

@@ -1,16 +1,14 @@
 package sugar.free.sightparser.handling.taskrunners;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
-import sugar.free.sightparser.applayer.AppLayerMessage;
-import sugar.free.sightparser.applayer.history.CloseHistoryReadingSessionMessage;
-import sugar.free.sightparser.applayer.history.HistoryFrame;
-import sugar.free.sightparser.applayer.history.OpenHistoryReadingSessionMessage;
-import sugar.free.sightparser.applayer.history.ReadHistoryFramesMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.history.CloseHistoryReadingSessionMessage;
+import sugar.free.sightparser.applayer.descriptors.history_frames.HistoryFrame;
+import sugar.free.sightparser.applayer.messages.history.OpenHistoryReadingSessionMessage;
+import sugar.free.sightparser.applayer.messages.history.ReadHistoryFramesMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;
 

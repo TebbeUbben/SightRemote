@@ -3,9 +3,9 @@ package sugar.free.sightparser.handling.taskrunners;
 import java.util.ArrayList;
 import java.util.List;
 
-import sugar.free.sightparser.applayer.AppLayerMessage;
-import sugar.free.sightparser.applayer.configuration.ConfigurationBlock;
-import sugar.free.sightparser.applayer.configuration.ReadConfigurationBlockMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.applayer.descriptors.configuration_blocks.ConfigurationBlock;
+import sugar.free.sightparser.applayer.messages.configuration.ReadConfigurationBlockMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;
 

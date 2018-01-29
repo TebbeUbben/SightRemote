@@ -1,17 +1,16 @@
 package sugar.free.sightparser.pipeline.handlers;
 
 import android.os.RemoteException;
-import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import sugar.free.sightparser.SerializationUtils;
-import sugar.free.sightparser.applayer.AppLayerMessage;
-import sugar.free.sightparser.applayer.Service;
-import sugar.free.sightparser.applayer.connection.ActivateServiceMessage;
-import sugar.free.sightparser.applayer.connection.ServiceChallengeMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.applayer.descriptors.Service;
+import sugar.free.sightparser.applayer.messages.connection.ActivateServiceMessage;
+import sugar.free.sightparser.applayer.messages.connection.ServiceChallengeMessage;
 import sugar.free.sightparser.crypto.Cryptograph;
 import sugar.free.sightparser.error.DisconnectedError;
 import sugar.free.sightparser.error.InvalidServicePasswordError;

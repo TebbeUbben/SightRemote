@@ -26,11 +26,11 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 
 import sugar.free.sightparser.SerializationUtils;
-import sugar.free.sightparser.applayer.AppLayerMessage;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
-import sugar.free.sightparser.applayer.remote_control.CancelBolusMessage;
-import sugar.free.sightparser.applayer.remote_control.CancelTBRMessage;
-import sugar.free.sightparser.applayer.remote_control.SetPumpStatusMessage;
+import sugar.free.sightparser.applayer.messages.remote_control.CancelBolusMessage;
+import sugar.free.sightparser.applayer.messages.remote_control.CancelTBRMessage;
+import sugar.free.sightparser.applayer.messages.remote_control.SetPumpStatusMessage;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolus;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolusType;
 import sugar.free.sightparser.applayer.descriptors.PumpStatus;

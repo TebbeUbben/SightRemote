@@ -1,6 +1,6 @@
 package sugar.free.sightparser.pipeline.handlers;
 
-import sugar.free.sightparser.applayer.connection.ConnectMessage;
+import sugar.free.sightparser.applayer.messages.connection.ConnectMessage;
 import sugar.free.sightparser.authlayer.SynAckResponse;
 import sugar.free.sightparser.pipeline.InboundHandler;
 import sugar.free.sightparser.pipeline.Pipeline;

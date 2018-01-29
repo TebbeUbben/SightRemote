@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sugar.free.sightparser.applayer.connection.BindMessage;
+import sugar.free.sightparser.applayer.messages.connection.BindMessage;
 import sugar.free.sightparser.authlayer.ConnectionResponse;
 import sugar.free.sightparser.authlayer.KeyRequest;
 import sugar.free.sightparser.authlayer.KeyResponse;

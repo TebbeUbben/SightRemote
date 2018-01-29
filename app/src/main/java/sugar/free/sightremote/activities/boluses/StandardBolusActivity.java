@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 
-import sugar.free.sightparser.applayer.remote_control.StandardBolusMessage;
+import sugar.free.sightparser.applayer.messages.remote_control.StandardBolusMessage;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
 import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.BolusPreparationTaskRunner;
