@@ -111,4 +111,7 @@
     <string name="done">Done</string>
     <string name="edit_name">Edit name</string>
     <string name="leave_empty_for_default_value">Leave empty for default value</string>
+    <string name="deny">Deny</string>
+    <string name="allow">Allow</string>
+    <string name="another_application_is_requesting_access_to_the_pump">Another application is requesting access to the pump!</string>
 </resources>

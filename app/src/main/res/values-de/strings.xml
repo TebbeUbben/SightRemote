@@ -112,4 +112,7 @@
     <string name="done">Fertig</string>
     <string name="edit_name">Name bearbeiten</string>
     <string name="leave_empty_for_default_value">Leer lassen für Standardwert</string>
+    <string name="deny">Ablehnen</string>
+    <string name="allow">Erlauben</string>
+    <string name="another_application_is_requesting_access_to_the_pump">Eine andere Anwendung möchte auf deine Pumpe zugreifen!</string>
 </resources>

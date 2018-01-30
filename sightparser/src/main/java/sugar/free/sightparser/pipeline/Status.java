@@ -8,6 +8,8 @@ public enum Status {
     APP_BINDING,
     CONNECTING,
     CONNECTED,
-    DISCONNECTED
+    DISCONNECTED,
+    NOT_AUTHORIZED,
+    INCOMPATIBLE
 
 }

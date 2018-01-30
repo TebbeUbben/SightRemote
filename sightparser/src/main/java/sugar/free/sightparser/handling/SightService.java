@@ -6,9 +6,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -24,16 +26,19 @@ import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
 import sugar.free.sightparser.error.DisconnectedError;
+import sugar.free.sightparser.error.NotAuthorizedError;
 import sugar.free.sightparser.pipeline.Pipeline;
 import sugar.free.sightparser.pipeline.Status;
 
 public class SightService extends Service {
 
+    public static final String COMPATIBILITY_VERSION = "1.01";
     private static final int DISCONNECT_DELAY = 5000;
     private static final int MIN_TIMEOUT_WAIT = 4000;
     private static final int MAX_TIMEOUT_WAIT = 60000;
     private static final int TIMEOUT_WAIT_STEP = 1000;
-
+    private static final String SIGHTREMOTE_PACKAGE_NAME = "sugar.free.sightremote";
+    private final SparseBooleanArray allowedUid = new SparseBooleanArray();
     private long statusIdCounter = 0;
     private String tempMac;
     private Map<IBinder, IBinder.DeathRecipient> connectedClients = new HashMap<>();
@@ -49,7 +54,179 @@ public class SightService extends Service {
     private Timer pingTimer;
     private long timeoutWait = MIN_TIMEOUT_WAIT;
     private volatile BluetoothSocket bluetoothSocket = null;
+    private long lastAuthPoll = 0;
+    private ISightService.Stub binder = new ISightService.Stub() {
 
+        @Override
+        public String getRemoteVersion() {
+            return COMPATIBILITY_VERSION;
+        }
+
+        @Override
+        public void pair(String mac, final IBinder binder) throws RemoteException {
+            if (verifyAdminCaller("pair")) {
+                if (!connectedClients.containsKey(binder)) {
+                    Log.d("SightService", "CLIENT CONNECTS TO PUMP");
+                    if (disconnectTimer != null) disconnectTimer.cancel();
+                    disconnectTimer = new Timer();
+                    DeathRecipient deathRecipient = new DeathRecipient() {
+                        @Override
+                        public void binderDied() {
+                            Log.d("SightService", "CLIENT DIED - CONNECT");
+                            try {
+                                disconnect(binder);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    connectedClients.put(binder, deathRecipient);
+                    binder.linkToDeath(deathRecipient, 0);
+                }
+                SightService.this.disconnect(false);
+                reset();
+                tempMac = mac;
+                SightService.this.connect(mac, true);
+            } else {
+                throw new RemoteException("Not authorized");
+            }
+        }
+
+        @Override
+        public boolean isUseable() throws RemoteException {
+            return verifyCaller("isUsable") && getDataStorage().contains("DEVICEMAC");
+        }
+
+        @Override
+        public String getStatus() throws RemoteException {
+            if (verifyCaller("getStatus")) {
+                return status.name();
+            } else {
+                return Status.NOT_AUTHORIZED.toString();
+            }
+        }
+
+        @Override
+        public void requestMessage(byte[] message, IMessageCallback callback) throws RemoteException {
+            if (verifyCaller("requestMessage")) {
+                MessageRequest messageRequest = new MessageRequest((AppLayerMessage) SerializationUtils.deserialize(message), callback, callback.asBinder());
+                if (pipeline != null && status == Status.CONNECTED)
+                    pipeline.requestMessage(messageRequest);
+            } else {
+                callback.onError(SerializationUtils.serialize(new NotAuthorizedError()));
+            }
+        }
+
+        @Override
+        public long registerStatusCallback(final IStatusCallback callback) throws RemoteException {
+            final long id = ++statusIdCounter;
+            DeathRecipient deathRecipient = new DeathRecipient() {
+                @Override
+                public void binderDied() {
+                    Log.d("SightService", "CLIENT DIED - STATUS");
+                    callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
+                    statusCallbackDeathRecipients.remove(callback);
+                    statusCallbackIds.remove(id);
+                }
+            };
+            statusCallbackDeathRecipients.put(callback, deathRecipient);
+            statusCallbackIds.put(id, callback);
+            callback.asBinder().linkToDeath(deathRecipient, 0);
+            return id;
+        }
+
+        @Override
+        public void unregisterStatusCallback(long id) throws RemoteException {
+            IStatusCallback callback = statusCallbackIds.get(id);
+            callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
+            statusCallbackDeathRecipients.remove(callback);
+            statusCallbackIds.remove(id);
+        }
+
+        @Override
+        public void connect(final IBinder binder) throws RemoteException {
+            if (verifyCaller("connect")) {
+                if (!connectedClients.containsKey(binder)) {
+                    Log.d("SightService", "CLIENT CONNECTS TO PUMP");
+                    if (disconnectTimer != null) disconnectTimer.cancel();
+                    disconnectTimer = new Timer();
+                    DeathRecipient deathRecipient = new DeathRecipient() {
+                        @Override
+                        public void binderDied() {
+                            Log.d("SightService", "CLIENT DIED - CONNECT");
+                            try {
+                                disconnect(binder);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    connectedClients.put(binder, deathRecipient);
+                    binder.linkToDeath(deathRecipient, 0);
+                    if (getDataStorage().contains("DEVICEMAC"))
+                        SightService.this.connect(getDataStorage().get("DEVICEMAC"), false);
+                }
+            } else {
+                // throw exception?
+            }
+        }
+
+        @Override
+        public void disconnect(IBinder binder) throws RemoteException {
+            if (connectedClients.containsKey(binder)) {
+                Log.d("SightService", "CLIENT DISCONNECTS FROM PUMP");
+                binder.unlinkToDeath(connectedClients.get(binder), 0);
+                connectedClients.remove(binder);
+                if (connectedClients.size() == 0 && connectionThread != null) {
+                    disconnectTimer = new Timer();
+                    disconnectTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            SightService.this.disconnect(false);
+                        }
+                    }, DISCONNECT_DELAY);
+                }
+            }
+        }
+
+        @Override
+        public void setPassword(String password) throws RemoteException {
+            if (verifyCaller("setPassword")) {
+                getDataStorage().set("PASSWORD", password);
+                sugar.free.sightparser.applayer.descriptors.Service.REMOTE_CONTROL.setServicePassword(password);
+            } else {
+                throw new RemoteException("Not authorized");
+            }
+        }
+
+        @Override
+        public void setAuthorized(String packageName, boolean allowed) throws RemoteException {
+            if (verifyAdminCaller("setAuthorized")) {
+                if (allowed) {
+                    getDataStorage().set("package-allowed-" + packageName, "yes");
+                } else {
+                    getDataStorage().remove("package-allowed-" + packageName);
+                }
+            } else {
+                throw new RemoteException("Not authorized");
+            }
+        }
+
+        @Override
+        public void reset() throws RemoteException {
+            if (verifyAdminCaller("reset")) {
+                SightService.this.disconnect(false);
+                getDataStorage().remove("INCOMINGKEY");
+                getDataStorage().remove("OUTGOINGKEY");
+                getDataStorage().remove("COMMID");
+                getDataStorage().remove("LASTNONCESENT");
+                getDataStorage().remove("LASTNONCERECEIVED");
+                getDataStorage().remove("DEVICEMAC");
+            } else {
+                throw new RemoteException("Not authorized");
+            }
+        }
+    };
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
         public void onStatusChange(Status status) {
@@ -117,6 +294,87 @@ public class SightService extends Service {
     public boolean onUnbind(Intent intent) {
         Log.d("SightService", "CLIENT UNBOUND FROM SERVICE");
         return true;
+    }
+
+    public void connect(String mac, boolean pairing) {
+        reconnect = !pairing;
+        Log.d("SightService", "CONNECT");
+        if (connectionThread == null) {
+            connectionThread = new ConnectionThread(mac, pairing);
+            connectionThread.start();
+        }
+    }
+
+    public void disconnect(boolean reconnect) {
+        this.reconnect = reconnect;
+        Log.d("SightService", "DISCONNECT");
+        if (connectionThread != null) {
+            connectionThread.interrupt();
+        }
+    }
+
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (getDataStorage().contains("PASSWORD"))
+            sugar.free.sightparser.applayer.descriptors.Service.REMOTE_CONTROL.setServicePassword(getDataStorage().get("PASSWORD"));
+        return START_STICKY;
+    }
+
+    public void onDestroy() {
+        if (disconnectTimer != null) disconnectTimer.cancel();
+        disconnect(false);
+    }
+
+    private DataStorage getDataStorage() {
+        if (dataStorage == null)
+            dataStorage = new DataStorage(getSharedPreferences("sugar.free.sightremote.services.SIGHTSERVICE", MODE_PRIVATE));
+        return dataStorage;
+    }
+
+    private boolean verifyAdminCaller(String msg) {
+        final int callingUid = Binder.getCallingUid();
+        final String[] packages = getPackageManager().getPackagesForUid(callingUid);
+        if (packages != null) {
+            for (String packageName : packages) {
+                if (packageName.equals(SIGHTREMOTE_PACKAGE_NAME)) return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean verifyCaller(String msg) {
+        final int callingUid = Binder.getCallingUid();
+        if (allowedUid.get(callingUid)) return true;
+
+        final String[] packages = getPackageManager().getPackagesForUid(callingUid);
+        if (packages == null) return false;
+        for (String packageName : packages) {
+            Log.d("SightService", msg + " package verify: " + packageName + " " + callingUid);
+            if (allowedPackage(packageName)) {
+                allowedUid.put(callingUid, true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean allowedPackage(String packageName) {
+        if (packageName.equals(SIGHTREMOTE_PACKAGE_NAME)) return true;
+        if (getDataStorage().get("package-allowed-" + packageName) != null) {
+            Log.d("SightService", "Allowing " + packageName + " as previously approved");
+            return true;
+        }
+        synchronized (this) {
+            if (System.currentTimeMillis() - lastAuthPoll > 30000) {
+                lastAuthPoll = System.currentTimeMillis();
+                final Intent intent = getPackageManager().getLaunchIntentForPackage(SIGHTREMOTE_PACKAGE_NAME);
+                if (intent != null) {
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("authorize_poll", packageName);
+                    getApplicationContext().startActivity(intent);
+                }
+            }
+        }
+        return false;
     }
 
     private class ConnectionThread extends Thread {
@@ -226,167 +484,4 @@ public class SightService extends Service {
             }
         }
     }
-
-    public void connect(String mac, boolean pairing) {
-        reconnect = !pairing;
-        Log.d("SightService", "CONNECT");
-        if (connectionThread == null) {
-            connectionThread = new ConnectionThread(mac, pairing);
-            connectionThread.start();
-        }
-    }
-
-    public void disconnect(boolean reconnect) {
-        this.reconnect = reconnect;
-        Log.d("SightService", "DISCONNECT");
-        if (connectionThread != null) {
-            connectionThread.interrupt();
-        }
-    }
-
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (getDataStorage().contains("PASSWORD"))
-            sugar.free.sightparser.applayer.descriptors.Service.REMOTE_CONTROL.setServicePassword(getDataStorage().get("PASSWORD"));
-        return START_STICKY;
-    }
-
-    public void onDestroy() {
-        if (disconnectTimer != null) disconnectTimer.cancel();
-        disconnect(false);
-    }
-
-    private DataStorage getDataStorage() {
-        if (dataStorage == null)
-            dataStorage = new DataStorage(getSharedPreferences("sugar.free.sightremote.services.SIGHTSERVICE", MODE_PRIVATE));
-        return dataStorage;
-    }
-
-    private ISightService.Stub binder = new ISightService.Stub() {
-        @Override
-        public void pair(String mac, final IBinder binder) throws RemoteException {
-            if (!connectedClients.containsKey(binder)) {
-                Log.d("SightService", "CLIENT CONNECTS TO PUMP");
-                if (disconnectTimer != null) disconnectTimer.cancel();
-                disconnectTimer = new Timer();
-                DeathRecipient deathRecipient = new DeathRecipient() {
-                    @Override
-                    public void binderDied() {
-                        Log.d("SightService", "CLIENT DIED - CONNECT");
-                        try {
-                            disconnect(binder);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                connectedClients.put(binder, deathRecipient);
-                binder.linkToDeath(deathRecipient, 0);
-            }
-            SightService.this.disconnect(false);
-            reset();
-            tempMac = mac;
-            SightService.this.connect(mac, true);
-        }
-
-        @Override
-        public boolean isUseable() throws RemoteException {
-            return getDataStorage().contains("DEVICEMAC");
-        }
-
-        @Override
-        public String getStatus() throws RemoteException {
-            return status.name();
-        }
-
-        @Override
-        public void requestMessage(byte[] message, IMessageCallback callback) throws RemoteException {
-            MessageRequest messageRequest = new MessageRequest((AppLayerMessage) SerializationUtils.deserialize(message), callback, callback.asBinder());
-            if (pipeline != null && status == Status.CONNECTED) pipeline.requestMessage(messageRequest);
-        }
-
-        @Override
-        public long registerStatusCallback(final IStatusCallback callback) throws RemoteException {
-            final long id = ++statusIdCounter;
-            DeathRecipient deathRecipient = new DeathRecipient() {
-                @Override
-                public void binderDied() {
-                    Log.d("SightService", "CLIENT DIED - STATUS");
-                    callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
-                    statusCallbackDeathRecipients.remove(callback);
-                    statusCallbackIds.remove(id);
-                }
-            };
-            statusCallbackDeathRecipients.put(callback, deathRecipient);
-            statusCallbackIds.put(id, callback);
-            callback.asBinder().linkToDeath(deathRecipient, 0);
-            return id;
-        }
-
-        @Override
-        public void unregisterStatusCallback(long id) throws RemoteException {
-            IStatusCallback callback = statusCallbackIds.get(id);
-            callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
-            statusCallbackDeathRecipients.remove(callback);
-            statusCallbackIds.remove(id);
-        }
-
-        @Override
-        public void connect(final IBinder binder) throws RemoteException {
-            if (!connectedClients.containsKey(binder)) {
-                Log.d("SightService", "CLIENT CONNECTS TO PUMP");
-                if (disconnectTimer != null) disconnectTimer.cancel();
-                disconnectTimer = new Timer();
-                DeathRecipient deathRecipient = new DeathRecipient() {
-                    @Override
-                    public void binderDied() {
-                        Log.d("SightService", "CLIENT DIED - CONNECT");
-                        try {
-                            disconnect(binder);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                connectedClients.put(binder, deathRecipient);
-                binder.linkToDeath(deathRecipient, 0);
-                if (getDataStorage().contains("DEVICEMAC"))
-                    SightService.this.connect(getDataStorage().get("DEVICEMAC"), false);
-            }
-        }
-
-        @Override
-        public void disconnect(IBinder binder) throws RemoteException {
-            if (connectedClients.containsKey(binder)) {
-                Log.d("SightService", "CLIENT DISCONNECTS FROM PUMP");
-                binder.unlinkToDeath(connectedClients.get(binder), 0);
-                connectedClients.remove(binder);
-                if (connectedClients.size() == 0 && connectionThread != null) {
-                    disconnectTimer = new Timer();
-                    disconnectTimer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            SightService.this.disconnect(false);
-                        }
-                    }, DISCONNECT_DELAY);
-                }
-            }
-        }
-
-        @Override
-        public void setPassword(String password) throws RemoteException {
-            getDataStorage().set("PASSWORD", password);
-            sugar.free.sightparser.applayer.descriptors.Service.REMOTE_CONTROL.setServicePassword(password);
-        }
-
-        @Override
-        public void reset() throws RemoteException {
-            SightService.this.disconnect(false);
-            getDataStorage().remove("INCOMINGKEY");
-            getDataStorage().remove("OUTGOINGKEY");
-            getDataStorage().remove("COMMID");
-            getDataStorage().remove("LASTNONCESENT");
-            getDataStorage().remove("LASTNONCERECEIVED");
-            getDataStorage().remove("DEVICEMAC");
-        }
-    };
 }

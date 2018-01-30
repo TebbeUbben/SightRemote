@@ -58,6 +58,8 @@ public class SightServiceConnector {
                     }
                 });
             } catch (RemoteException e) {
+            } catch (NullPointerException e) {
+                android.util.Log.e("SightServiceConnector", "Null pointer exception, probably incompatible application interface - upgrade them to compantible versions", e);
             }
             if (connectLatch != null) connectLatch.countDown();
             if (connectionCallback != null) connectionCallback.onServiceConnected();
@@ -188,6 +190,14 @@ public class SightServiceConnector {
     public void setPassword(String password) {
         try {
             boundService.setPassword(password);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAuthorized(String packageName, boolean allowed) {
+        try {
+            boundService.setAuthorized(packageName, allowed);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
