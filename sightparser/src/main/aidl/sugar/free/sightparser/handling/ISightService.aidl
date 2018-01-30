@@ -5,6 +5,7 @@ import sugar.free.sightparser.handling.IStatusCallback;
 
 interface ISightService {
 
+    String getRemoteVersion();
     void pair(String mac, IBinder binder);
     boolean isUseable();
     String getStatus();
@@ -14,5 +15,6 @@ interface ISightService {
     void connect(IBinder binder);
     void disconnect(IBinder binder);
     void setPassword(String password);
+    void setAuthorized(String packageName, boolean allowed);
     void reset();
 }
