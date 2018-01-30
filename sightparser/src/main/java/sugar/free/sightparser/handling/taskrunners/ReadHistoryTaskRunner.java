@@ -33,7 +33,7 @@ public class ReadHistoryTaskRunner extends TaskRunner {
             historyResult.historyFrames.addAll(readMessage.getHistoryFrames());
             if (readMessage.getLatestEventNumber() > historyResult.latestEventNumber)
                 historyResult.latestEventNumber = readMessage.getLatestEventNumber();
-            if (readMessage.getHistoryFrames().size() == 0) return new CloseHistoryReadingSessionMessage();
+            if (readMessage.getLatestEventNumber() == -1) return new CloseHistoryReadingSessionMessage();
             return new ReadHistoryFramesMessage();
         } else if (message instanceof CloseHistoryReadingSessionMessage) finish(historyResult);
         return null;
