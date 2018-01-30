@@ -43,6 +43,7 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightparser.handling.taskrunners.StatusTaskRunner;
 import sugar.free.sightremote.database.BolusDelivered;
+import sugar.free.sightremote.utils.ActivationWarningDialogChain;
 import sugar.free.sightremote.utils.UnitFormatter;
 
 public class StatusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener {
@@ -380,14 +381,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                     .setNegativeButton(R.string.cancel, null)
                     .show();
         } else if (item.getItemId() == R.id.status_nav_enter_password) {
-            final EditText input = new EditText(this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            new AlertDialog.Builder(this)
-                    .setView(input)
-                    .setTitle(R.string.enter_password)
-                    .setPositiveButton(R.string.okay, (dialog, which) -> getServiceConnector().setPassword(input.getText().toString()))
-                    .setNegativeButton(R.string.cancel, null)
-                    .show();
+            new ActivationWarningDialogChain(this, getServiceConnector()).doActivationWarning();
         }
         return super.onOptionsItemSelected(item);
     }

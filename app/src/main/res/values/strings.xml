@@ -90,6 +90,15 @@
     <string name="latest_bolus_extended">%1$s: %2$s for %3$02d:%4$02d</string>
     <string name="latest_bolus_multiwave">%1$s: %2$s, %3$s for %4$02d:%5$02d</string>
     <string name="background_sync">Background Sync</string>
+    <string name="please_enter_activation_password">Please enter the Insulin service activation password:</string>
+    <string name="no">No</string>
+    <string name="safety_warning">Safety Warning!</string>
+    <string name="safety_warning_text1">Activating the Insulin service allows this app to deliver or adjust insulin delivery on the pump!  If the pump is ever going to be connected to a person then this activation must only be performed by a medical professional responsible for their care.</string>
+    <string name="connected_to_a_person">Connected to a person</string>
+    <string name="never_connected_to_a_person">Never connected to a person</string>
+    <string name="are_you_a_qualified_medical_professional">Are you a qualified medicial professional responsible for the care of the person who\'s insulin pump this application is paired with?</string>
+    <string name="yes_i_am_a_medical_professional">Yes, I am a qualified medical professional responsible for their care</string>
+    <string name="are_you_absolutely_sure_activate">Are you absolutely sure you wish to activate the Insulin service and that you fully understand what this does?</string>
     <string name="br_block_formatter">%1$s - %2$s</string>
     <string name="br_start_time">Start time:</string>
     <string name="br_end_time">End time:</string>
