@@ -310,7 +310,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         openMessage.setHistoryType(historyType);
         int offset = Offset.getOffset(getDatabaseHelper(), pumpSerialNumber, historyType);
         if (offset != -1) {
-            openMessage.setOffset(offset);
+            openMessage.setOffset(offset + 1);
             openMessage.setReadingDirection(HistoryReadingDirection.FORWARD);
         } else {
             openMessage.setOffset(0xFFFFFFFF);

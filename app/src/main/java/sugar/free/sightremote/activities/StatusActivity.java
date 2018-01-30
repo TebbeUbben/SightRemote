@@ -193,7 +193,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                 bolus1Title.setText(getBolusTitle(bolus1Data.getBolusType()));
                 bolus1Text.setText(getBolusText(bolus1Data));
                 bolus1Progress.setProgress((int) (100F / bolus1Data.getInitialAmount() * bolus1Data.getLeftoverAmount()));
-            } else {
+            } else if (bolus1.getVisibility() != View.GONE) {
                 sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
                 bolus1.setVisibility(View.GONE);
             }
@@ -205,7 +205,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                 bolus2Title.setText(getBolusTitle(bolus2Data.getBolusType()));
                 bolus2Text.setText(getBolusText(bolus2Data));
                 bolus2Progress.setProgress((int) (100F / bolus2Data.getInitialAmount() * bolus2Data.getLeftoverAmount()));
-            } else {
+            } else if (bolus2.getVisibility() != View.GONE) {
                 sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
                 bolus2.setVisibility(View.GONE);
             }
@@ -217,7 +217,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                 bolus3Title.setText(getBolusTitle(bolus3Data.getBolusType()));
                 bolus3Text.setText(getBolusText(bolus3Data));
                 bolus3Progress.setProgress((int) (100F / bolus3Data.getInitialAmount() * bolus3Data.getLeftoverAmount()));
-            } else {
+            } else if (bolus3.getVisibility() != View.GONE) {
                 sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
                 bolus3.setVisibility(View.GONE);
             }

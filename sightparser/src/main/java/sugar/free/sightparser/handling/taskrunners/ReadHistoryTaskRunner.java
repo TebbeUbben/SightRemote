@@ -1,5 +1,7 @@
 package sugar.free.sightparser.handling.taskrunners;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +30,10 @@ public class ReadHistoryTaskRunner extends TaskRunner {
         else if (message instanceof OpenHistoryReadingSessionMessage) return new ReadHistoryFramesMessage();
         else if (message instanceof ReadHistoryFramesMessage) {
             ReadHistoryFramesMessage readMessage = (ReadHistoryFramesMessage) message;
-            if (readMessage.getHistoryFrames().size() == 0) return new CloseHistoryReadingSessionMessage();
             historyResult.historyFrames.addAll(readMessage.getHistoryFrames());
             if (readMessage.getLatestEventNumber() > historyResult.latestEventNumber)
                 historyResult.latestEventNumber = readMessage.getLatestEventNumber();
+            if (readMessage.getHistoryFrames().size() == 0) return new CloseHistoryReadingSessionMessage();
             return new ReadHistoryFramesMessage();
         } else if (message instanceof CloseHistoryReadingSessionMessage) finish(historyResult);
         return null;
