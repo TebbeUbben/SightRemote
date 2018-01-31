@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class BolusAdapter extends RecyclerView.Adapter<BolusAdapter.ViewHolder> 
             holder.extendedAmount.setText(HTMLUtil.getHTML(R.string.history_extended_amount,
                     UnitFormatter.formatUnits(bolusDelivered.getImmediateAmount()), UnitFormatter.formatDuration(bolusDelivered.getDuration())));
         }
-        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time)).format(bolusDelivered.getDateTime()));
+        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter)).format(bolusDelivered.getDateTime()));
     }
 
     @Override

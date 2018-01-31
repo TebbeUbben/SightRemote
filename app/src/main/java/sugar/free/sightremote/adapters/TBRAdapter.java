@@ -6,15 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
-import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
 import sugar.free.sightremote.R;
-import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
@@ -36,7 +33,7 @@ public class TBRAdapter extends RecyclerView.Adapter<TBRAdapter.ViewHolder> {
         EndOfTBR endOfTBR = endOfTBRs.get(position);
         holder.amount.setText(HTMLUtil.getHTML(R.string.history_tbr_amount,
                 endOfTBR.getAmount(), UnitFormatter.formatDuration(endOfTBR.getDuration())));
-        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time)).format(endOfTBR.getDateTime()));
+        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter)).format(endOfTBR.getDateTime()));
     }
 
     @Override

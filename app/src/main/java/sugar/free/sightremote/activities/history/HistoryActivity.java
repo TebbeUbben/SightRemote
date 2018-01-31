@@ -34,6 +34,11 @@ public abstract class HistoryActivity extends SightActivity implements SwipeRefr
     }
 
     @Override
+    protected void connectedToService() {
+        getServiceConnector().connect();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         registerReceiver(broadcastReceiver, new IntentFilter(HistoryBroadcast.ACTION_SYNC_FINISHED));

@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolus;
@@ -457,17 +457,17 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                 else {
                     if (dbLatestBolus.getBolusType() == HistoryBolusType.STANDARD) {
                         runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_standard,
-                                DateFormat.getTimeInstance(DateFormat.SHORT).format(dbLatestBolus.getDateTime()),
+                                new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
                                 UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()))));
                     } else {
                         if (dbLatestBolus.getBolusType() == HistoryBolusType.MULTIWAVE)
                             runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_multiwave,
-                                    DateFormat.getTimeInstance(DateFormat.SHORT).format(dbLatestBolus.getDateTime()),
+                                    new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
                                     UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()),
                                     UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
                                     UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
                         else runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_extended,
-                                DateFormat.getTimeInstance(DateFormat.SHORT).format(dbLatestBolus.getDateTime()),
+                                new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
                                 UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
                                 UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
                     }

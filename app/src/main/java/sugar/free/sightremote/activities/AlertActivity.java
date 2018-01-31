@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -82,9 +83,9 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
         ringtone = RingtoneManager.getRingtone(this, uri);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+                             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
+                             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+                             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
         layoutParams.screenBrightness = 1.0F;
         getWindow().setAttributes(layoutParams);
