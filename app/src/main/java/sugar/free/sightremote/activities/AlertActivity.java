@@ -130,6 +130,15 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
         }, BIND_AUTO_CREATE);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (alerting) {
+            vibrator.cancel();
+            vibrate();
+        }
+    }
+
     public void update() {
         if (alertMessage.getAlertStatus() == AlertStatus.ACTIVE) {
             mute.setVisibility(View.VISIBLE);
