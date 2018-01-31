@@ -13,7 +13,6 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.stmt.query.In;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ import sugar.free.sightparser.applayer.descriptors.history_frames.CannulaFilledF
 import sugar.free.sightparser.applayer.descriptors.history_frames.EndOfTBRFrame;
 import sugar.free.sightparser.applayer.descriptors.history_frames.PumpStatusChangedFrame;
 import sugar.free.sightparser.applayer.descriptors.history_frames.TimeChangedFrame;
+import sugar.free.sightparser.applayer.messages.status.ReadDateTimeMessage;
 import sugar.free.sightparser.applayer.messages.status_param.ReadStatusParamBlockMessage;
 import sugar.free.sightparser.applayer.descriptors.status_param_blocks.SystemIdentificationBlock;
 import sugar.free.sightparser.handling.HistoryBroadcast;
@@ -64,6 +64,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     private AlarmManager alarmManager;
     private SharedPreferences activityPreferences;
     private PendingIntent pendingIntent;
+    private long dateTimeOffset;
     private PowerManager.WakeLock wakeLock;
     private String pumpSerialNumber;
     private boolean syncing;
@@ -129,8 +130,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     public void onResult(Object result){
         if (result instanceof ReadStatusParamBlockMessage) {
             pumpSerialNumber = ((SystemIdentificationBlock) ((ReadStatusParamBlockMessage) result).getStatusBlock()).getSerialNumber();
-            new ReadHistoryTaskRunner(connector, createOpenMessage(HistoryType.ALL),
-                    Offset.getOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.ALL) == -1 ? 20 : Integer.MAX_VALUE).fetch(this);
+            new SingleMessageTaskRunner(connector, new ReadDateTimeMessage()).fetch(this);
         } else if (result instanceof ReadHistoryTaskRunner.HistoryResult) {
             ReadHistoryTaskRunner.HistoryResult historyResult = (ReadHistoryTaskRunner.HistoryResult) result;
             List<HistoryFrame> historyFrames = historyResult.getHistoryFrames();
@@ -141,6 +141,12 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             syncing = false;
             sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
             if (wakeLock.isHeld()) wakeLock.release();
+        } else if (result instanceof ReadDateTimeMessage) {
+            ReadDateTimeMessage dateTimeMessage = (ReadDateTimeMessage) result;
+            Date pumpDate = parseDateTime(dateTimeMessage.getYear(), dateTimeMessage.getMonth(), dateTimeMessage.getDay(), dateTimeMessage.getHour(), dateTimeMessage.getMinute(), dateTimeMessage.getSecond());
+            dateTimeOffset = new Date().getTime() - pumpDate.getTime();
+            new ReadHistoryTaskRunner(connector, createOpenMessage(HistoryType.ALL),
+                    Offset.getOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.ALL) == -1 ? 20 : Integer.MAX_VALUE).fetch(this);
         }
     }
 
@@ -219,9 +225,9 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         int startTimeSeconds = frame.getStartHour() * 60 * 60 + frame.getStartMinute()  * 60 + frame.getStartSecond();
         boolean startedOnDayBefore = startTimeSeconds >= eventTimeSeconds;
 
-        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(),
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(),
                 frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
-        Date startTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay() - (startedOnDayBefore ? 1 : 0),
+        Date startTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay() - (startedOnDayBefore ? 1 : 0),
                 frame.getStartHour(), frame.getStartMinute(), frame.getStartSecond());
         endOfTBR.setDateTime(eventTime);
         endOfTBR.setStartTime(startTime);
@@ -235,7 +241,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         pumpStatusChanged.setEventNumber(frame.getEventNumber());
         pumpStatusChanged.setPump(pumpSerialNumber);
 
-        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(),
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(),
                 frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
         pumpStatusChanged.setDateTime(eventTime);
         return pumpStatusChanged;
@@ -255,9 +261,9 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         int startTimeSeconds = frame.getStartHour() * 60 * 60 + frame.getStartMinute()  * 60 + frame.getStartSecond();
         boolean startedOnDayBefore = startTimeSeconds >= eventTimeSeconds;
 
-        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(),
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay(),
                 frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
-        Date startTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay() - (startedOnDayBefore ? 1 : 0),
+        Date startTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(), frame.getEventDay() - (startedOnDayBefore ? 1 : 0),
                 frame.getStartHour(), frame.getStartMinute(), frame.getStartSecond());
         bolusDelivered.setDateTime(eventTime);
         bolusDelivered.setStartTime(startTime);
@@ -274,7 +280,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         bolusProgrammed.setImmediateAmount(frame.getImmediateAmount());
         bolusProgrammed.setPump(pumpSerialNumber);
 
-        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(),
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
                 frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
         bolusProgrammed.setDateTime(eventTime);
         return bolusProgrammed;
@@ -285,11 +291,11 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         timeChanged.setEventNumber(frame.getEventNumber());
         timeChanged.setPump(pumpSerialNumber);
 
-        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(),
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
                 frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
         timeChanged.setDateTime(eventTime);
 
-        Date beforeTime = parseDateTime(frame.getBeforeYear(), frame.getBeforeMonth(),
+        Date beforeTime = parseDateTimeAddOffset(frame.getBeforeYear(), frame.getBeforeMonth(),
                 frame.getBeforeDay(), frame.getBeforeHour(), frame.getBeforeMinute(), frame.getBeforeSecond());
         timeChanged.setTimeBefore(beforeTime);
 
@@ -302,7 +308,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         cannulaFilled.setPump(pumpSerialNumber);
         cannulaFilled.setAmount(frame.getAmount());
 
-        Date eventTime = parseDateTime(frame.getEventYear(), frame.getEventMonth(),
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
                 frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
         cannulaFilled.setDateTime(eventTime);
 
@@ -333,6 +339,12 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         calendar.set(Calendar.SECOND, second);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
+    }
+
+    private Date parseDateTimeAddOffset(int year, int month, int day, int hour, int minute, int second) {
+        Date date = parseDateTime(year, month, day, hour, minute, second);
+        date = new Date(date.getTime() + dateTimeOffset);
+        return date;
     }
 
     @Override
