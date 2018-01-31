@@ -1,3 +1,17 @@
+ext {
+    minSdkVersion = 16
+    compileSdkVersion = 26
+    targetSdkVersion = 26
+    buildToolsVersion = '26.0.2'
+
+    versionMajor = 1
+    versionMinor = 0
+    versionCompatiblity = 'golden-age'
+
+    versionCode = 1
+    versionName = versionMajor + "." + versionMinor + "_" + versionCompatiblity
+}
+
 buildscript {
     repositories {
         jcenter()
