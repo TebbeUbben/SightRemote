@@ -13,6 +13,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.stmt.query.In;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -128,7 +129,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     public void onResult(Object result){
         if (result instanceof ReadStatusParamBlockMessage) {
             pumpSerialNumber = ((SystemIdentificationBlock) ((ReadStatusParamBlockMessage) result).getStatusBlock()).getSerialNumber();
-            new ReadHistoryTaskRunner(connector, createOpenMessage(HistoryType.ALL)).fetch(this);
+            new ReadHistoryTaskRunner(connector, createOpenMessage(HistoryType.ALL),
+                    Offset.getOffset(getDatabaseHelper(), pumpSerialNumber, HistoryType.ALL) == -1 ? 20 : Integer.MAX_VALUE).fetch(this);
         } else if (result instanceof ReadHistoryTaskRunner.HistoryResult) {
             ReadHistoryTaskRunner.HistoryResult historyResult = (ReadHistoryTaskRunner.HistoryResult) result;
             List<HistoryFrame> historyFrames = historyResult.getHistoryFrames();

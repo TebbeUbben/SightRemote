@@ -1,5 +1,6 @@
 package sugar.free.sightparser.handling.taskrunners;
 
+import android.content.Intent;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -18,10 +19,13 @@ public class ReadHistoryTaskRunner extends TaskRunner {
 
     private OpenHistoryReadingSessionMessage openMessage;
     private HistoryResult historyResult = new HistoryResult();
+    private int limit;
+    private int receivedPackets = 0;
 
-    public ReadHistoryTaskRunner(SightServiceConnector serviceConnector, OpenHistoryReadingSessionMessage openMessage) {
+    public ReadHistoryTaskRunner(SightServiceConnector serviceConnector, OpenHistoryReadingSessionMessage openMessage, int limit) {
         super(serviceConnector);
         this.openMessage = openMessage;
+        this.limit = limit;
     }
 
     @Override
@@ -33,7 +37,7 @@ public class ReadHistoryTaskRunner extends TaskRunner {
             historyResult.historyFrames.addAll(readMessage.getHistoryFrames());
             if (readMessage.getLatestEventNumber() > historyResult.latestEventNumber)
                 historyResult.latestEventNumber = readMessage.getLatestEventNumber();
-            if (readMessage.getLatestEventNumber() == -1) return new CloseHistoryReadingSessionMessage();
+            if (readMessage.getLatestEventNumber() == -1 || ++receivedPackets >= limit) return new CloseHistoryReadingSessionMessage();
             return new ReadHistoryFramesMessage();
         } else if (message instanceof CloseHistoryReadingSessionMessage) finish(historyResult);
         return null;
