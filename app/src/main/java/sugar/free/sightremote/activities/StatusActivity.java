@@ -400,6 +400,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 42) {
+            if (!data.hasExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)) return;
             getPreferences().edit().putString("alert_alarm_tone", data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString()).apply();
         }
     }
