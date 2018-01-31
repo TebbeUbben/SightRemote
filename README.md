@@ -16,10 +16,12 @@ What's working:
 * Show active boluses
 * Show history
 * Change active basal profile
-
-What's implemented, but still not working because the remote control password is missing:
 * Issue boluses
 * Issue TBRs
 * Cancel boluses
 * Cancel TBR
 * Start/Stop pump
+* Receive and dismiss pump alerts
+* Retrieve and display history
+* Secure API for other apps like AndroidAPS
+* Edit BR profiles
