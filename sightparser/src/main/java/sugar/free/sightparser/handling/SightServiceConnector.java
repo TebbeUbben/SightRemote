@@ -75,6 +75,15 @@ public class SightServiceConnector {
         }
     };
 
+    public String getRemoteVersion() {
+        try {
+            if (boundService != null) return boundService.getRemoteVersion();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return "ERROR";
+    }
+
     public void connectToService() {
         if (!connectingToService) {
             Intent intent = new Intent();
