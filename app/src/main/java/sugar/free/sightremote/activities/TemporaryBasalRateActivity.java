@@ -17,6 +17,8 @@ import sugar.free.sightparser.handling.taskrunners.SetTBRTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.utils.DurationPicker;
+import sugar.free.sightremote.utils.HTMLUtil;
+import sugar.free.sightremote.utils.UnitFormatter;
 
 public class TemporaryBasalRateActivity extends SightActivity implements View.OnClickListener, TaskRunner.ResultCallback, NumberPicker.OnValueChangeListener, DurationPicker.OnDurationChangeListener {
 
@@ -74,11 +76,9 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
         int duration = durationPicker.getPickerValue();
         int amount = percentage.getValue() * 10;
         SetTBRTaskRunner taskRunner = new SetTBRTaskRunner(getServiceConnector(), amount, duration);
-        int minutes = duration % 60;
-        int hours = (duration - minutes) / 60;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.confirmation)
-                .setMessage(getString(R.string.tbr_confirmation, amount, hours, minutes))
+                .setMessage(HTMLUtil.getHTML(R.string.tbr_confirmation, amount, UnitFormatter.formatDuration(duration)))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     showManualOverlay();
                     taskRunner.fetch(TemporaryBasalRateActivity.this);

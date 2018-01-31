@@ -273,7 +273,7 @@ public class SightService extends Service {
             for (IStatusCallback sc : new ArrayList<>(statusCallbackIds.values()))
                 try {
                     sc.onStatusChange(status.name());
-                } catch (RemoteException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
         }

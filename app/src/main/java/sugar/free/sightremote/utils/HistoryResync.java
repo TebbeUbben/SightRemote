@@ -1,4 +1,4 @@
-package sugar.free.sightremote.services;
+package sugar.free.sightremote.utils;
 
 import android.content.Context;
 
@@ -16,18 +16,18 @@ import sugar.free.sightremote.database.EndOfTBR;
  * Send the last 24 hours records from our database store
  */
 
-class HistoryResync {
+public class HistoryResync {
 
     private static final String TAG = "HistoryResync";
     private DatabaseHelper databaseHelper;
     private Context context;
 
-    HistoryResync(Context context, DatabaseHelper databaseHelper) {
+    public HistoryResync(Context context, DatabaseHelper databaseHelper) {
         this.databaseHelper = databaseHelper;
         this.context = context;
     }
 
-    void doResync() {
+    public void doResync() {
         resyncFromDatabase();
     }
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="unit_formatter">%1$sU</string>
+    <string name="br_unit_formatter">%1$sU/h</string>
+    <string name="duration_formatter">%1$02d:%2$02d</string>
+    <string name="time">HH:mm</string>
+    <string name="history_date_time">EE, DD. MMMM yyyy HH:mm</string>
+</resources>

@@ -7,14 +7,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 import lombok.Getter;
 import lombok.Setter;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.database.BolusDelivered;
+import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
 public class BolusAdapter extends RecyclerView.Adapter<BolusAdapter.ViewHolder> {
@@ -34,16 +35,14 @@ public class BolusAdapter extends RecyclerView.Adapter<BolusAdapter.ViewHolder> 
         BolusDelivered bolusDelivered = bolusesDelivered.get(position);
         HistoryBolusType bolusType = bolusDelivered.getBolusType();
         if (bolusType == HistoryBolusType.STANDARD || bolusType == HistoryBolusType.MULTIWAVE) {
-            holder.immediateAmount.setText(holder.immediateAmount.getResources().getString(R.string.history_immediate_amount,
-                    UnitFormatter.format(bolusDelivered.getImmediateAmount())));
+            holder.immediateAmount.setText(HTMLUtil.getHTML(R.string.history_immediate_amount,
+                    UnitFormatter.formatUnits(bolusDelivered.getImmediateAmount())));
         }
         if (bolusType == HistoryBolusType.EXTENDED || bolusType == HistoryBolusType.MULTIWAVE) {
-            int minutes = bolusDelivered.getDuration() % 60;
-            int hours = (bolusDelivered.getDuration() - minutes) / 60;
-            holder.extendedAmount.setText(holder.extendedAmount.getResources().getString(R.string.history_extended_amount,
-                    UnitFormatter.format(bolusDelivered.getImmediateAmount()), hours, minutes));
+            holder.extendedAmount.setText(HTMLUtil.getHTML(R.string.history_extended_amount,
+                    UnitFormatter.formatUnits(bolusDelivered.getImmediateAmount()), UnitFormatter.formatDuration(bolusDelivered.getDuration())));
         }
-        holder.dateTime.setText(DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT).format(bolusDelivered.getDateTime()));
+        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time)).format(bolusDelivered.getDateTime()));
     }
 
     @Override

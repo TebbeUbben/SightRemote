@@ -11,13 +11,11 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +42,7 @@ import sugar.free.sightremote.R;
 import sugar.free.sightparser.handling.taskrunners.StatusTaskRunner;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.utils.ActivationWarningDialogChain;
+import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
 public class StatusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener {
@@ -158,7 +157,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         cartridge.setText(getString(R.string.cartridge_formatter, statusResult.getCartridgeAmountMessage().getCartridgeAmount()));
         battery.setText(getString(R.string.battery_formatter, statusResult.getBatteryAmountMessage().getBatteryAmount()));
         if (pumpStatus == PumpStatus.STOPPED) {
-            basalAmount.setVisibility(View.GONE);
+            basalAmount.setVisibility(View.INVISIBLE);
             temporaryBasalrate.setVisibility(View.GONE);
             bolus1.setVisibility(View.GONE);
             bolus2.setVisibility(View.GONE);
@@ -170,14 +169,16 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
             if (statusResult.getCurrentTBRMessage().getPercentage() == 100) {
                 basalAmount.setVisibility(View.VISIBLE);
                 basalAmount.setTypeface(basalAmount.getTypeface(), Typeface.NORMAL);
-                basalAmount.setText(getString(R.string.basal_amount_formatter, statusResult.getCurrentBasalMessage().getCurrentBasalName(), statusResult.getCurrentBasalMessage().getCurrentBasalAmount()));
+                basalAmount.setText(HTMLUtil.getHTML(R.string.basal_amount_formatter, statusResult.getCurrentBasalMessage().getCurrentBasalName(),
+                        UnitFormatter.formatBR(statusResult.getCurrentBasalMessage().getCurrentBasalAmount())));
                 temporaryBasalrate.setVisibility(View.GONE);
             } else {
                 activeProcesses++;
                 cancelTBR.setVisibility(View.VISIBLE);
                 temporaryBasalrate.setVisibility(View.VISIBLE);
                 basalAmount.setVisibility(View.VISIBLE);
-                basalAmount.setText(getString(R.string.basal_amount_formatter, statusResult.getCurrentBasalMessage().getCurrentBasalName(), statusResult.getCurrentBasalMessage().getCurrentBasalAmount() / 100F * ((float) statusResult.getCurrentTBRMessage().getPercentage())));
+                basalAmount.setText(HTMLUtil.getHTML(R.string.basal_amount_formatter, statusResult.getCurrentBasalMessage().getCurrentBasalName(),
+                        UnitFormatter.formatBR(statusResult.getCurrentBasalMessage().getCurrentBasalAmount() / 100F * ((float) statusResult.getCurrentTBRMessage().getPercentage()))));
                 basalAmount.setTypeface(basalAmount.getTypeface(), Typeface.ITALIC);
                 int progress = (int) (100F / ((float) statusResult.getCurrentTBRMessage().getInitialTime()) * ((float) statusResult.getCurrentTBRMessage().getLeftoverTime()));
                 tbrProgress2.setProgress(progress);
@@ -337,7 +338,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                 message.setPumpStatus(PumpStatus.STARTED);
                 SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
                 new AlertDialog.Builder(this)
-                        .setMessage(getString(R.string.start_pump_confirmation))
+                        .setMessage(HTMLUtil.getHTML(R.string.start_pump_confirmation))
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
                             startPump.setVisible(false);
                             if (StatusActivity.this.taskRunner != null) StatusActivity.this.taskRunner.cancel();
@@ -355,7 +356,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                 message.setPumpStatus(PumpStatus.STOPPED);
                 SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
                 new AlertDialog.Builder(this)
-                        .setMessage(getString(R.string.stop_pump_confirmation))
+                        .setMessage(HTMLUtil.getHTML(R.string.stop_pump_confirmation))
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
                             stopPump.setVisible(false);
                             if (StatusActivity.this.taskRunner != null) StatusActivity.this.taskRunner.cancel();
@@ -370,7 +371,7 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         } else if (item.getItemId() == R.id.status_nav_delete_pairing) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.confirmation)
-                    .setMessage(R.string.delete_pairing_confirmation)
+                    .setMessage(HTMLUtil.getHTML(R.string.delete_pairing_confirmation))
                     .setPositiveButton(R.string.yes, (dialog, which) -> {;
                         getServiceConnector().reset();
                         Intent intent = new Intent(this, SetupActivity.class);
@@ -437,22 +438,20 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                     runOnUiThread(() -> latestBolus.setVisibility(View.GONE));
                 else {
                     if (dbLatestBolus.getBolusType() == HistoryBolusType.STANDARD) {
-                        runOnUiThread(() -> latestBolus.setText(getString(R.string.latest_bolus_standard,
+                        runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_standard,
                                 DateFormat.getTimeInstance(DateFormat.SHORT).format(dbLatestBolus.getDateTime()),
-                                UnitFormatter.format(dbLatestBolus.getImmediateAmount()))));
+                                UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()))));
                     } else {
-                        int minutes = dbLatestBolus.getDuration() % 60;
-                        int hours = (dbLatestBolus.getDuration() - minutes) / 60;
                         if (dbLatestBolus.getBolusType() == HistoryBolusType.MULTIWAVE)
-                            runOnUiThread(() -> latestBolus.setText(getString(R.string.latest_bolus_multiwave,
+                            runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_multiwave,
                                     DateFormat.getTimeInstance(DateFormat.SHORT).format(dbLatestBolus.getDateTime()),
-                                    UnitFormatter.format(dbLatestBolus.getImmediateAmount()),
-                                    UnitFormatter.format(dbLatestBolus.getExtendedAmount()),
-                                    hours, minutes)));
-                        else runOnUiThread(() -> latestBolus.setText(getString(R.string.latest_bolus_extended,
+                                    UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()),
+                                    UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
+                                    UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
+                        else runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_extended,
                                 DateFormat.getTimeInstance(DateFormat.SHORT).format(dbLatestBolus.getDateTime()),
-                                UnitFormatter.format(dbLatestBolus.getExtendedAmount()),
-                                hours, minutes)));
+                                UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
+                                UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
                     }
                 }
             } catch (SQLException e) {

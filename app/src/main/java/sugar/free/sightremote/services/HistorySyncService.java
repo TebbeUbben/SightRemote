@@ -51,6 +51,8 @@ import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.Offset;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
+import sugar.free.sightremote.utils.HistoryResync;
+import sugar.free.sightremote.utils.HistorySendIntent;
 
 public class HistorySyncService extends Service implements StatusCallback, TaskRunner.ResultCallback, ServiceConnectionCallback {
 

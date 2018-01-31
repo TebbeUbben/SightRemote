@@ -56,10 +56,18 @@
             android:label="@string/tbr_data" />
         <activity
             android:name=".activities.EditBRProfileActivity" />
-        <activity android:name=".activities.AuthorizeActivity" />
+        <activity
+            android:name=".activities.AuthorizeActivity" />
+        <activity
+            android:name=".activities.AlertActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.NoStatusBackground" />
 
         <service
             android:name=".services.HistorySyncService"
+            android:enabled="true" />
+        <service
+            android:name=".services.AlertService"
             android:enabled="true" />
     </application>
 

@@ -39,7 +39,7 @@ public class BRProfileAdapter extends RecyclerView.Adapter<BRProfileAdapter.View
         if (nameBlocks.get(position).getName().equals(""))
             holder.name.setText(holder.name.getResources().getString(R.string.default_br_name, position + 1));
         else holder.name.setText(nameBlocks.get(position).getName());
-        holder.totalUnits.setText(UnitFormatter.format(profileBlocks.get(position).getTotalAmount()));
+        holder.totalUnits.setText(UnitFormatter.formatUnits(profileBlocks.get(position).getTotalAmount()));
         if (activeProfile == position) holder.activated.setChecked(true);
         else holder.activated.setChecked(false);
         holder.activated.setOnClickListener((view) -> {

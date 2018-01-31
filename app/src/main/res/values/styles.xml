@@ -12,6 +12,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.NoActionBar.NoStatusBackground">
+    </style>
+
     <style name="AppTheme.NoActionBar.TranslucentStatus">
     </style>
 

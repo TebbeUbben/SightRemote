@@ -17,6 +17,7 @@ import sugar.free.sightparser.applayer.descriptors.Service;
 import sugar.free.sightparser.applayer.messages.connection.ActivateServiceMessage;
 import sugar.free.sightparser.applayer.messages.connection.BindMessage;
 import sugar.free.sightparser.applayer.messages.connection.ConnectMessage;
+import sugar.free.sightparser.applayer.messages.connection.DeactivateAllServicesMessage;
 import sugar.free.sightparser.applayer.messages.connection.DisconnectMessage;
 import sugar.free.sightparser.applayer.messages.connection.ServiceChallengeMessage;
 import sugar.free.sightparser.authlayer.ConnectionRequest;
@@ -168,6 +169,8 @@ public class Pipeline {
 
     public void disconnect() {
         if (status == Status.CONNECTED) {
+            send(new DeactivateAllServicesMessage());
+            activatedServices.clear();
             send(new DisconnectMessage());
             send(new DisconnectRequest());
         }
@@ -180,7 +183,9 @@ public class Pipeline {
             && !(message instanceof BindMessage)
             && !(message instanceof ConnectMessage)
             && !(message instanceof DisconnectMessage)
-            && !(message instanceof ServiceChallengeMessage)) requestWorker.requestMessage(this, messageRequest);
+            && !(message instanceof DeactivateAllServicesMessage)
+            && !(message instanceof ServiceChallengeMessage))
+                requestWorker.requestMessage(this, messageRequest);
     }
 
     public void setChannels(InputStream inputStream, OutputStream outputStream) {

@@ -17,7 +17,7 @@ public class MuteAlertMessage extends AppLayerMessage {
 
     @Override
     public short getCommand() {
-        return (short) 0xBE03;
+        return (short) 0x8C06;
     }
 
     @Override

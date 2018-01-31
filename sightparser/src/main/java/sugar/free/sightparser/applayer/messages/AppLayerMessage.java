@@ -16,6 +16,7 @@ import sugar.free.sightparser.applayer.messages.configuration.WriteDateTimeMessa
 import sugar.free.sightparser.applayer.messages.connection.ActivateServiceMessage;
 import sugar.free.sightparser.applayer.messages.connection.BindMessage;
 import sugar.free.sightparser.applayer.messages.connection.ConnectMessage;
+import sugar.free.sightparser.applayer.messages.connection.DeactivateAllServicesMessage;
 import sugar.free.sightparser.applayer.messages.connection.DisconnectMessage;
 import sugar.free.sightparser.applayer.messages.connection.ServiceChallengeMessage;
 import sugar.free.sightparser.applayer.descriptors.Service;
@@ -64,6 +65,7 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         connectionMessages.put((short) 0x14F0, DisconnectMessage.class);
         connectionMessages.put((short) 0xD2F3, ServiceChallengeMessage.class);
         connectionMessages.put((short) 0xF7F0, ActivateServiceMessage.class);
+        connectionMessages.put((short) 0x31F3, DeactivateAllServicesMessage.class);
         MESSAGES.put(Service.CONNECTION.getServiceID(), connectionMessages);
 
         Map<Short, Class<? extends AppLayerMessage>> statusMessages = new HashMap<>();
@@ -87,7 +89,7 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         remoteControlMessages.put((short) 0x53A4, ChangeTBRMessage.class);
         remoteControlMessages.put((short) 0xDA18, AvailableBolusesMessage.class);
         remoteControlMessages.put((short) 0x2618, SetPumpStatusMessage.class);
-        remoteControlMessages.put((short) 0xBE03, MuteAlertMessage.class);
+        remoteControlMessages.put((short) 0x8C06, MuteAlertMessage.class);
         remoteControlMessages.put((short) 0x9306, DismissAlertMessage.class);
         MESSAGES.put(Service.REMOTE_CONTROL.getServiceID(), remoteControlMessages);
 
@@ -150,7 +152,7 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         if (!MESSAGES.containsKey(service)) throw new UnknownServiceError(service);
         Class<? extends AppLayerMessage> clazz = MESSAGES.get(service).get(command);
         if (clazz == null) throw new UnknownAppMessageError(service, command);
-        if (error != 0x0000) {
+        if (error != 0x0000 && error != 0xF0CC) {
             Class<? extends AppErrorCodeError> errorClass = Errors.ERRORS.get(error);
             if (errorClass != null) throw errorClass.getConstructor(Class.class, short.class).newInstance(clazz, error);
             else throw new UnknownAppErrorCodeError(clazz, error);

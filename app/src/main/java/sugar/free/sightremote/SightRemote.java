@@ -6,6 +6,7 @@ import android.content.Intent;
 import lombok.Getter;
 import sugar.free.sightparser.handling.HistoryBroadcast;
 import sugar.free.sightparser.handling.SightService;
+import sugar.free.sightremote.services.AlertService;
 import sugar.free.sightremote.services.HistorySyncService;
 
 public class SightRemote extends Application {
@@ -20,5 +21,6 @@ public class SightRemote extends Application {
         instance = this;
         startService(new Intent(this, SightService.class));
         startService(new Intent(this, HistorySyncService.class));
+        startService(new Intent(this, AlertService.class));
     }
 }

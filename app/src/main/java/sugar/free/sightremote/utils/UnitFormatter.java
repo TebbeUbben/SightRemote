@@ -7,7 +7,7 @@ import sugar.free.sightremote.SightRemote;
 
 public class UnitFormatter {
 
-    public static String format(float units) {
+    public static String formatUnits(float units) {
         DecimalFormat decimalFormat = new DecimalFormat("0");
         decimalFormat.setMinimumFractionDigits(1);
         decimalFormat.setMaximumFractionDigits(2);

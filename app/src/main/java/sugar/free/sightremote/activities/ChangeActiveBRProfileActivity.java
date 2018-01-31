@@ -32,6 +32,7 @@ import sugar.free.sightparser.handling.taskrunners.WriteConfigurationTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.adapters.BRProfileAdapter;
+import sugar.free.sightremote.utils.HTMLUtil;
 
 public class ChangeActiveBRProfileActivity extends SightActivity implements TaskRunner.ResultCallback, BRProfileAdapter.BRProfileChangeListener, BRProfileAdapter.OnClickListener {
 
@@ -128,7 +129,7 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
         WriteConfigurationTaskRunner taskRunner = new WriteConfigurationTaskRunner(getServiceConnector(), blocks);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.confirmation)
-                .setMessage(getString(R.string.change_br_profile_confirmation))
+                .setMessage(HTMLUtil.getHTML(R.string.change_br_profile_confirmation))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     taskRunner.fetch(this);
                     adapter.setActiveProfile(profile);

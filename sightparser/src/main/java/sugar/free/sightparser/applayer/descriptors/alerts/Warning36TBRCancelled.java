@@ -7,7 +7,7 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 public class Warning36TBRCancelled extends Alert {
 
     @Getter
-    private float amount;
+    private short amount;
     @Getter
     private short duration;
 
@@ -15,7 +15,7 @@ public class Warning36TBRCancelled extends Alert {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        amount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
+        amount = byteBuf.readShortLE();
         duration = byteBuf.readShortLE();
     }
 }

@@ -7,7 +7,7 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 public class Reminder7TBRCompleted extends Alert {
 
     @Getter
-    private float amount;
+    private short amount;
     @Getter
     private short duration;
 
@@ -15,7 +15,7 @@ public class Reminder7TBRCompleted extends Alert {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        amount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
+        amount = byteBuf.readShortLE();
         duration = byteBuf.readShortLE();
     }
 }

@@ -20,6 +20,8 @@ import sugar.free.sightremote.R;
 import sugar.free.sightremote.activities.SightActivity;
 import sugar.free.sightremote.utils.BolusAmountPicker;
 import sugar.free.sightremote.utils.DurationPicker;
+import sugar.free.sightremote.utils.HTMLUtil;
+import sugar.free.sightremote.utils.UnitFormatter;
 
 public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener, BolusAmountPicker.OnAmountChangeListener, DurationPicker.OnDurationChangeListener {
 
@@ -126,14 +128,12 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
         message.setDelayedAmount(delayedBolusAmountPicker.getPickerValue());
         message.setDuration((short) durationPicker.getPickerValue());
         SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
-        DecimalFormat decimalFormat = new DecimalFormat("0");
-        decimalFormat.setMinimumFractionDigits(1);
-        decimalFormat.setMaximumFractionDigits(2);
-        int minutes = durationPicker.getPickerValue() % 60;
-        int hours = (durationPicker.getPickerValue() - minutes) / 60;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.confirmation)
-                .setMessage(getString(R.string.multiwave_bolus_confirmation, decimalFormat.format(immediateBolusAmountPicker.getPickerValue()), decimalFormat.format(delayedBolusAmountPicker.getPickerValue()), hours, minutes))
+                .setMessage(HTMLUtil.getHTML(R.string.multiwave_bolus_confirmation,
+                        UnitFormatter.formatUnits(immediateBolusAmountPicker.getPickerValue()),
+                        UnitFormatter.formatUnits(delayedBolusAmountPicker.getPickerValue()),
+                        UnitFormatter.formatDuration(durationPicker.getPickerValue())))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     showManualOverlay();
                     taskRunner.fetch(MultiwaveBolusActivity.this);

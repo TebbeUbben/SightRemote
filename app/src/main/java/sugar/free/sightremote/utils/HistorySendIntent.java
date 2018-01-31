@@ -1,4 +1,4 @@
-package sugar.free.sightremote.services;
+package sugar.free.sightremote.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,9 +15,9 @@ import sugar.free.sightremote.database.TimeChanged;
  * Created by jamorham on 28/01/2018.
  */
 
-class HistorySendIntent {
+public class HistorySendIntent {
 
-    static void sendEndOfTBR(Context context, EndOfTBR endOfTBR) {
+    public static void sendEndOfTBR(Context context, EndOfTBR endOfTBR) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_END_OF_TBR);
         intent.putExtra(HistoryBroadcast.EXTRA_DURATION, endOfTBR.getDuration());
@@ -29,7 +29,7 @@ class HistorySendIntent {
         context.sendBroadcast(intent);
     }
 
-    static void sendBolusDelivered(Context context, BolusDelivered bolusDelivered) {
+    public static void sendBolusDelivered(Context context, BolusDelivered bolusDelivered) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_BOLUS_DELIVERED);
         intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_ID, bolusDelivered.getBolusId());
@@ -44,7 +44,7 @@ class HistorySendIntent {
         context.sendBroadcast(intent);
     }
 
-    static void sendBolusProgrammed(Context context, BolusProgrammed bolusProgrammed) {
+    public static void sendBolusProgrammed(Context context, BolusProgrammed bolusProgrammed) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_BOLUS_PROGRAMMED);
         intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_ID, bolusProgrammed.getBolusId());
@@ -58,7 +58,7 @@ class HistorySendIntent {
         context.sendBroadcast(intent);
     }
 
-    static void sendPumpStatusChanged(Context context, PumpStatusChanged pumpStatusChanged) {
+    public static void sendPumpStatusChanged(Context context, PumpStatusChanged pumpStatusChanged) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
         intent.putExtra(HistoryBroadcast.EXTRA_OLD_STATUS, pumpStatusChanged.getOldValue().toString());
@@ -69,7 +69,7 @@ class HistorySendIntent {
         context.sendBroadcast(intent);
     }
 
-    static void sendTimeChanged(Context context, TimeChanged timeChanged) {
+    public static void sendTimeChanged(Context context, TimeChanged timeChanged) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_TIME_CHANGED);
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, timeChanged.getDateTime());
@@ -79,7 +79,7 @@ class HistorySendIntent {
         context.sendBroadcast(intent);
     }
 
-    static void sendCannulaFilled(Context context, CannulaFilled cannulaFilled) {
+    public static void sendCannulaFilled(Context context, CannulaFilled cannulaFilled) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_CANNULA_FILLED);
         intent.putExtra(HistoryBroadcast.EXTRA_FILL_AMOUNT, cannulaFilled.getAmount());

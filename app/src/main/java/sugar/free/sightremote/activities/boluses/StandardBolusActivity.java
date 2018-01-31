@@ -19,6 +19,8 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.activities.SightActivity;
 import sugar.free.sightremote.utils.BolusAmountPicker;
+import sugar.free.sightremote.utils.HTMLUtil;
+import sugar.free.sightremote.utils.UnitFormatter;
 
 public class StandardBolusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener, BolusAmountPicker.OnAmountChangeListener {
 
@@ -99,12 +101,9 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
         StandardBolusMessage message = new StandardBolusMessage();
         message.setAmount(bolusAmountPicker.getPickerValue());
         final SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
-        DecimalFormat decimalFormat = new DecimalFormat("0");
-        decimalFormat.setMinimumFractionDigits(1);
-        decimalFormat.setMaximumFractionDigits(2);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.confirmation)
-                .setMessage(getString(R.string.standard_bolus_confirmation, decimalFormat.format(bolusAmountPicker.getPickerValue())))
+                .setMessage(HTMLUtil.getHTML(R.string.standard_bolus_confirmation, UnitFormatter.formatUnits(bolusAmountPicker.getPickerValue())))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {
                     showManualOverlay();
                     taskRunner.fetch(StandardBolusActivity.this);
