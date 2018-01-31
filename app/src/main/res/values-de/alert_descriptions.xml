@@ -4,13 +4,13 @@
     <string name="alert_r2_description"></string>
     <string name="alert_r3_description"></string>
     <string name="alert_r4_description"></string>
-    <string name="alert_r7_description"><![CDATA[<b>Prozentsatz:</b> %1$d%%\n<b>Dauer:</b> %2$s hours]]></string>
+    <string name="alert_r7_description"><![CDATA[<b>Prozentsatz:</b> %1$d%%\n<b>Dauer:</b> %2$s Stunden]]></string>
 
     <string name="alert_w31_description"><![CDATA[<b>Ampullenfüllmenge:</b> %1$s]]>></string>
     <string name="alert_w32_description">Batterie wechseln.</string>
     <string name="alert_w33_description">Zeit/Datum einstellen.</string>
     <string name="alert_w34_description">Kunder Service Center anrufen.</string>
-    <string name="alert_w36_description"><![CDATA[<b>Prozentsatz:</b> %1$d%%<br/><b>Dauer:</b> %2$s hours]]></string>
+    <string name="alert_w36_description"><![CDATA[<b>Prozentsatz:</b> %1$d%%<br/><b>Dauer:</b> %2$s Stunden]]></string>
     <string name="alert_w38_description"><![CDATA[<b>Eingestellt:</b> %1$s<br/><b>Abgegeben:</b> %2$s]]></string>
     <string name="alert_w39_description"></string>
 

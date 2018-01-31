@@ -6,7 +6,6 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Timer;
@@ -16,11 +15,9 @@ import lombok.Setter;
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.descriptors.alerts.Alert;
 import sugar.free.sightparser.applayer.descriptors.alerts.Error7ElectronicError;
-import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.DismissAlertMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.MuteAlertMessage;
 import sugar.free.sightparser.applayer.messages.status.ActiveAlertMessage;
-import sugar.free.sightparser.handling.MessageCallback;
 import sugar.free.sightparser.handling.ServiceConnectionCallback;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
@@ -74,6 +71,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
                 fetchTimer.cancel();
                 fetchTimer = null;
             }
+            serviceConnector.disconnect();
         }
     }
 
@@ -115,7 +113,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
                 startActivity(intent);
             } else if (alertActivity != null) {
                 alertActivity.setAlertMessage(activeAlertMessage);
-                alertActivity.updateButtons();
+                alertActivity.update();
             }
         }
     }

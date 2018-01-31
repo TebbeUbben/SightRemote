@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -24,22 +26,22 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 
 import sugar.free.sightparser.SerializationUtils;
-import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.applayer.descriptors.ActiveBolus;
+import sugar.free.sightparser.applayer.descriptors.ActiveBolusType;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
+import sugar.free.sightparser.applayer.descriptors.PumpStatus;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.CancelBolusMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.CancelTBRMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.SetPumpStatusMessage;
-import sugar.free.sightparser.applayer.descriptors.ActiveBolus;
-import sugar.free.sightparser.applayer.descriptors.ActiveBolusType;
-import sugar.free.sightparser.applayer.descriptors.PumpStatus;
 import sugar.free.sightparser.error.CancelledException;
 import sugar.free.sightparser.error.DisconnectedError;
 import sugar.free.sightparser.handling.HistoryBroadcast;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
 import sugar.free.sightparser.handling.TaskRunner;
+import sugar.free.sightparser.handling.taskrunners.StatusTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
-import sugar.free.sightparser.handling.taskrunners.StatusTaskRunner;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.utils.ActivationWarningDialogChain;
 import sugar.free.sightremote.utils.HTMLUtil;
@@ -383,8 +385,23 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
                     .show();
         } else if (item.getItemId() == R.id.status_nav_enter_password) {
             new ActivationWarningDialogChain(this, getServiceConnector()).doActivationWarning();
+        } else if (item.getItemId() == R.id.status_nav_choose_alarm_tone) {
+            Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
+            String selectedTone = getPreferences().getString("alert_alarm_tone", null);
+            Uri defaultTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, selectedTone == null ? defaultTone : Uri.parse(selectedTone));
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+            startActivityForResult(intent, 42);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 42) {
+            getPreferences().edit().putString("alert_alarm_tone", data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString()).apply();
+        }
     }
 
     private TaskRunner.ResultCallback errorToastResultCallback = new TaskRunner.ResultCallback() {

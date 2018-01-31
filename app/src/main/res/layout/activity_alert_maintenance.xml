@@ -56,6 +56,7 @@
         tools:text="Change infusion set" />
 
     <LinearLayout
+        android:id="@+id/button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
@@ -63,23 +64,10 @@
         android:orientation="horizontal">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/mute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="5dp"
-            android:clickable="true"
-            app:backgroundTint="#BF360C"
-            app:fabSize="normal"
-            app:srcCompat="@drawable/ic_snooze" />
-
-        <android.support.design.widget.FloatingActionButton
             android:id="@+id/dismiss"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="15dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="5dp"
@@ -87,5 +75,18 @@
             app:backgroundTint="#BF360C"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_close" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/mute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            app:backgroundTint="#BF360C"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_snooze" />
     </LinearLayout>
 </LinearLayout>

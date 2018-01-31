@@ -111,4 +111,5 @@
     <string name="allow">Erlauben</string>
     <string name="another_application_is_requesting_access_to_the_pump">Eine andere Anwendung möchte auf deine Pumpe zugreifen!</string>
     <string name="pump_alert">Pumpenalarm</string>
+    <string name="choose_alarm_tone">Alarmton auswählen</string>
 </resources>

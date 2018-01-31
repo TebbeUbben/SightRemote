@@ -15,6 +15,7 @@ public class Warning36TBRCancelled extends Alert {
 
     @Override
     public void parse(ByteBuf byteBuf) {
+        byteBuf.shift(2);
         amount = byteBuf.readShortLE();
         duration = byteBuf.readShortLE();
     }

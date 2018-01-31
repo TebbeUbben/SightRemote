@@ -110,4 +110,5 @@
     <string name="allow">Allow</string>
     <string name="another_application_is_requesting_access_to_the_pump">Another application is requesting access to the pump!</string>
     <string name="pump_alert">Pump alert</string>
+    <string name="choose_alarm_tone">Choose alarm tone</string>
 </resources>

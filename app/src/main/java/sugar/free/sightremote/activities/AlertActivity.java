@@ -3,16 +3,19 @@ package sugar.free.sightremote.activities;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import lombok.Setter;
@@ -58,21 +61,37 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
     @Setter
     private ActiveAlertMessage alertMessage;
     private AlertService alertService;
+    private Vibrator vibrator;
+    private boolean alerting;
+    private Ringtone ringtone;
 
     private TextView alertCode;
     private TextView alertTitle;
     private TextView alertDescription;
     private FloatingActionButton mute;
     private FloatingActionButton dismiss;
+    private LinearLayout buttonContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        String selectedTone = getSharedPreferences("sugar.free.sightremote.services.SIGHTREMOTE", MODE_PRIVATE).getString("alert_alarm_tone", null);
+        Uri uri = selectedTone == null ? RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE) : Uri.parse(selectedTone);
+        ringtone = RingtoneManager.getRingtone(this, uri);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        layoutParams.screenBrightness = 1.0F;
+        getWindow().setAttributes(layoutParams);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
 
         if (savedInstanceState == null)
             alertMessage = (ActiveAlertMessage) SerializationUtils.deserialize(getIntent().getByteArrayExtra("alertMessage"));
@@ -86,6 +105,7 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
         alertDescription = findViewById(R.id.alert_description);
         mute = findViewById(R.id.mute);
         dismiss = findViewById(R.id.dismiss);
+        buttonContainer = findViewById(R.id.button_container);
 
         mute.setOnClickListener(this);
         dismiss.setOnClickListener(this);
@@ -93,7 +113,7 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
         setAlertCode();
         setAlertTitle();
         setAlertDescription();
-        updateButtons();
+        update();
 
         bindService(new Intent(this, AlertService.class), serviceConnection = new ServiceConnection() {
             @Override
@@ -109,14 +129,27 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
         }, BIND_AUTO_CREATE);
     }
 
-    public void updateButtons() {
+    public void update() {
         if (alertMessage.getAlertStatus() == AlertStatus.ACTIVE) {
             mute.setVisibility(View.VISIBLE);
             dismiss.setVisibility(View.VISIBLE);
+            if (!alerting) {
+                vibrate();
+                ringtone.play();
+            }
         } else if (alertMessage.getAlertStatus() == AlertStatus.MUTED) {
             mute.setVisibility(View.GONE);
             dismiss.setVisibility(View.VISIBLE);
+            vibrator.cancel();
+            ringtone.stop();
+            alerting = false;
         }
+        buttonContainer.invalidate();
+    }
+
+    private void vibrate() {
+        vibrator.vibrate(new long[] {0, 1000, 1000}, 0);
+        alerting = true;
     }
 
     private void setAlertCode() {
@@ -329,6 +362,12 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
         super.onDestroy();
         if (alertService != null) alertService.setAlertActivity(null);
         unbindService(serviceConnection);
+        vibrator.cancel();
+        ringtone.stop();
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 
     @Override
@@ -340,6 +379,7 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (alertService != null) {
+            vibrator.vibrate(100);
             if (v == mute) {
                 mute.setVisibility(View.GONE);
                 alertService.muteAlert();
