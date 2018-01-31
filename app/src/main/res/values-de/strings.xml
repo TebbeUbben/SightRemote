@@ -86,7 +86,7 @@
     <string name="latest_bolus_extended"><![CDATA[%1$s: <b>%2$s für %3$s</b>]]></string>
     <string name="latest_bolus_multiwave"><![CDATA[%1$s: <b>%2$s, %3$s für %4$s</b>]]></string>
     <string name="background_sync">Hintergrundsynchronisation</string>
-    <string name="please_enter_activation_password">Please enter the Insulin service activation password:</string>
+    <string name="please_enter_activation_password">Bitte gib das Passwort zum Aktiveren des Insulin-Services ein:</string>
     <string name="no">Nein</string>
     <string name="safety_warning">Sicherheitswarnung!</string>
     <string name="safety_warning_text1">Das Aktivieren des Insulin-Services erlaubt dieser App die Insulinzufuhr der Pumpe zu steuern! Sollte die mit dieser App gekoppelten Pumpe jemals an einer Person angeschlossen werden, so darf die Aktivierung nur von medizinischem Personal, das für diese Person verantwortlich ist, durchgeführt werden.</string>
