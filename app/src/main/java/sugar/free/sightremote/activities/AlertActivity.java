@@ -140,21 +140,20 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void update() {
-        if (alertMessage.getAlertStatus() == AlertStatus.ACTIVE) {
-            mute.setVisibility(View.VISIBLE);
-            dismiss.setVisibility(View.VISIBLE);
-            if (!alerting) {
-                vibrate();
-                if (ringtone != null) ringtone.play();
+        runOnUiThread(() -> {
+            if (alertMessage.getAlertStatus() == AlertStatus.ACTIVE) {
+                mute.show();
+                if (!alerting) {
+                    vibrate();
+                    if (ringtone != null) ringtone.play();
+                }
+            } else if (alertMessage.getAlertStatus() == AlertStatus.MUTED) {
+                mute.hide();
+                vibrator.cancel();
+                if (ringtone != null) ringtone.stop();
+                alerting = false;
             }
-        } else if (alertMessage.getAlertStatus() == AlertStatus.MUTED) {
-            mute.setVisibility(View.GONE);
-            dismiss.setVisibility(View.VISIBLE);
-            vibrator.cancel();
-            if (ringtone != null) ringtone.stop();
-            alerting = false;
-        }
-        buttonContainer.invalidate();
+        });
     }
 
     private void vibrate() {

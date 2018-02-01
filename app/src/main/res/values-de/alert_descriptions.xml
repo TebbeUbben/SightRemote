@@ -6,7 +6,7 @@
     <string name="alert_r4_description"></string>
     <string name="alert_r7_description"><![CDATA[<b>Prozentsatz:</b> %1$d%%\n<b>Dauer:</b> %2$s Stunden]]></string>
 
-    <string name="alert_w31_description"><![CDATA[<b>Ampullenfüllmenge:</b> %1$s]]>></string>
+    <string name="alert_w31_description"><![CDATA[<b>Ampullenfüllmenge:</b> %1$s]]></string>
     <string name="alert_w32_description">Batterie wechseln.</string>
     <string name="alert_w33_description">Zeit/Datum einstellen.</string>
     <string name="alert_w34_description">Kunder Service Center anrufen.</string>
