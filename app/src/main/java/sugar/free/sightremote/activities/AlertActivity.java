@@ -145,13 +145,13 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
             dismiss.setVisibility(View.VISIBLE);
             if (!alerting) {
                 vibrate();
-                ringtone.play();
+                if (ringtone != null) ringtone.play();
             }
         } else if (alertMessage.getAlertStatus() == AlertStatus.MUTED) {
             mute.setVisibility(View.GONE);
             dismiss.setVisibility(View.VISIBLE);
             vibrator.cancel();
-            ringtone.stop();
+            if (ringtone != null) ringtone.stop();
             alerting = false;
         }
         buttonContainer.invalidate();
@@ -373,7 +373,7 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
         if (alertService != null) alertService.setAlertActivity(null);
         unbindService(serviceConnection);
         vibrator.cancel();
-        ringtone.stop();
+        if (ringtone != null) ringtone.stop();
     }
 
     @Override
