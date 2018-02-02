@@ -1,9 +1,21 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorButtonNormal">@color/colorBackgroundLight</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="actionBarPopupTheme">@style/AppTheme.PopupMenu</item>
+        <item name="android:alertDialogTheme">@style/AppTheme.Dialog</item>
+    </style>
+
+    <style name="AppTheme.PopupMenu" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:colorBackground">@color/colorBackground</item>
+    </style>
+
+    <style name="AppTheme.Dialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">@color/colorBackground</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
@@ -12,15 +24,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar.NoStatusBackground">
-    </style>
-
-    <style name="AppTheme.NoActionBar.TranslucentStatus">
-    </style>
-
-    <style name="WhiteCheckBox" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">#FFFFFF</item>
-        <item name="colorControlActivated">#FFFFFF</item>
-    </style>
+    <style name="AppTheme.NoActionBar.NoStatusBackground"></style>
 
 </resources>

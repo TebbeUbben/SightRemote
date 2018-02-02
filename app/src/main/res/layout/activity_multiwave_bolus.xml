@@ -22,7 +22,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/set_immediate_amount"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="#FFFFFF" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -69,7 +70,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/set_delayed_amount"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="#FFFFFF" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -116,7 +118,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/set_duration"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="#FFFFFF" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

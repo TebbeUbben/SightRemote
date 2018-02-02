@@ -30,22 +30,15 @@
     <string name="extended_bolus">Extended bolus</string>
     <string name="multiwave_bolus">Multiwave bolus</string>
     <string name="connecting">Connecting…</string>
-    <string name="Loading">Loading</string>
-    <string name="no_active_processes">No active procedures.</string>
-    <string name="cartridge_formatter">%1$.2fU</string>
-    <string name="battery_formatter">%1$d%%</string>
     <string name="basal_amount_formatter"><![CDATA[%1$s: <b>%2$s</b>]]></string>
     <string name="tbr_text">%1$d%% for %2$s h / %3$s h</string>
     <string name="extended_bolus_text">%1$.2fU / %2$.2fU in %3$s h</string>
     <string name="normal_bolus_text">%1$.2fU / %2$.2fU</string>
     <string name="loading_points">Loading…</string>
-    <string name="pump_info">Pump info</string>
     <string name="retry">Retry</string>
     <string name="open_navigation">Open navigation</string>
     <string name="close_navigation">Close navigation</string>
-    <string name="amount">Amount</string>
     <string name="deliver">Deliver</string>
-    <string name="disconnected">Disconnected</string>
     <string name="pump_not_started">Pump is not running.</string>
     <string name="decimal_delimitter">.</string>
     <string name="set_immediate_amount">Set immediate amount:</string>
@@ -95,7 +88,6 @@
     <string name="yes_i_am_a_medical_professional">Yes, I am a qualified medical professional responsible for their care</string>
     <string name="are_you_absolutely_sure_activate">Are you absolutely sure you wish to activate the Insulin service and that you fully understand what this does?</string>
     <string name="br_block_formatter">%1$s - %2$s</string>
-    <string name="br_start_time">Start time:</string>
     <string name="br_end_time">End time:</string>
     <string name="br_amount">Amount:</string>
     <string name="edit_block">Edit block</string>
@@ -111,4 +103,9 @@
     <string name="another_application_is_requesting_access_to_the_pump">Another application is requesting access to the pump!</string>
     <string name="pump_alert">Pump alert</string>
     <string name="choose_alarm_tone">Choose alarm tone</string>
+    <string name="daily_total">Daily total</string>
+    <string name="total">Total</string>
+    <string name="active_basal_rate">Active basal rate</string>
+    <string name="latest_bolus">Latest bolus</string>
+    <string name="setup">Setup</string>
 </resources>

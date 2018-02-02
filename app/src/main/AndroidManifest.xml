@@ -29,11 +29,10 @@
         </activity>
         <activity
             android:name=".activities.SetupActivity"
-            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus" />
+            android:label="@string/setup" />
         <activity
             android:name=".activities.StatusActivity"
-            android:label="@string/status"
-            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus" />
+            android:label="@string/status" />
         <activity
             android:name=".activities.boluses.StandardBolusActivity"
             android:label="@string/standard_bolus" />

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -12,12 +13,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.CardView;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +27,6 @@ import android.widget.Toast;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
-import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolus;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolusType;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
@@ -47,7 +48,7 @@ import sugar.free.sightremote.utils.ActivationWarningDialogChain;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
-public class StatusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener {
+public class StatusActivity extends SightActivity implements View.OnClickListener, TaskRunner.ResultCallback {
 
     private TaskRunner taskRunner;
     private StatusTaskRunner.StatusResult statusResult;
@@ -61,94 +62,85 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     };
 
     private TextView status;
-    private TextView cartridge;
     private TextView battery;
-    private TextView basalAmount;
+    private TextView cartridge;
+    private TextView activeBasalRate;
     private TextView latestBolus;
-    private CardView temporaryBasalrate;
+
+    private TextView dailyBolus;
+    private TextView dailyBasal;
+    private TextView dailyTotal;
+
+    private LinearLayout tbrContainer;
     private TextView tbrText;
-    private ProgressBar tbrProgress2;
-    private CardView bolus1;
+    private ProgressBar tbrProgress;
+    private ImageButton tbrCancel;
+
+    private LinearLayout bolus1Container;
+    private View bolus1Circle;
     private TextView bolus1Title;
     private TextView bolus1Text;
     private ProgressBar bolus1Progress;
-    private CardView bolus2;
+    private ImageButton bolus1Cancel;
+
+    private LinearLayout bolus2Container;
+    private View bolus2Circle;
     private TextView bolus2Title;
     private TextView bolus2Text;
     private ProgressBar bolus2Progress;
-    private CardView bolus3;
+    private ImageButton bolus2Cancel;
+
+    private LinearLayout bolus3Container;
+    private View bolus3Circle;
     private TextView bolus3Title;
     private TextView bolus3Text;
     private ProgressBar bolus3Progress;
-    private TextView noActiveProcesses;
+    private ImageButton bolus3Cancel;
+
     private MenuItem startPump;
     private MenuItem stopPump;
     private MenuItem backgroundSync;
-    private Button cancelTBR;
-    private Button cancelBolus1;
-    private Button cancelBolus2;
-    private Button cancelBolus3;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContent(R.layout.activity_status);
 
         status = findViewById(R.id.status);
-        cartridge = findViewById(R.id.catridge);
         battery = findViewById(R.id.battery);
-        basalAmount = findViewById(R.id.basal_amount);
+        cartridge = findViewById(R.id.cartridge);
+        activeBasalRate = findViewById(R.id.active_basal_rate);
         latestBolus = findViewById(R.id.latest_bolus);
-        temporaryBasalrate = findViewById(R.id.tempory_basalrate);
+        dailyBolus = findViewById(R.id.daily_bolus);
+        dailyBasal = findViewById(R.id.daily_basal);
+        dailyTotal = findViewById(R.id.daily_total);
+        tbrContainer = findViewById(R.id.tbr_container);
         tbrText = findViewById(R.id.tbr_text);
-        tbrProgress2 = findViewById(R.id.tbr_progress2);
-        bolus1 = findViewById(R.id.bolus1);
+        tbrProgress = findViewById(R.id.tbr_progress);
+        tbrCancel = findViewById(R.id.tbr_cancel);
+        bolus1Container = findViewById(R.id.bolus1_container);
+        bolus1Circle = findViewById(R.id.bolus1_circle);
         bolus1Title = findViewById(R.id.bolus1_title);
         bolus1Text = findViewById(R.id.bolus1_text);
         bolus1Progress = findViewById(R.id.bolus1_progress);
-        bolus2 = findViewById(R.id.bolus2);
+        bolus1Cancel = findViewById(R.id.bolus1_cancel);
+        bolus2Container = findViewById(R.id.bolus2_container);
+        bolus2Circle = findViewById(R.id.bolus2_circle);
         bolus2Title = findViewById(R.id.bolus2_title);
         bolus2Text = findViewById(R.id.bolus2_text);
         bolus2Progress = findViewById(R.id.bolus2_progress);
-        bolus3 = findViewById(R.id.bolus3);
+        bolus2Cancel = findViewById(R.id.bolus2_cancel);
+        bolus3Container = findViewById(R.id.bolus3_container);
+        bolus3Circle = findViewById(R.id.bolus3_circle);
         bolus3Title = findViewById(R.id.bolus3_title);
         bolus3Text = findViewById(R.id.bolus3_text);
         bolus3Progress = findViewById(R.id.bolus3_progress);
-        noActiveProcesses = findViewById(R.id.no_active_processes);
-        cancelTBR = findViewById(R.id.cancelTBR);
-        cancelBolus1 = findViewById(R.id.cancelBolus1);
-        cancelBolus2 = findViewById(R.id.cancelBolus2);
-        cancelBolus3 = findViewById(R.id.cancelBolus3);
+        bolus3Cancel = findViewById(R.id.bolus3_cancel);
 
-        cancelTBR.setOnClickListener(this);
-        cancelBolus1.setOnClickListener(this);
-        cancelBolus2.setOnClickListener(this);
-        cancelBolus3.setOnClickListener(this);
-
-        if (savedInstanceState != null && savedInstanceState.containsKey("StatusResult")) {
-            statusResult = (StatusTaskRunner.StatusResult) SerializationUtils.deserialize(savedInstanceState.getByteArray("StatusResult"));
-            updateViews();
-        }
-    }
-
-    @Override
-    protected int getRootLayout() {
-        return R.layout.activity_status;
-    }
-
-    @Override
-    protected void setupToolbar() {
-        setSupportActionBar(findViewById(R.id.toolbar));
-    }
-
-    @Override
-    protected View getRootView() {
-        return findViewById(R.id.root);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (statusResult != null) outState.putByteArray("StatusResult", SerializationUtils.serialize(statusResult));
+        tbrCancel.setOnClickListener(this);
+        bolus1Cancel.setOnClickListener(this);
+        bolus2Cancel.setOnClickListener(this);
+        bolus3Cancel.setOnClickListener(this);
     }
 
     private void updateViews() {
@@ -156,87 +148,73 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         if (pumpStatus == PumpStatus.STARTED) status.setText(R.string.started);
         else if (pumpStatus == PumpStatus.PAUSED) status.setText(R.string.paused);
         else if (pumpStatus == PumpStatus.STOPPED) status.setText(R.string.stopped);
-        cartridge.setText(getString(R.string.cartridge_formatter, statusResult.getCartridgeAmountMessage().getCartridgeAmount()));
+        cartridge.setText(UnitFormatter.formatUnits(statusResult.getCartridgeAmountMessage().getCartridgeAmount()));
         battery.setText(getString(R.string.battery_formatter, statusResult.getBatteryAmountMessage().getBatteryAmount()));
+        dailyBolus.setText(UnitFormatter.formatUnits(statusResult.getDailyTotalMessage().getBolusTotal()));
+        dailyBasal.setText(UnitFormatter.formatUnits(statusResult.getDailyTotalMessage().getBasalTotal()));
+        dailyTotal.setText(UnitFormatter.formatUnits(statusResult.getDailyTotalMessage().getTotal()));
         if (pumpStatus == PumpStatus.STOPPED) {
-            basalAmount.setVisibility(View.INVISIBLE);
-            temporaryBasalrate.setVisibility(View.GONE);
-            bolus1.setVisibility(View.GONE);
-            bolus2.setVisibility(View.GONE);
-            bolus3.setVisibility(View.GONE);
-            noActiveProcesses.setVisibility(View.VISIBLE);
-            noActiveProcesses.setText(R.string.no_active_processes);
+            activeBasalRate.setText(UnitFormatter.formatBR(0));
+            tbrContainer.setVisibility(View.GONE);
+            bolus1Container.setVisibility(View.GONE);
+            bolus2Container.setVisibility(View.GONE);
+            bolus3Container.setVisibility(View.GONE);
+            startPump.setVisible(true);
+            stopPump.setVisible(false);
         } else {
-            int activeProcesses = 0;
-            if (statusResult.getCurrentTBRMessage().getPercentage() == 100) {
-                basalAmount.setVisibility(View.VISIBLE);
-                basalAmount.setTypeface(basalAmount.getTypeface(), Typeface.NORMAL);
-                basalAmount.setText(HTMLUtil.getHTML(R.string.basal_amount_formatter, statusResult.getCurrentBasalMessage().getCurrentBasalName(),
-                        UnitFormatter.formatBR(statusResult.getCurrentBasalMessage().getCurrentBasalAmount())));
-                temporaryBasalrate.setVisibility(View.GONE);
+            startPump.setVisible(false);
+            stopPump.setVisible(true);
+            int tbrAmount = statusResult.getCurrentTBRMessage().getPercentage();
+            int tbrDuration = statusResult.getCurrentTBRMessage().getLeftoverTime();
+            int tbrInitialDuration = statusResult.getCurrentTBRMessage().getInitialTime();
+            float basalAmount = statusResult.getCurrentBasalMessage().getCurrentBasalAmount();
+            String basalName = statusResult.getCurrentBasalMessage().getCurrentBasalName();
+            if (tbrAmount == 100) {
+                tbrContainer.setVisibility(View.GONE);
+                activeBasalRate.setText(HTMLUtil.getHTML(R.string.basal_amount_formatter, basalName, UnitFormatter.formatBR(basalAmount)));
+                activeBasalRate.setTypeface(activeBasalRate.getTypeface(), Typeface.NORMAL);
             } else {
-                activeProcesses++;
-                cancelTBR.setVisibility(View.VISIBLE);
-                temporaryBasalrate.setVisibility(View.VISIBLE);
-                basalAmount.setVisibility(View.VISIBLE);
-                basalAmount.setText(HTMLUtil.getHTML(R.string.basal_amount_formatter, statusResult.getCurrentBasalMessage().getCurrentBasalName(),
-                        UnitFormatter.formatBR(statusResult.getCurrentBasalMessage().getCurrentBasalAmount() / 100F * ((float) statusResult.getCurrentTBRMessage().getPercentage()))));
-                basalAmount.setTypeface(basalAmount.getTypeface(), Typeface.ITALIC);
-                int progress = (int) (100F / ((float) statusResult.getCurrentTBRMessage().getInitialTime()) * ((float) statusResult.getCurrentTBRMessage().getLeftoverTime()));
-                tbrProgress2.setProgress(progress);
-                tbrText.setText(getString(R.string.tbr_text, statusResult.getCurrentTBRMessage().getPercentage(), formatTime(statusResult.getCurrentTBRMessage().getLeftoverTime()), formatTime(statusResult.getCurrentTBRMessage().getInitialTime())));
+                tbrContainer.setVisibility(View.VISIBLE);
+                activeBasalRate.setText(HTMLUtil.getHTML(R.string.basal_amount_formatter, basalName, UnitFormatter.formatBR(basalAmount / 100F * ((float) tbrAmount))));
+                activeBasalRate.setTypeface(activeBasalRate.getTypeface(), Typeface.ITALIC);
+                tbrProgress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, R.color.colorTBR), PorterDuff.Mode.SRC_IN);
+                tbrProgress.setMax(tbrInitialDuration);
+                tbrProgress.setProgress(tbrDuration);
+                tbrCancel.setVisibility(View.VISIBLE);
+                tbrText.setText(getString(R.string.tbr_text, tbrAmount, UnitFormatter.formatDuration(tbrDuration), UnitFormatter.formatDuration(tbrInitialDuration)));
             }
-            ActiveBolus bolus1Data = statusResult.getActiveBolusesMessage().getBolus1();
-            ActiveBolus bolus2Data = statusResult.getActiveBolusesMessage().getBolus2();
-            ActiveBolus bolus3Data = statusResult.getActiveBolusesMessage().getBolus3();
+            ActiveBolus bolus1 = statusResult.getActiveBolusesMessage().getBolus1();
+            if (bolus1 != null) {
+                bolus1Container.setVisibility(View.VISIBLE);
+                bolus1Title.setText(getBolusTitle(bolus1.getBolusType()));
+                bolus1Text.setText(getBolusText(bolus1));
+                bolus1Circle.setBackground(ContextCompat.getDrawable(this, getBolusDrawable(bolus1.getBolusType())));
+                bolus1Progress.setMax((int) (bolus1.getInitialAmount() * 100));
+                bolus1Progress.setProgress((int) (bolus1.getLeftoverAmount() * 100));
+                bolus1Cancel.setVisibility(View.VISIBLE);
+            } else bolus1Container.setVisibility(View.GONE);
 
-            if (bolus1Data != null) {
-                activeProcesses++;
-                cancelBolus1.setVisibility(View.VISIBLE);
-                bolus1.setVisibility(View.VISIBLE);
-                bolus1Title.setText(getBolusTitle(bolus1Data.getBolusType()));
-                bolus1Text.setText(getBolusText(bolus1Data));
-                bolus1Progress.setProgress((int) (100F / bolus1Data.getInitialAmount() * bolus1Data.getLeftoverAmount()));
-            } else if (bolus1.getVisibility() != View.GONE) {
-                sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
-                bolus1.setVisibility(View.GONE);
-            }
+            ActiveBolus bolus2 = statusResult.getActiveBolusesMessage().getBolus2();
+            if (bolus2 != null) {
+                bolus2Container.setVisibility(View.VISIBLE);
+                bolus2Title.setText(getBolusTitle(bolus2.getBolusType()));
+                bolus2Text.setText(getBolusText(bolus2));
+                bolus2Circle.setBackground(ContextCompat.getDrawable(this, getBolusDrawable(bolus2.getBolusType())));
+                bolus2Progress.setMax((int) (bolus2.getInitialAmount() * 100));
+                bolus2Progress.setProgress((int) (bolus2.getLeftoverAmount() * 100));
+                bolus2Cancel.setVisibility(View.VISIBLE);
+            } else bolus2Container.setVisibility(View.GONE);
 
-            if (bolus2Data != null) {
-                activeProcesses++;
-                cancelBolus2.setVisibility(View.VISIBLE);
-                bolus2.setVisibility(View.VISIBLE);
-                bolus2Title.setText(getBolusTitle(bolus2Data.getBolusType()));
-                bolus2Text.setText(getBolusText(bolus2Data));
-                bolus2Progress.setProgress((int) (100F / bolus2Data.getInitialAmount() * bolus2Data.getLeftoverAmount()));
-            } else if (bolus2.getVisibility() != View.GONE) {
-                sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
-                bolus2.setVisibility(View.GONE);
-            }
-
-            if (bolus3Data != null) {
-                activeProcesses++;
-                cancelBolus3.setVisibility(View.VISIBLE);
-                bolus3.setVisibility(View.VISIBLE);
-                bolus3Title.setText(getBolusTitle(bolus3Data.getBolusType()));
-                bolus3Text.setText(getBolusText(bolus3Data));
-                bolus3Progress.setProgress((int) (100F / bolus3Data.getInitialAmount() * bolus3Data.getLeftoverAmount()));
-            } else if (bolus3.getVisibility() != View.GONE) {
-                sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
-                bolus3.setVisibility(View.GONE);
-            }
-
-            noActiveProcesses.setVisibility(activeProcesses == 0 ? View.VISIBLE : View.GONE);
-            noActiveProcesses.setText(R.string.no_active_processes);
-        }
-        if (startPump != null && stopPump != null) {
-            if (pumpStatus == PumpStatus.STARTED) {
-                stopPump.setVisible(true);
-                startPump.setVisible(false);
-            } else {
-                stopPump.setVisible(false);
-                startPump.setVisible(true);
-            }
+            ActiveBolus bolus3 = statusResult.getActiveBolusesMessage().getBolus3();
+            if (bolus3 != null) {
+                bolus3Container.setVisibility(View.VISIBLE);
+                bolus3Title.setText(getBolusTitle(bolus3.getBolusType()));
+                bolus3Text.setText(getBolusText(bolus3));
+                bolus3Circle.setBackground(ContextCompat.getDrawable(this, getBolusDrawable(bolus3.getBolusType())));
+                bolus3Progress.setMax((int) (bolus3.getInitialAmount() * 100));
+                bolus3Progress.setProgress((int) (bolus3.getLeftoverAmount() * 100));
+                bolus3Cancel.setVisibility(View.VISIBLE);
+            } else bolus3Container.setVisibility(View.GONE);
         }
     }
 
@@ -248,14 +226,24 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     }
 
     private String getBolusText(ActiveBolus activeBolus) {
-        if (activeBolus.getBolusType() == ActiveBolusType.STANDARD) return getString(R.string.normal_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount());
-        else return getString(R.string.extended_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount(), formatTime(activeBolus.getDuration()));
+        if (activeBolus.getBolusType() == ActiveBolusType.STANDARD)
+            return getString(R.string.normal_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount());
+        else
+            return getString(R.string.extended_bolus_text, activeBolus.getLeftoverAmount(), activeBolus.getInitialAmount(), UnitFormatter.formatDuration(activeBolus.getDuration()));
     }
 
-    private String formatTime(int minutes) {
-        int dMinutes = minutes % 60;
-        int dHours = (minutes - dMinutes) / 60;
-        return getString(R.string.duration_formatter, dHours, dMinutes);
+    private int getBolusDrawable(ActiveBolusType bolusType) {
+        if (bolusType == ActiveBolusType.STANDARD) return R.drawable.standard_bolus_circle;
+        else if (bolusType == ActiveBolusType.EXTENDED) return R.drawable.extended_bolus_circle;
+        else if (bolusType == ActiveBolusType.MULTIWAVE) return R.drawable.multiwave_bolus_circle;
+        return 0;
+    }
+
+    private int getBolusColor(ActiveBolusType bolusType) {
+        if (bolusType == ActiveBolusType.STANDARD) return R.color.colorStandard;
+        else if (bolusType == ActiveBolusType.EXTENDED) return R.color.colorExtended;
+        else if (bolusType == ActiveBolusType.MULTIWAVE) return R.color.colorMultiwave;
+        return 0;
     }
 
     @Override
@@ -279,6 +267,48 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
     }
 
     @Override
+    protected void statusChanged(Status status) {
+        if (status == Status.CONNECTED) {
+            taskRunnerRunnable.run();
+            sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+        }
+    }
+
+    @Override
+    protected int getSelectedNavItemID() {
+        return R.id.nav_status;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (StatusActivity.this.taskRunner != null) StatusActivity.this.taskRunner.cancel();
+        handler.removeCallbacks(taskRunnerRunnable);
+        AppLayerMessage message = null;
+        if (v == tbrCancel) {
+            tbrCancel.setVisibility(View.GONE);
+            message = new CancelTBRMessage();
+        } else if (v == bolus1Cancel) {
+            bolus1Cancel.setVisibility(View.INVISIBLE);
+            CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
+            cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus1().getBolusID());
+            message = cancelBolusMessage;
+        } else if (v == bolus2Cancel) {
+            bolus2Cancel.setVisibility(View.INVISIBLE);
+            CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
+            cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus2().getBolusID());
+            message = cancelBolusMessage;
+        } else if (v == bolus3Cancel) {
+            bolus3Cancel.setVisibility(View.INVISIBLE);
+            CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
+            cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus3().getBolusID());
+            message = cancelBolusMessage;
+        }
+        SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
+        taskRunner.fetch(errorToastResultCallback);
+        handler.postDelayed(taskRunnerRunnable, 500);
+    }
+
+    @Override
     public void onResult(Object result) {
         if (result != null) {
             dismissSnackbar();
@@ -286,14 +316,6 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
             runOnUiThread(() -> updateViews());
         }
         handler.postDelayed(taskRunnerRunnable, 1500);
-    }
-
-    @Override
-    protected void statusChanged(Status status) {
-        if (status == Status.CONNECTED) {
-            taskRunnerRunnable.run();
-            sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
-        }
     }
 
     @Override
@@ -305,15 +327,6 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         }
     }
 
-    @Override
-    protected int getSelectedNavItemID() {
-        return R.id.nav_status;
-    }
-
-    @Override
-    protected boolean finishAfterNavigationClick() {
-        return false;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -332,6 +345,52 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         updateBackgroundSyncMenu();
         return true;
     }
+
+    private TaskRunner.ResultCallback errorToastResultCallback = new TaskRunner.ResultCallback() {
+        @Override
+        public void onResult(Object result) {
+
+        }
+
+        @Override
+        public void onError(Exception e) {
+            runOnUiThread(() -> Toast.makeText(StatusActivity.this, R.string.error, Toast.LENGTH_SHORT).show());
+        }
+    };
+
+    private BroadcastReceiver historyBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                BolusDelivered dbLatestBolus = getDatabaseHelper().getBolusDeliveredDao().queryBuilder().orderBy("dateTime", false).queryForFirst();
+                if (dbLatestBolus == null) return;
+                if (System.currentTimeMillis() - dbLatestBolus.getDateTime().getTime() >= 24 * 60 * 60 * 1000)
+                    runOnUiThread(() -> latestBolus.setVisibility(View.GONE));
+                else {
+                    if (dbLatestBolus.getBolusType() == HistoryBolusType.STANDARD) {
+                        runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_standard,
+                                new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
+                                UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()))));
+                    } else {
+                        if (dbLatestBolus.getBolusType() == HistoryBolusType.MULTIWAVE)
+                            runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_multiwave,
+                                    new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
+                                    UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()),
+                                    UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
+                                    UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
+                        else runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_extended,
+                                new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
+                                UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
+                                UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item == startPump) {
@@ -397,87 +456,6 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 42) {
-            if (!data.hasExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)) return;
-            getPreferences().edit().putString("alert_alarm_tone", data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString()).apply();
-        }
-    }
-
-    private TaskRunner.ResultCallback errorToastResultCallback = new TaskRunner.ResultCallback() {
-        @Override
-        public void onResult(Object result) {
-
-        }
-
-        @Override
-        public void onError(Exception e) {
-            runOnUiThread(() -> Toast.makeText(StatusActivity.this, R.string.error, Toast.LENGTH_SHORT).show());
-        }
-    };
-
-    @Override
-    public void onClick(View v) {
-        if (StatusActivity.this.taskRunner != null) StatusActivity.this.taskRunner.cancel();
-        handler.removeCallbacks(taskRunnerRunnable);
-        AppLayerMessage message = null;
-        if (v == cancelTBR) {
-            cancelTBR.setVisibility(View.GONE);
-            message = new CancelTBRMessage();
-        } else if (v == cancelBolus1) {
-            cancelBolus1.setVisibility(View.GONE);
-            CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
-            cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus1().getBolusID());
-            message = cancelBolusMessage;
-        } else if (v == cancelBolus2) {
-            cancelBolus2.setVisibility(View.GONE);
-            CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
-            cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus2().getBolusID());
-            message = cancelBolusMessage;
-        } else if (v == cancelBolus3) {
-            cancelBolus3.setVisibility(View.GONE);
-            CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
-            cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus3().getBolusID());
-            message = cancelBolusMessage;
-        }
-        SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
-        taskRunner.fetch(errorToastResultCallback);
-        handler.postDelayed(taskRunnerRunnable, 500);
-    }
-
-    private BroadcastReceiver historyBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                BolusDelivered dbLatestBolus = getDatabaseHelper().getBolusDeliveredDao().queryBuilder().orderBy("dateTime", false).queryForFirst();
-                if (dbLatestBolus == null) return;
-                if (System.currentTimeMillis() - dbLatestBolus.getDateTime().getTime() >= 24 * 60 * 60 * 1000)
-                    runOnUiThread(() -> latestBolus.setVisibility(View.GONE));
-                else {
-                    if (dbLatestBolus.getBolusType() == HistoryBolusType.STANDARD) {
-                        runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_standard,
-                                new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
-                                UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()))));
-                    } else {
-                        if (dbLatestBolus.getBolusType() == HistoryBolusType.MULTIWAVE)
-                            runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_multiwave,
-                                    new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
-                                    UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()),
-                                    UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
-                                    UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
-                        else runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_extended,
-                                new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
-                                UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
-                                UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
     public void backgroundSyncCheck(MenuItem item) {
         getPreferences().edit().putBoolean("background_sync_enabled", !isBackGroundSyncEnabled()).apply();
         updateBackgroundSyncMenu();
@@ -490,5 +468,10 @@ public class StatusActivity extends SightActivity implements TaskRunner.ResultCa
 
     private void updateBackgroundSyncMenu() {
         backgroundSync.setChecked(isBackGroundSyncEnabled());
+    }
+
+    @Override
+    protected boolean finishAfterNavigationClick() {
+        return false;
     }
 }

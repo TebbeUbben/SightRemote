@@ -3,7 +3,7 @@
     <string name="alert_r1_title">Deliver Bolus</string>
     <string name="alert_r2_title">Missed Bolus</string>
     <string name="alert_r3_title">Alarm clock</string>
-    <string name="alert_r4_title"></string>
+    <string name="alert_r4_title">Change infusion set</string>
     <string name="alert_r7_title">TBR completed</string>
 
     <string name="alert_w31_title">Cartridge low</string>

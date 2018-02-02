@@ -10,6 +10,7 @@ import sugar.free.sightparser.applayer.messages.status.CartridgeAmountMessage;
 import sugar.free.sightparser.applayer.messages.status.CurrentBasalMessage;
 import sugar.free.sightparser.applayer.messages.status.CurrentTBRMessage;
 import sugar.free.sightparser.applayer.descriptors.PumpStatus;
+import sugar.free.sightparser.applayer.messages.status.DailyTotalMessage;
 import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.TaskRunner;
@@ -44,6 +45,9 @@ public class StatusTaskRunner extends TaskRunner {
             return new CartridgeAmountMessage();
         } else if (message instanceof CartridgeAmountMessage) {
             statusResult.cartridgeAmountMessage = (CartridgeAmountMessage) message;
+            return new DailyTotalMessage();
+        } else if (message instanceof DailyTotalMessage) {
+            statusResult.dailyTotalMessage = (DailyTotalMessage) message;
             finish(statusResult);
         }
         return null;
@@ -57,5 +61,6 @@ public class StatusTaskRunner extends TaskRunner {
         private CurrentBasalMessage currentBasalMessage;
         private BatteryAmountMessage batteryAmountMessage;
         private CartridgeAmountMessage cartridgeAmountMessage;
+        private DailyTotalMessage dailyTotalMessage;
     }
 }

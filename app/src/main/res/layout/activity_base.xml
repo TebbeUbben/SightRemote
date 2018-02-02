@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:alpha="0.8"
-                android:background="#FFFFFF"
+                android:background="@color/colorBackground"
                 android:clickable="true" />
         </FrameLayout>
     </android.support.design.widget.CoordinatorLayout>
@@ -34,5 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        app:itemIconTint="@color/navigation_drawer_colors"
+        app:itemTextColor="@color/navigation_drawer_colors"
         app:menu="@menu/navigation_drawer" />
 </android.support.v4.widget.DrawerLayout>

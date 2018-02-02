@@ -29,10 +29,6 @@
     <string name="extended_bolus">Verzögerter Bolus</string>
     <string name="multiwave_bolus">Multiwave-Bolus</string>
     <string name="connecting">Verbinde…</string>
-    <string name="Loading">Lädt…</string>
-    <string name="no_active_processes">Keine aktiven Prozeduren.</string>
-    <string name="cartridge_formatter">%1$.2fU</string>
-    <string name="battery_formatter">%1$d%%</string>
     <string name="basal_amount_formatter"><![CDATA[%1$s: <b>%2$s</b>]]></string>
     <string name="tbr_text">%1$d%% für %2$s h / %3$s h</string>
     <string name="extended_bolus_text">%1$.2fU / %2$.2fU in %3$s h</string>
@@ -41,12 +37,9 @@
     <string name="connect">Verbinden</string>
     <string name="standard_bolus">Standard-Bolus</string>
     <string name="loading_points">Lädt…</string>
-    <string name="pump_info">Pumpeninfo</string>
     <string name="open_navigation">Navigation öffnen</string>
     <string name="close_navigation">Navigation schließen</string>
-    <string name="amount">Menge</string>
     <string name="deliver">Abgeben</string>
-    <string name="disconnected">Getrennt</string>
     <string name="pump_not_started">Pumpe is nicht gestartet.</string>
     <string name="decimal_delimitter">,</string>
     <string name="set_immediate_amount">Sofortabgabemenge einstellen:</string>
@@ -96,7 +89,6 @@
     <string name="yes_i_am_a_medical_professional">Ja, ich bin qualifiziertes medizinisches Personal und für diese Person verantwortlich.</string>
     <string name="are_you_absolutely_sure_activate">Sind Sie sich absolut sicher, dass Sie den Insulin-Service aktivieren wollen und genau verstehen, was dies zur Folge hat?</string>
     <string name="br_block_formatter">%1$s - %2$s</string>
-    <string name="br_start_time">Anfang:</string>
     <string name="br_end_time">Ende:</string>
     <string name="br_amount">Menge</string>
     <string name="edit_block">Block bearbeiten</string>
@@ -112,4 +104,9 @@
     <string name="another_application_is_requesting_access_to_the_pump">Eine andere Anwendung möchte auf deine Pumpe zugreifen!</string>
     <string name="pump_alert">Pumpenalarm</string>
     <string name="choose_alarm_tone">Alarmton auswählen</string>
+    <string name="daily_total">Tagesgesamtmenge</string>
+    <string name="total">Gesamt</string>
+    <string name="active_basal_rate">Aktive Basalrate</string>
+    <string name="latest_bolus">Letzter Bolus</string>
+    <string name="setup">Einrichtung</string>
 </resources>

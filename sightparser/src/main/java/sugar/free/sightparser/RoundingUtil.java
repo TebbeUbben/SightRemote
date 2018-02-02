@@ -11,5 +11,4 @@ public class RoundingUtil {
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.floatValue();
     }
-
 }

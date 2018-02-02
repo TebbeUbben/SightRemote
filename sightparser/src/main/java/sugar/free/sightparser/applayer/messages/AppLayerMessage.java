@@ -38,6 +38,7 @@ import sugar.free.sightparser.applayer.messages.status.BatteryAmountMessage;
 import sugar.free.sightparser.applayer.messages.status.CartridgeAmountMessage;
 import sugar.free.sightparser.applayer.messages.status.CurrentBasalMessage;
 import sugar.free.sightparser.applayer.messages.status.CurrentTBRMessage;
+import sugar.free.sightparser.applayer.messages.status.DailyTotalMessage;
 import sugar.free.sightparser.applayer.messages.status.FirmwareVersionMessage;
 import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
 import sugar.free.sightparser.applayer.messages.status.ReadDateTimeMessage;
@@ -79,6 +80,7 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         statusMessages.put((short) 0x4A05, WarrantyTimerMessage.class);
         statusMessages.put((short) 0xE300, ReadDateTimeMessage.class);
         statusMessages.put((short) 0xD903, ActiveAlertMessage.class);
+        statusMessages.put((short) 0xC603, DailyTotalMessage.class);
         MESSAGES.put(Service.STATUS.getServiceID(), statusMessages);
 
         Map<Short, Class<? extends AppLayerMessage>> remoteControlMessages = new HashMap<>();
