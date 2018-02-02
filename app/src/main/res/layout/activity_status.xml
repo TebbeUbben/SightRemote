@@ -364,7 +364,7 @@
             android:orientation="horizontal"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <View
                 android:layout_width="40dp"

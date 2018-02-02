@@ -74,7 +74,7 @@
     <string name="bolus_data">Bolus data</string>
     <string name="history_tbr_amount">%1$d%% for %2$s hours</string>
     <string name="tbr_data">TBR data</string>
-    <string name="latest_bolus_standard"><![CDATA[%1$s: <b>%2$s]]</b>>]]></string>
+    <string name="latest_bolus_standard"><![CDATA[%1$s: <b>%2$s</b>]]></string>
     <string name="latest_bolus_extended"><![CDATA[%1$s: <b>%2$s for %3$s</b>]]></string>
     <string name="latest_bolus_multiwave"><![CDATA[%1$s: <b>%2$s, %3$s for %4$s</b>]]></string>
     <string name="background_sync">Background Sync</string>
