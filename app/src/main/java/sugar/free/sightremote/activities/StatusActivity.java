@@ -191,6 +191,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus1Circle.setBackground(ContextCompat.getDrawable(this, getBolusDrawable(bolus1.getBolusType())));
                 bolus1Progress.setMax((int) (bolus1.getInitialAmount() * 100));
                 bolus1Progress.setProgress((int) (bolus1.getLeftoverAmount() * 100));
+                bolus1Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus1.getBolusType())), PorterDuff.Mode.SRC_IN);
                 bolus1Cancel.setVisibility(View.VISIBLE);
             } else bolus1Container.setVisibility(View.GONE);
 
@@ -203,6 +204,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus2Progress.setMax((int) (bolus2.getInitialAmount() * 100));
                 bolus2Progress.setProgress((int) (bolus2.getLeftoverAmount() * 100));
                 bolus2Cancel.setVisibility(View.VISIBLE);
+                bolus2Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus2.getBolusType())), PorterDuff.Mode.SRC_IN);
             } else bolus2Container.setVisibility(View.GONE);
 
             ActiveBolus bolus3 = statusResult.getActiveBolusesMessage().getBolus3();
@@ -213,6 +215,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus3Circle.setBackground(ContextCompat.getDrawable(this, getBolusDrawable(bolus3.getBolusType())));
                 bolus3Progress.setMax((int) (bolus3.getInitialAmount() * 100));
                 bolus3Progress.setProgress((int) (bolus3.getLeftoverAmount() * 100));
+                bolus3Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus3.getBolusType())), PorterDuff.Mode.SRC_IN);
                 bolus3Cancel.setVisibility(View.VISIBLE);
             } else bolus3Container.setVisibility(View.GONE);
         }
