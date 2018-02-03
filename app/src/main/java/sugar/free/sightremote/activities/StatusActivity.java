@@ -193,7 +193,10 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus1Progress.setProgress((int) (bolus1.getLeftoverAmount() * 100));
                 bolus1Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus1.getBolusType())), PorterDuff.Mode.SRC_IN);
                 bolus1Cancel.setVisibility(View.VISIBLE);
-            } else bolus1Container.setVisibility(View.GONE);
+            } else if (bolus1Container.getVisibility() == View.VISIBLE){
+                sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+                bolus1Container.setVisibility(View.GONE);
+            }
 
             ActiveBolus bolus2 = statusResult.getActiveBolusesMessage().getBolus2();
             if (bolus2 != null) {
@@ -205,7 +208,10 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus2Progress.setProgress((int) (bolus2.getLeftoverAmount() * 100));
                 bolus2Cancel.setVisibility(View.VISIBLE);
                 bolus2Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus2.getBolusType())), PorterDuff.Mode.SRC_IN);
-            } else bolus2Container.setVisibility(View.GONE);
+            } else if (bolus2Container.getVisibility() == View.VISIBLE){
+                sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+                bolus2Container.setVisibility(View.GONE);
+            }
 
             ActiveBolus bolus3 = statusResult.getActiveBolusesMessage().getBolus3();
             if (bolus3 != null) {
@@ -217,7 +223,10 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus3Progress.setProgress((int) (bolus3.getLeftoverAmount() * 100));
                 bolus3Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus3.getBolusType())), PorterDuff.Mode.SRC_IN);
                 bolus3Cancel.setVisibility(View.VISIBLE);
-            } else bolus3Container.setVisibility(View.GONE);
+            } else if (bolus3Container.getVisibility() == View.VISIBLE){
+                sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+                bolus3Container.setVisibility(View.GONE);
+            }
         }
     }
 
