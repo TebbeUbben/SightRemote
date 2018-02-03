@@ -20,6 +20,9 @@
     <item android:id="@+id/status_nav_choose_alarm_tone"
         android:title="@string/choose_alarm_tone"
         app:showAsAction="never" />
+    <item android:id="@+id/status_nav_firewall"
+        android:title="@string/firewall_options"
+        app:showAsAction="never" />
     <item android:id="@+id/status_nav_enter_password"
         android:title="@string/enter_password"
         app:showAsAction="never" />

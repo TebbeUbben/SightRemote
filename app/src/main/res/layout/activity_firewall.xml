@@ -1,0 +1,85 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="prefs"
+            type="sugar.free.sightremote.adapters.PrefsView" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/firewalllayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="@string/which_pump_features_is_the_app_is_allowed_to_use" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="right"
+                    android:orientation="vertical">
+
+                    <Switch
+                        android:id="@+id/switch1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_margin="10dp"
+                        android:checked="@{prefs.getbool(`firewall_allow_standard_bolus`)}"
+                        android:onClick="@{() -> prefs.togglebool(`firewall_allow_standard_bolus`)}"
+                        android:text="@{@string/allow_standard_boluses + @string/switch_spacer}"
+                        android:textAlignment="textEnd"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                    <Switch
+                        android:id="@+id/switch2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_margin="10dp"
+                        android:checked="@{prefs.getbool(`firewall_allow_extended_bolus`)}"
+                        android:onClick="@{() -> prefs.togglebool(`firewall_allow_extended_bolus`)}"
+                        android:text="@{@string/allow_extended_boluses + @string/switch_spacer}"
+                        android:textAlignment="textEnd"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                    <Switch
+                        android:id="@+id/switch3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_margin="10dp"
+                        android:checked="@{prefs.getbool(`firewall_allow_temporary_basal`)}"
+                        android:onClick="@{() -> prefs.togglebool(`firewall_allow_temporary_basal`)}"
+                        android:text="@{@string/allow_temporary_basals + @string/switch_spacer}"
+                        android:textAlignment="textEnd"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+
+    </ScrollView>
+
+
+</layout>

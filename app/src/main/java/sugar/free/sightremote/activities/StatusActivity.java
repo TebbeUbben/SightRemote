@@ -100,6 +100,49 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
     private MenuItem startPump;
     private MenuItem stopPump;
     private MenuItem backgroundSync;
+    private TaskRunner.ResultCallback errorToastResultCallback = new TaskRunner.ResultCallback() {
+        @Override
+        public void onResult(Object result) {
+
+        }
+
+        @Override
+        public void onError(Exception e) {
+            runOnUiThread(() -> Toast.makeText(StatusActivity.this, R.string.error, Toast.LENGTH_SHORT).show());
+        }
+    };
+    private BroadcastReceiver historyBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                BolusDelivered dbLatestBolus = getDatabaseHelper().getBolusDeliveredDao().queryBuilder().orderBy("dateTime", false).queryForFirst();
+                if (dbLatestBolus == null) return;
+                if (System.currentTimeMillis() - dbLatestBolus.getDateTime().getTime() >= 24 * 60 * 60 * 1000)
+                    runOnUiThread(() -> latestBolus.setVisibility(View.GONE));
+                else {
+                    if (dbLatestBolus.getBolusType() == HistoryBolusType.STANDARD) {
+                        runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_standard,
+                                new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
+                                UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()))));
+                    } else {
+                        if (dbLatestBolus.getBolusType() == HistoryBolusType.MULTIWAVE)
+                            runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_multiwave,
+                                    new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
+                                    UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()),
+                                    UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
+                                    UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
+                        else
+                            runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_extended,
+                                    new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
+                                    UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
+                                    UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -193,7 +236,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus1Progress.setProgress((int) (bolus1.getLeftoverAmount() * 100));
                 bolus1Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus1.getBolusType())), PorterDuff.Mode.SRC_IN);
                 bolus1Cancel.setVisibility(View.VISIBLE);
-            } else if (bolus1Container.getVisibility() == View.VISIBLE){
+            } else if (bolus1Container.getVisibility() == View.VISIBLE) {
                 sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
                 bolus1Container.setVisibility(View.GONE);
             }
@@ -208,7 +251,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus2Progress.setProgress((int) (bolus2.getLeftoverAmount() * 100));
                 bolus2Cancel.setVisibility(View.VISIBLE);
                 bolus2Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus2.getBolusType())), PorterDuff.Mode.SRC_IN);
-            } else if (bolus2Container.getVisibility() == View.VISIBLE){
+            } else if (bolus2Container.getVisibility() == View.VISIBLE) {
                 sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
                 bolus2Container.setVisibility(View.GONE);
             }
@@ -223,7 +266,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus3Progress.setProgress((int) (bolus3.getLeftoverAmount() * 100));
                 bolus3Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus3.getBolusType())), PorterDuff.Mode.SRC_IN);
                 bolus3Cancel.setVisibility(View.VISIBLE);
-            } else if (bolus3Container.getVisibility() == View.VISIBLE){
+            } else if (bolus3Container.getVisibility() == View.VISIBLE) {
                 sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
                 bolus3Container.setVisibility(View.GONE);
             }
@@ -339,7 +382,6 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -348,7 +390,8 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         stopPump = menu.findItem(R.id.status_nav_stop);
         backgroundSync = menu.findItem(R.id.status_nav_background_sync);
         if (statusResult != null) {
-            if (statusResult.getPumpStatusMessage().getPumpStatus() == PumpStatus.STARTED) startPump.setVisible(false);
+            if (statusResult.getPumpStatusMessage().getPumpStatus() == PumpStatus.STARTED)
+                startPump.setVisible(false);
             else stopPump.setVisible(false);
         } else {
             startPump.setVisible(false);
@@ -357,51 +400,6 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         updateBackgroundSyncMenu();
         return true;
     }
-
-    private TaskRunner.ResultCallback errorToastResultCallback = new TaskRunner.ResultCallback() {
-        @Override
-        public void onResult(Object result) {
-
-        }
-
-        @Override
-        public void onError(Exception e) {
-            runOnUiThread(() -> Toast.makeText(StatusActivity.this, R.string.error, Toast.LENGTH_SHORT).show());
-        }
-    };
-
-    private BroadcastReceiver historyBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                BolusDelivered dbLatestBolus = getDatabaseHelper().getBolusDeliveredDao().queryBuilder().orderBy("dateTime", false).queryForFirst();
-                if (dbLatestBolus == null) return;
-                if (System.currentTimeMillis() - dbLatestBolus.getDateTime().getTime() >= 24 * 60 * 60 * 1000)
-                    runOnUiThread(() -> latestBolus.setVisibility(View.GONE));
-                else {
-                    if (dbLatestBolus.getBolusType() == HistoryBolusType.STANDARD) {
-                        runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_standard,
-                                new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
-                                UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()))));
-                    } else {
-                        if (dbLatestBolus.getBolusType() == HistoryBolusType.MULTIWAVE)
-                            runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_multiwave,
-                                    new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
-                                    UnitFormatter.formatUnits(dbLatestBolus.getImmediateAmount()),
-                                    UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
-                                    UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
-                        else runOnUiThread(() -> latestBolus.setText(HTMLUtil.getHTML(R.string.latest_bolus_extended,
-                                new SimpleDateFormat(getString(R.string.time_formatter)).format(dbLatestBolus.getDateTime()),
-                                UnitFormatter.formatUnits(dbLatestBolus.getExtendedAmount()),
-                                UnitFormatter.formatDuration(dbLatestBolus.getDuration()))));
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -414,7 +412,8 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                         .setMessage(HTMLUtil.getHTML(R.string.start_pump_confirmation))
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
                             startPump.setVisible(false);
-                            if (StatusActivity.this.taskRunner != null) StatusActivity.this.taskRunner.cancel();
+                            if (StatusActivity.this.taskRunner != null)
+                                StatusActivity.this.taskRunner.cancel();
                             taskRunner.fetch(errorToastResultCallback);
                             handler.removeCallbacks(taskRunnerRunnable);
                             handler.postDelayed(taskRunnerRunnable, 500);
@@ -432,7 +431,8 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                         .setMessage(HTMLUtil.getHTML(R.string.stop_pump_confirmation))
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
                             stopPump.setVisible(false);
-                            if (StatusActivity.this.taskRunner != null) StatusActivity.this.taskRunner.cancel();
+                            if (StatusActivity.this.taskRunner != null)
+                                StatusActivity.this.taskRunner.cancel();
                             taskRunner.fetch(errorToastResultCallback);
                             handler.removeCallbacks(taskRunnerRunnable);
                             handler.postDelayed(taskRunnerRunnable, 500);
@@ -445,7 +445,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
             new AlertDialog.Builder(this)
                     .setTitle(R.string.confirmation)
                     .setMessage(HTMLUtil.getHTML(R.string.delete_pairing_confirmation))
-                    .setPositiveButton(R.string.yes, (dialog, which) -> {;
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
                         getServiceConnector().reset();
                         Intent intent = new Intent(this, SetupActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -456,6 +456,10 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                     .show();
         } else if (item.getItemId() == R.id.status_nav_enter_password) {
             new ActivationWarningDialogChain(this, getServiceConnector()).doActivationWarning();
+        } else if (item.getItemId() == R.id.status_nav_firewall) {
+            Intent intent = new Intent(this, FirewallActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         } else if (item.getItemId() == R.id.status_nav_choose_alarm_tone) {
             Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
@@ -475,7 +479,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
     }
 
     private boolean isBackGroundSyncEnabled() {
-        return getPreferences().getBoolean("background_sync_enabled",false);
+        return getPreferences().getBoolean("background_sync_enabled", false);
     }
 
     private void updateBackgroundSyncMenu() {

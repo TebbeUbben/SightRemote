@@ -62,6 +62,7 @@
             android:name=".activities.AlertActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.NoStatusBackground" />
+        <activity android:name=".activities.FirewallActivity" />
 
         <service
             android:name=".services.HistorySyncService"
