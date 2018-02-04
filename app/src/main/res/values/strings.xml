@@ -108,7 +108,7 @@
     <string name="active_basal_rate">Active basal rate</string>
     <string name="latest_bolus">Latest bolus</string>
     <string name="setup">Setup</string>
-    <string name="switch_spacer">"   "</string>
+    <string name="switch_spacer" translatable="false">"   "</string>
     <string name="allow_standard_boluses">Allow Standard Boluses</string>
     <string name="allow_extended_boluses">Allow Extended Boluses</string>
     <string name="allow_temporary_basals">Allow Temporary Basals</string>
