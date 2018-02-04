@@ -108,4 +108,10 @@
     <string name="active_basal_rate">Active basal rate</string>
     <string name="latest_bolus">Latest bolus</string>
     <string name="setup">Setup</string>
+    <string name="switch_spacer">"   "</string>
+    <string name="allow_standard_boluses">Allow Standard Boluses</string>
+    <string name="allow_extended_boluses">Allow Extended Boluses</string>
+    <string name="allow_temporary_basals">Allow Temporary Basals</string>
+    <string name="firewall_options">Firewall Options</string>
+    <string name="which_pump_features_is_the_app_is_allowed_to_use">Which pump features is the app is allowed to use?\n\nThis will also affect any connected app like AndroidAPS.</string>
 </resources>

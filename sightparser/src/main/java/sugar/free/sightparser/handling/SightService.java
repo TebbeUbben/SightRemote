@@ -7,10 +7,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -22,6 +24,7 @@ import java.util.TimerTask;
 import java.util.UUID;
 
 import sugar.free.sightparser.DataStorage;
+import sugar.free.sightparser.Pref;
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
@@ -45,6 +48,7 @@ public class SightService extends Service {
     private ConnectionThread connectionThread;
     private Pipeline pipeline;
     private DataStorage dataStorage;
+    private FirewallConstraint firewall;
     private Map<IStatusCallback, IBinder.DeathRecipient> statusCallbackDeathRecipients = new HashMap<>();
     private Map<Long, IStatusCallback> statusCallbackIds = new HashMap<>();
     private Status status = Status.DISCONNECTED;
@@ -109,11 +113,17 @@ public class SightService extends Service {
         @Override
         public void requestMessage(byte[] message, IMessageCallback callback) throws RemoteException {
             if (verifyCaller("requestMessage")) {
-                MessageRequest messageRequest = new MessageRequest((AppLayerMessage) SerializationUtils.deserialize(message), callback, callback.asBinder());
-                if (pipeline != null && status == Status.CONNECTED)
-                    pipeline.requestMessage(messageRequest);
+                final AppLayerMessage msg = (AppLayerMessage) SerializationUtils.deserialize(message);
+                if (firewall.isAllowed(msg)) {
+                    MessageRequest messageRequest = new MessageRequest(msg, callback, callback.asBinder());
+                    if (pipeline != null && status == Status.CONNECTED)
+                        pipeline.requestMessage(messageRequest);
+                } else {
+                    showToast("Blocked by SiteRemote firewall preference" + " :: " + msg.toString());
+                    callback.onError(SerializationUtils.serialize(new NotAuthorizedError("Blocked by Firewall preference")));
+                }
             } else {
-                callback.onError(SerializationUtils.serialize(new NotAuthorizedError()));
+                callback.onError(SerializationUtils.serialize(new NotAuthorizedError("Application not authorized")));
             }
         }
 
@@ -205,7 +215,11 @@ public class SightService extends Service {
                 if (allowed) {
                     getDataStorage().set("package-allowed-" + packageName, "yes");
                 } else {
-                    getDataStorage().remove("package-allowed-" + packageName);
+                    if (packageName.startsWith(Pref.CHANGE_PREFS_SPECIAL_CASE)) {
+                        firewall.parsePreference(packageName);
+                    } else {
+                        getDataStorage().remove("package-allowed-" + packageName);
+                    }
                 }
             } else {
                 throw new RemoteException("Not authorized");
@@ -316,6 +330,9 @@ public class SightService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (getDataStorage().contains("PASSWORD"))
             sugar.free.sightparser.applayer.descriptors.Service.REMOTE_CONTROL.setServicePassword(getDataStorage().get("PASSWORD"));
+        if (firewall == null) {
+            firewall = new FirewallConstraint(getApplicationContext());
+        }
         return START_STICKY;
     }
 
@@ -375,6 +392,23 @@ public class SightService extends Service {
             }
         }
         return false;
+    }
+
+    private void showToast(String msg) {
+        try {
+            runOnUiThread(() -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show());
+        } catch (Exception e) {
+            // don't let an error here cause a crash
+        }
+    }
+
+    private void runOnUiThread(Runnable theRunnable) {
+        try {
+            final Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
+            mainHandler.post(theRunnable);
+        } catch (Exception e) {
+            // don't let an error here cause a crash
+        }
     }
 
     private class ConnectionThread extends Thread {
