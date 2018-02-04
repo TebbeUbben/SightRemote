@@ -39,7 +39,7 @@ public abstract class Alert implements Serializable {
 
         ALERTS.put((short) 0x6C1D, Error6MechanicalError.class);
         ALERTS.put((short) 0x731D, Error10RewindError.class);
-        ALERTS.put((short) 0x3A03, Error13LanguageError.class);
+        ALERTS.put((short) 0x8F1D, Error13LanguageError.class);
     }
 
     public void parse(ByteBuf byteBuf) {

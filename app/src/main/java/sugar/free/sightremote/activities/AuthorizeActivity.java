@@ -55,5 +55,9 @@ public class AuthorizeActivity extends SightActivity {
         finish();
     }
 
+    @Override
+    protected boolean useNavigationDrawer() {
+        return false;
+    }
 }
 

@@ -114,4 +114,5 @@
     <string name="allow_temporary_basals">Allow Temporary Basals</string>
     <string name="firewall_options">Firewall Options</string>
     <string name="which_pump_features_is_the_app_is_allowed_to_use">Which pump features is the app is allowed to use?\n\nThis will also affect any connected app like AndroidAPS.</string>
+    <string name="security_warning">Security warning</string>
 </resources>

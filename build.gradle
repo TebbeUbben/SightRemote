@@ -5,11 +5,12 @@ ext {
     buildToolsVersion = '26.0.2'
 
     versionMajor = 1
-    versionMinor = 1
+    versionMinor = 2
+    versionRevision = 0
     versionCompatiblity = 'golden-age'
 
     versionCode = 1
-    versionName = versionMajor + "." + versionMinor + "_" + versionCompatiblity
+    versionName = versionMajor + "." + versionMinor + "." + versionRevision + "_" + versionCompatiblity
 }
 
 buildscript {

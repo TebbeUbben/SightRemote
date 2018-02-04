@@ -31,5 +31,15 @@ public class FirewallActivity extends SightActivity {
         binding.setPrefs(new PrefsViewImpl(getApplicationContext(), "ACTIVITY_FIREWALL", getServiceConnector()));
         setContentView(binding.getRoot());
     }
+
+    @Override
+    protected void connectedToService() {
+        getServiceConnector().connect();
+    }
+
+    @Override
+    protected boolean useNavigationDrawer() {
+        return false;
+    }
 }
 

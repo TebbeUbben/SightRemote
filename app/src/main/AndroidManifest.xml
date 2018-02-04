@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".SightRemote"
@@ -54,15 +54,17 @@
         <activity
             android:name=".activities.history.TBRHistoryActivity"
             android:label="@string/tbr_data" />
+        <activity android:name=".activities.EditBRProfileActivity" />
         <activity
-            android:name=".activities.EditBRProfileActivity" />
-        <activity
-            android:name=".activities.AuthorizeActivity" />
+            android:name=".activities.AuthorizeActivity"
+            android:label="@string/security_warning" />
         <activity
             android:name=".activities.AlertActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.NoStatusBackground" />
-        <activity android:name=".activities.FirewallActivity" />
+        <activity
+            android:name=".activities.FirewallActivity"
+            android:label="@string/firewall_options" />
 
         <service
             android:name=".services.HistorySyncService"
