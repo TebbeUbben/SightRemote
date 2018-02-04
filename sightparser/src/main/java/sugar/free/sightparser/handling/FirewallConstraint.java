@@ -9,6 +9,7 @@ import sugar.free.sightparser.Pref;
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.ChangeTBRMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.ExtendedBolusMessage;
+import sugar.free.sightparser.applayer.messages.remote_control.SetTBRMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.StandardBolusMessage;
 
 
@@ -35,6 +36,7 @@ public class FirewallConstraint {
         lookup.put(StandardBolusMessage.class, "firewall_allow_standard_bolus");
         lookup.put(ExtendedBolusMessage.class, "firewall_allow_extended_bolus");
         lookup.put(ChangeTBRMessage.class, "firewall_allow_temporary_basal");
+        lookup.put(SetTBRMessage.class, "firewall_allow_temporary_basal");
     }
 
     private final Pref pref;
