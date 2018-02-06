@@ -2,6 +2,7 @@ package sugar.free.sightremote.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.MenuItem;
 
 import sugar.free.sightparser.handling.FirewallConstraint;
 import sugar.free.sightremote.R;
@@ -23,6 +24,8 @@ public class FirewallActivity extends SightActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firewall);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // to initialize defaults
         FirewallConstraint fw = new FirewallConstraint(getApplicationContext());
         fw = null;
@@ -40,6 +43,15 @@ public class FirewallActivity extends SightActivity {
     @Override
     protected boolean useNavigationDrawer() {
         return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 
