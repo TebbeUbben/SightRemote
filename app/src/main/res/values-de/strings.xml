@@ -103,17 +103,22 @@
     <string name="allow">Erlauben</string>
     <string name="another_application_is_requesting_access_to_the_pump">Eine andere Anwendung möchte auf deine Pumpe zugreifen!</string>
     <string name="pump_alert">Pumpenalarm</string>
-    <string name="choose_alarm_tone">Alarmton auswählen</string>
     <string name="daily_total">Tagesgesamtmenge</string>
     <string name="total">Gesamt</string>
     <string name="active_basal_rate">Aktive Basalrate</string>
     <string name="latest_bolus">Letzter Bolus</string>
     <string name="setup">Einrichtung</string>
-    <string name="switch_spacer" translatable="false">"   "</string>
     <string name="allow_standard_boluses">Erlaube Standard-Boli</string>
     <string name="allow_extended_boluses">Erlaube verzögerte Boli</string>
     <string name="allow_temporary_basals">Erlaube temporäre Basalraten</string>
     <string name="firewall_options">Firewall-Optionen</string>
     <string name="which_pump_features_is_the_app_is_allowed_to_use">Welche Funktionen der Pumpe darf diese App nutzen?\n\nDies hat auch Auswirkungen auf andere verbundene Apps wie AndroidAPS.</string>
     <string name="security_warning">Sicherheitswarnung</string>
+    <string name="alarm_tone">Alarmton</string>
+    <string name="synchronize_pump_data_automatically_in_the_background">Pumpendaten automatisch im Hintergrund synchronisieren</string>
+    <string name="restrict_the_apps_functionality">Den Funktionsumfang der App einschränken</string>
+    <string name="enter_the_password_required_for_remote_controlling_the_pump">Password zum Fernsteuern der Pumpe eingeben</string>
+    <string name="delete_the_pairing_with_your_pump">Verbindung mit der Pumpe löschen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="select_the_alarm_tone_used_for_pump_alerts">Ton für Alarme der Pumpe auswählen</string>
 </resources>

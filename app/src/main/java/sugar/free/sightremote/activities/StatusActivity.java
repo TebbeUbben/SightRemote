@@ -43,6 +43,7 @@ import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.StatusTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
+import sugar.free.sightremote.SightRemote;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.utils.ActivationWarningDialogChain;
 import sugar.free.sightremote.utils.HTMLUtil;
@@ -99,7 +100,6 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
 
     private MenuItem startPump;
     private MenuItem stopPump;
-    private MenuItem backgroundSync;
     private TaskRunner.ResultCallback errorToastResultCallback = new TaskRunner.ResultCallback() {
         @Override
         public void onResult(Object result) {
@@ -388,7 +388,6 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         inflater.inflate(R.menu.status_menu, menu);
         startPump = menu.findItem(R.id.status_nav_start);
         stopPump = menu.findItem(R.id.status_nav_stop);
-        backgroundSync = menu.findItem(R.id.status_nav_background_sync);
         if (statusResult != null) {
             if (statusResult.getPumpStatusMessage().getPumpStatus() == PumpStatus.STARTED)
                 startPump.setVisible(false);
@@ -397,7 +396,6 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
             startPump.setVisible(false);
             stopPump.setVisible(false);
         }
-        updateBackgroundSyncMenu();
         return true;
     }
 
@@ -441,49 +439,8 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                         .show();
             }
             return true;
-        } else if (item.getItemId() == R.id.status_nav_delete_pairing) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.confirmation)
-                    .setMessage(HTMLUtil.getHTML(R.string.delete_pairing_confirmation))
-                    .setPositiveButton(R.string.yes, (dialog, which) -> {
-                        getServiceConnector().reset();
-                        Intent intent = new Intent(this, SetupActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .setNegativeButton(R.string.cancel, null)
-                    .show();
-        } else if (item.getItemId() == R.id.status_nav_enter_password) {
-            new ActivationWarningDialogChain(this, getServiceConnector()).doActivationWarning();
-        } else if (item.getItemId() == R.id.status_nav_firewall) {
-            Intent intent = new Intent(this, FirewallActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } else if (item.getItemId() == R.id.status_nav_choose_alarm_tone) {
-            Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
-            String selectedTone = getPreferences().getString("alert_alarm_tone", null);
-            Uri defaultTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, selectedTone == null ? defaultTone : Uri.parse(selectedTone));
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
-            startActivityForResult(intent, 42);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void backgroundSyncCheck(MenuItem item) {
-        getPreferences().edit().putBoolean("background_sync_enabled", !isBackGroundSyncEnabled()).apply();
-        updateBackgroundSyncMenu();
-        sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
-    }
-
-    private boolean isBackGroundSyncEnabled() {
-        return getPreferences().getBoolean("background_sync_enabled", false);
-    }
-
-    private void updateBackgroundSyncMenu() {
-        backgroundSync.setChecked(isBackGroundSyncEnabled());
     }
 
     @Override

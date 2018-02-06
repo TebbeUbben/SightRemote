@@ -102,7 +102,6 @@
     <string name="allow">Allow</string>
     <string name="another_application_is_requesting_access_to_the_pump">Another application is requesting access to the pump!</string>
     <string name="pump_alert">Pump alert</string>
-    <string name="choose_alarm_tone">Choose alarm tone</string>
     <string name="daily_total">Daily total</string>
     <string name="total">Total</string>
     <string name="active_basal_rate">Active basal rate</string>
@@ -115,4 +114,11 @@
     <string name="firewall_options">Firewall Options</string>
     <string name="which_pump_features_is_the_app_is_allowed_to_use">Which pump features is the app is allowed to use?\n\nThis will also affect any connected app like AndroidAPS.</string>
     <string name="security_warning">Security warning</string>
+    <string name="alarm_tone">Alarm tone</string>
+    <string name="synchronize_pump_data_automatically_in_the_background">Synchronize pump data automatically in the background.</string>
+    <string name="restrict_the_apps_functionality">Restrict the app\'s functionality.</string>
+    <string name="enter_the_password_required_for_remote_controlling_the_pump">Enter the password required for remote controlling the pump.</string>
+    <string name="delete_the_pairing_with_your_pump">Delete the pairing with your pump.</string>
+    <string name="settings">Settings</string>
+    <string name="select_the_alarm_tone_used_for_pump_alerts">Select the alarm tone used for pump alerts.</string>
 </resources>

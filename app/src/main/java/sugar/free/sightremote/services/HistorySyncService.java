@@ -44,6 +44,7 @@ import sugar.free.sightparser.handling.StatusCallback;
 import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.ReadHistoryTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
+import sugar.free.sightremote.SightRemote;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.database.BolusProgrammed;
 import sugar.free.sightremote.database.CannulaFilled;
@@ -103,7 +104,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         intentFilter.addAction(HistoryBroadcast.ACTION_START_RESYNC);
         getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
         if (pendingIntent != null) alarmManager.cancel(pendingIntent);
-        if (getActivityPreferences().getBoolean("background_sync_enabled", false)) {
+        if (SightRemote.getPreferences().getBoolean("background_sync_enabled", false)) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                     pendingIntent);
         }
@@ -393,11 +394,5 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     public void onServiceDisconnected() {
         syncing = false;
         if (wakeLock.isHeld()) wakeLock.release();
-    }
-
-    protected SharedPreferences getActivityPreferences() {
-        if (activityPreferences == null)
-            activityPreferences = getSharedPreferences("sugar.free.sightremote.services.SIGHTREMOTE", MODE_PRIVATE);
-        return activityPreferences;
     }
 }

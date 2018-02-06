@@ -7,6 +7,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
+    <uses-feature
+        android:name="android.hardware.fingerprint"
+        android:required="false" />
 
     <application
         android:name=".SightRemote"
@@ -60,11 +65,15 @@
             android:label="@string/security_warning" />
         <activity
             android:name=".activities.AlertActivity"
+            android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.NoStatusBackground" />
         <activity
             android:name=".activities.FirewallActivity"
             android:label="@string/firewall_options" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/settings" />
 
         <service
             android:name=".services.HistorySyncService"

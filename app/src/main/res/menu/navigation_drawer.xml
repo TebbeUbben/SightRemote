@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/nav_status"
-        android:title="@string/status" />
+    <group android:id="@+id/status">
+        <item
+            android:id="@+id/nav_status"
+            android:title="@string/status" />
+    </group>
     <item android:title="@string/bolus">
         <menu>
             <group>
@@ -42,4 +44,9 @@
             </group>
         </menu>
     </item>
+    <group android:id="@+id/settings">
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/settings" />
+    </group>
 </menu>
