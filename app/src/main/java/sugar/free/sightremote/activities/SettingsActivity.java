@@ -41,7 +41,8 @@ public class SettingsActivity extends SightActivity {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings);
-            getPreferenceScreen().setOnPreferenceClickListener(this);
+            getPreferenceScreen().findPreference("enter_password").setOnPreferenceClickListener(this);
+            getPreferenceScreen().findPreference("delete_pairing").setOnPreferenceClickListener(this);
         }
 
         @Override

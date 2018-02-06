@@ -22,6 +22,10 @@ public class SightRemote extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        PreferenceManager.setDefaultValues(this, R.xml.settings, true);
+
+
         instance = this;
         startService(new Intent(this, SightService.class));
         startService(new Intent(this, HistorySyncService.class));
