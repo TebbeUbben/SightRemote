@@ -69,4 +69,9 @@ public class SettingsActivity extends SightActivity {
             return (SettingsActivity) getActivity();
         }
     }
+
+    @Override
+    protected int getSelectedNavItemID() {
+        return R.id.nav_settings;
+    }
 }
