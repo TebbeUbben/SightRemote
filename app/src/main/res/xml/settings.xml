@@ -22,7 +22,7 @@
         android:summary="@string/enter_the_password_required_for_remote_controlling_the_pump"
         android:title="@string/enter_password" />
     <Preference
-        android:key="@string/delete_pairing"
+        android:key="delete_pairing"
         android:summary="@string/delete_the_pairing_with_your_pump"
         android:title="@string/delete_pairing" />
 </PreferenceScreen>
