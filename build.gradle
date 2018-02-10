@@ -5,7 +5,7 @@ ext {
     buildToolsVersion = '27.0.3'
 
     versionMajor = 1
-    versionMinor = 2
+    versionMinor = 3
     versionRevision = 0
     versionCompatiblity = 'golden-age'
 
