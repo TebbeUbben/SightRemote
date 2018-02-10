@@ -10,4 +10,8 @@
     <color name="colorExtended">#FF9800</color>
     <color name="colorMultiwave">#80AA6A</color>
     <color name="colorTBR">#8BC34A</color>
+
+    <color name="colorWrong">#F44336</color>
+    <color name="colorRight">#8BC34A</color>
+    <color name="colorNeutral">#FFFFFF</color>
 </resources>

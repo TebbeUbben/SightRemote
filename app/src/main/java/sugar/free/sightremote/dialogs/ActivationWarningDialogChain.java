@@ -1,4 +1,4 @@
-package sugar.free.sightremote.utils;
+package sugar.free.sightremote.dialogs;
 
 import android.app.AlertDialog;
 import android.content.Context;

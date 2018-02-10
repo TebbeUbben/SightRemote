@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:paddingLeft="22dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp">
+
+    <LinearLayout
+        android:id="@+id/old_pin_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_your_old_pin"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF" />
+
+        <EditText
+            android:id="@+id/old_pin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:inputType="numberPassword"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_your_new_pin"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF" />
+
+    <EditText
+        android:id="@+id/new_pin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:inputType="numberPassword"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_your_new_pin_a_second_time"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF" />
+
+    <EditText
+        android:id="@+id/confirm_pin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:inputType="numberPassword"
+        android:textColor="#FFFFFF" />
+</LinearLayout>

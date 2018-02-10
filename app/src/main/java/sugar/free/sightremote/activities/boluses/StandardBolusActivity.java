@@ -1,6 +1,5 @@
 package sugar.free.sightremote.activities.boluses;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -8,8 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Toast;
-
-import java.text.DecimalFormat;
 
 import sugar.free.sightparser.applayer.messages.remote_control.StandardBolusMessage;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
@@ -19,11 +16,13 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.activities.SightActivity;
 import sugar.free.sightremote.utils.BolusAmountPicker;
+import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
 public class StandardBolusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener, BolusAmountPicker.OnAmountChangeListener {
 
+    private ConfirmationDialog confirmationDialog;
     private BolusAmountPicker bolusAmountPicker;
 
     private BolusPreparationTaskRunner.PreperationResult preperationResult;
@@ -97,19 +96,21 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (confirmationDialog != null) confirmationDialog.hide();
+    }
+
+    @Override
     public void onClick(View view) {
         StandardBolusMessage message = new StandardBolusMessage();
         message.setAmount(bolusAmountPicker.getPickerValue());
         final SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.confirmation)
-                .setMessage(HTMLUtil.getHTML(R.string.standard_bolus_confirmation, UnitFormatter.formatUnits(bolusAmountPicker.getPickerValue())))
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
+        (confirmationDialog = new ConfirmationDialog(this,
+                HTMLUtil.getHTML(R.string.standard_bolus_confirmation, UnitFormatter.formatUnits(bolusAmountPicker.getPickerValue())), () -> {
                     showManualOverlay();
                     taskRunner.fetch(StandardBolusActivity.this);
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+            })).show();
     }
 
     @Override

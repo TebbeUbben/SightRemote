@@ -1,14 +1,11 @@
 package sugar.free.sightremote.activities;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -43,14 +40,14 @@ import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.StatusTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
-import sugar.free.sightremote.SightRemote;
 import sugar.free.sightremote.database.BolusDelivered;
-import sugar.free.sightremote.utils.ActivationWarningDialogChain;
+import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
 public class StatusActivity extends SightActivity implements View.OnClickListener, TaskRunner.ResultCallback {
 
+    private ConfirmationDialog confirmationDialog;
     private TaskRunner taskRunner;
     private StatusTaskRunner.StatusResult statusResult;
     private Handler handler = new Handler();
@@ -273,6 +270,12 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (confirmationDialog != null) confirmationDialog.hide();
+    }
+
     private int getBolusTitle(ActiveBolusType bolusType) {
         if (bolusType == ActiveBolusType.STANDARD) return R.string.standard_bolus;
         else if (bolusType == ActiveBolusType.EXTENDED) return R.string.extended_bolus;
@@ -406,18 +409,14 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 SetPumpStatusMessage message = new SetPumpStatusMessage();
                 message.setPumpStatus(PumpStatus.STARTED);
                 SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
-                new AlertDialog.Builder(this)
-                        .setMessage(HTMLUtil.getHTML(R.string.start_pump_confirmation))
-                        .setPositiveButton(R.string.yes, (dialog, which) -> {
-                            startPump.setVisible(false);
-                            if (StatusActivity.this.taskRunner != null)
-                                StatusActivity.this.taskRunner.cancel();
-                            taskRunner.fetch(errorToastResultCallback);
-                            handler.removeCallbacks(taskRunnerRunnable);
-                            handler.postDelayed(taskRunnerRunnable, 500);
-                        })
-                        .setNegativeButton(R.string.cancel, null)
-                        .show();
+                (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.start_pump_confirmation), () -> {
+                    startPump.setVisible(false);
+                    if (StatusActivity.this.taskRunner != null)
+                        StatusActivity.this.taskRunner.cancel();
+                    taskRunner.fetch(errorToastResultCallback);
+                    handler.removeCallbacks(taskRunnerRunnable);
+                    handler.postDelayed(taskRunnerRunnable, 500);
+                })).show();
             }
             return true;
         } else if (item == stopPump) {
@@ -425,18 +424,14 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 SetPumpStatusMessage message = new SetPumpStatusMessage();
                 message.setPumpStatus(PumpStatus.STOPPED);
                 SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
-                new AlertDialog.Builder(this)
-                        .setMessage(HTMLUtil.getHTML(R.string.stop_pump_confirmation))
-                        .setPositiveButton(R.string.yes, (dialog, which) -> {
-                            stopPump.setVisible(false);
-                            if (StatusActivity.this.taskRunner != null)
-                                StatusActivity.this.taskRunner.cancel();
-                            taskRunner.fetch(errorToastResultCallback);
-                            handler.removeCallbacks(taskRunnerRunnable);
-                            handler.postDelayed(taskRunnerRunnable, 500);
-                        })
-                        .setNegativeButton(R.string.cancel, null)
-                        .show();
+                (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.stop_pump_confirmation), () -> {
+                    stopPump.setVisible(false);
+                    if (StatusActivity.this.taskRunner != null)
+                        StatusActivity.this.taskRunner.cancel();
+                    taskRunner.fetch(errorToastResultCallback);
+                    handler.removeCallbacks(taskRunnerRunnable);
+                    handler.postDelayed(taskRunnerRunnable, 500);
+                })).show();
             }
             return true;
         }

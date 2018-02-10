@@ -7,22 +7,54 @@
         android:summary="@string/select_the_alarm_tone_used_for_pump_alerts"
         android:title="@string/alarm_tone" />
     <CheckBoxPreference
+        android:defaultValue="false"
         android:key="background_sync_enabled"
         android:summary="@string/synchronize_pump_data_automatically_in_the_background"
         android:title="@string/background_sync" />
-    <Preference
-        android:summary="@string/restrict_the_apps_functionality"
-        android:title="@string/firewall_options">
-        <intent
-            android:targetPackage="sugar.free.sightremote"
-            android:targetClass="sugar.free.sightremote.activities.FirewallActivity" />
-    </Preference>
-    <Preference
-        android:key="enter_password"
-        android:summary="@string/enter_the_password_required_for_remote_controlling_the_pump"
-        android:title="@string/enter_password" />
-    <Preference
-        android:key="delete_pairing"
-        android:summary="@string/delete_the_pairing_with_your_pump"
-        android:title="@string/delete_pairing" />
+
+    <PreferenceCategory
+        android:title="@string/confirmation">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="enable_confirmation_challenges"
+            android:summary="@string/avoid_inadvertent_bolus_deliveries"
+            android:title="@string/confirmation_challenges" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="enable_confirmation_challenges"
+            android:key="confirmation_use_fingerprint"
+            android:summary="@string/use_your_fingerprint_to_confirm_actions"
+            android:title="@string/use_fingerprint" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="enable_confirmation_challenges"
+            android:key="confirmation_use_pin"
+            android:inputType="numberPassword"
+            android:summary="@string/use_a_pin_instead_of_a_challenge"
+            android:title="@string/use_pin" />
+        <Preference
+            android:dependency="confirmation_use_pin"
+            android:key="confirmation_pin"
+            android:summary="@string/change_the_pin_used_for_confirmation"
+            android:title="@string/change_pin" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/connection">
+        <Preference
+            android:summary="@string/restrict_the_apps_functionality"
+            android:title="@string/firewall_options">
+            <intent
+                android:targetClass="sugar.free.sightremote.activities.FirewallActivity"
+                android:targetPackage="sugar.free.sightremote" />
+        </Preference>
+        <Preference
+            android:key="enter_password"
+            android:summary="@string/enter_the_password_required_for_remote_controlling_the_pump"
+            android:title="@string/enter_password" />
+        <Preference
+            android:key="delete_pairing"
+            android:summary="@string/delete_the_pairing_with_your_pump"
+            android:title="@string/delete_pairing" />
+    </PreferenceCategory>
 </PreferenceScreen>

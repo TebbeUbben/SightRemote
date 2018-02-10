@@ -34,10 +34,14 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.adapters.BRProfileAdapter;
 import sugar.free.sightremote.adapters.BRProfileBlockAdapter;
+import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.EditBRBlockDialog;
 import sugar.free.sightremote.utils.FixedSizeProfileBlock;
+import sugar.free.sightremote.utils.HTMLUtil;
 
 public class EditBRProfileActivity extends SightActivity implements TaskRunner.ResultCallback, BRProfileAdapter.OnClickListener, EditBRBlockDialog.BlockChangedListener {
+
+    private ConfirmationDialog confirmationDialog;
 
     private NameBlock nameBlock;
     private BRProfileBlock profileBlock;
@@ -123,18 +127,26 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (confirmationDialog != null) confirmationDialog.hide();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         } else if (item.getItemId() == R.id.edit_br_nav_done) {
-            showManualOverlay();
-            List<ConfigurationBlock> blocks = new ArrayList<>();
-            blocks.add(nameBlock);
-            profileBlock.setProfileBlocks(FixedSizeProfileBlock.convertToRelative(profileBlocks));
-            blocks.add(profileBlock);
-            WriteConfigurationTaskRunner taskRunner = new WriteConfigurationTaskRunner(getServiceConnector(), blocks);
-            taskRunner.fetch(this);
+            new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.edit_br_profile_confirmation), () -> {
+                showManualOverlay();
+                List<ConfigurationBlock> blocks = new ArrayList<>();
+                blocks.add(nameBlock);
+                profileBlock.setProfileBlocks(FixedSizeProfileBlock.convertToRelative(profileBlocks));
+                blocks.add(profileBlock);
+                WriteConfigurationTaskRunner taskRunner = new WriteConfigurationTaskRunner(getServiceConnector(), blocks);
+                taskRunner.fetch(this);
+            }).show();
         } else if (item.getItemId() == R.id.edit_br_nav_edit_name) {
             EditText editName = new EditText(this);
             editName.setInputType(InputType.TYPE_CLASS_TEXT);

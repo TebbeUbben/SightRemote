@@ -1,6 +1,5 @@
 package sugar.free.sightremote.activities;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -16,6 +15,7 @@ import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.SetTBRTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
+import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.DurationPicker;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
@@ -23,6 +23,7 @@ import sugar.free.sightremote.utils.UnitFormatter;
 public class TemporaryBasalRateActivity extends SightActivity implements View.OnClickListener, TaskRunner.ResultCallback, NumberPicker.OnValueChangeListener, DurationPicker.OnDurationChangeListener {
 
     private DurationPicker durationPicker;
+    private ConfirmationDialog confirmationDialog;
 
     private NumberPicker percentage;
     private NumberPicker digit1;
@@ -72,19 +73,21 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (confirmationDialog != null) confirmationDialog.hide();
+    }
+
+    @Override
     public void onClick(View v) {
         int duration = durationPicker.getPickerValue();
         int amount = percentage.getValue() * 10;
         SetTBRTaskRunner taskRunner = new SetTBRTaskRunner(getServiceConnector(), amount, duration);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.confirmation)
-                .setMessage(HTMLUtil.getHTML(R.string.tbr_confirmation, amount, UnitFormatter.formatDuration(duration)))
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
+        (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.tbr_confirmation, amount, UnitFormatter.formatDuration(duration)),
+                () -> {
                     showManualOverlay();
                     taskRunner.fetch(TemporaryBasalRateActivity.this);
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+                })).show();
     }
 
     @Override

@@ -56,6 +56,8 @@ import sugar.free.sightremote.database.TimeChanged;
 import sugar.free.sightremote.utils.HistoryResync;
 import sugar.free.sightremote.utils.HistorySendIntent;
 
+import static sugar.free.sightremote.utils.Preferences.*;
+
 public class HistorySyncService extends Service implements StatusCallback, TaskRunner.ResultCallback, ServiceConnectionCallback {
 
     private DatabaseHelper databaseHelper = null;
@@ -104,7 +106,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         intentFilter.addAction(HistoryBroadcast.ACTION_START_RESYNC);
         getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
         if (pendingIntent != null) alarmManager.cancel(pendingIntent);
-        if (SightRemote.getPreferences().getBoolean("background_sync_enabled", false)) {
+        if (getBooleanPref(PREF_BOOLEAN_BACKGROUND_SYNC_ENABLED)) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                     pendingIntent);
         }

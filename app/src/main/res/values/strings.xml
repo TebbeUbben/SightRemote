@@ -68,6 +68,7 @@
     <string name="profiles">Profiles</string>
     <string name="default_br_name">Basal Profile %1$d</string>
     <string name="change_br_profile_confirmation"><![CDATA[Are you sure you want to <b>change the active basal profile</b>?]]></string>
+    <string name="edit_br_profile_confirmation"><![CDATA[Are you sure you want to <b>edit this basal profile</b>?]]></string>
     <string name="history_immediate_amount"><![CDATA[Immediate: <b>%1$s</b>]]></string>
     <string name="history_extended_amount"><![CDATA[Extended: <b>%1$s in %2$s hours</b>]]></string>
     <string name="history">History</string>
@@ -121,4 +122,29 @@
     <string name="delete_the_pairing_with_your_pump">Delete the pairing with your pump.</string>
     <string name="settings">Settings</string>
     <string name="select_the_alarm_tone_used_for_pump_alerts">Select the alarm tone used for pump alerts.</string>
+    <string name="confirmation_challenges">Confirmation challenges</string>
+    <string name="avoid_inadvertent_bolus_deliveries">Avoid inadvertent bolus deliveries.</string>
+    <string name="use_fingerprint">Use fingerprint</string>
+    <string name="use_your_fingerprint_to_confirm_actions">Use your fingerprint to confirm actions.</string>
+    <string name="use_pin">Use PIN</string>
+    <string name="use_a_pin_instead_of_a_challenge">Use a pin instead of a challenge.</string>
+    <string name="change_pin">Change PIN</string>
+    <string name="change_the_pin_used_for_confirmation">Change the PIN used for confirmation.</string>
+    <string name="or_enter_your_pin">Or enter your PIN:</string>
+    <string name="or_press_the_buttons_in_the_following_order"><![CDATA[Or press the buttons in the following order: <b>%1$d-%2$d-%3$d-%4$d</b>]]></string>
+    <string name="enter_your_pin">Enter your PIN:</string>
+    <string name="press_the_buttons_in_the_following_order"><![CDATA[Press the buttons in the following order: <b>%1$d-%2$d-%3$d-%4$d</b>]]></string>
+    <string name="wrong_pin">Wrong PIN</string>
+    <string name="couldnt_recognize_fingerprint">Couldn\'t recognize fingerprint</string>
+    <string name="use_your_fingerprint_for_confirmation">Use your fingerprint for confirmation.</string>
+    <string name="enter_your_old_pin">Enter your old PIN:</string>
+    <string name="enter_your_new_pin">Enter your new PIN:</string>
+    <string name="enter_your_new_pin_a_second_time">Enter your new PIN a second time:</string>
+    <string name="no_match">No match</string>
+    <string name="pin_must_have_a_least_four_digits">PIN must have at least four digits</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="connection">Connection</string>
 </resources>

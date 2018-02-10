@@ -13,8 +13,6 @@ import sugar.free.sightremote.services.HistorySyncService;
 
 public class SightRemote extends Application {
 
-    private static SharedPreferences sharedPreferences;
-
     @Getter
     private static SightRemote instance;
 
@@ -22,19 +20,11 @@ public class SightRemote extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         PreferenceManager.setDefaultValues(this, R.xml.settings, true);
-
 
         instance = this;
         startService(new Intent(this, SightService.class));
         startService(new Intent(this, HistorySyncService.class));
         startService(new Intent(this, AlertService.class));
-    }
-
-    public static SharedPreferences getPreferences() {
-        if (sharedPreferences == null)
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getInstance());
-        return sharedPreferences;
     }
 }

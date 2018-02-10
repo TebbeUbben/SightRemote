@@ -1,6 +1,5 @@
 package sugar.free.sightremote.activities;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -32,10 +31,12 @@ import sugar.free.sightparser.handling.taskrunners.WriteConfigurationTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.adapters.BRProfileAdapter;
+import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.HTMLUtil;
 
 public class ChangeActiveBRProfileActivity extends SightActivity implements TaskRunner.ResultCallback, BRProfileAdapter.BRProfileChangeListener, BRProfileAdapter.OnClickListener {
 
+    private ConfirmationDialog confirmationDialog;
     private RecyclerView profileList;
     private BRProfileAdapter adapter;
     private List<BRProfileBlock> brProfileBlocks;
@@ -111,6 +112,12 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (confirmationDialog != null) confirmationDialog.hide();
+    }
+
+    @Override
     public void onError(Exception e) {
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
     }
@@ -127,18 +134,11 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
         ArrayList<ConfigurationBlock> blocks = new ArrayList<>();
         blocks.add(block);
         WriteConfigurationTaskRunner taskRunner = new WriteConfigurationTaskRunner(getServiceConnector(), blocks);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.confirmation)
-                .setMessage(HTMLUtil.getHTML(R.string.change_br_profile_confirmation))
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    taskRunner.fetch(this);
-                    adapter.setActiveProfile(profile);
-                    adapter.notifyDataSetChanged();
-                })
-                .setNegativeButton(R.string.cancel, (dialog, which) -> {
-                    adapter.notifyDataSetChanged();
-                })
-                .show();
+        (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.change_br_profile_confirmation), () -> {
+            taskRunner.fetch(this);
+            adapter.setActiveProfile(profile);
+            adapter.notifyDataSetChanged();
+        })).show();
     }
 
     @Override

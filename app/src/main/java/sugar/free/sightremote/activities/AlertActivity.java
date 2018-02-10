@@ -55,6 +55,8 @@ import sugar.free.sightremote.services.AlertService;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
+import static sugar.free.sightremote.utils.Preferences.*;
+
 public class AlertActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ServiceConnection serviceConnection;
@@ -71,14 +73,13 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
     private TextView alertDescription;
     private FloatingActionButton mute;
     private FloatingActionButton dismiss;
-    private LinearLayout buttonContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        String selectedTone = getSharedPreferences("sugar.free.sightremote.services.SIGHTREMOTE", MODE_PRIVATE).getString("alert_alarm_tone", null);
+        String selectedTone = getStringPref(PREF_STRING_ALERT_ALARM_TONE);
         Uri uri = selectedTone == null ? RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE) : Uri.parse(selectedTone);
         ringtone = RingtoneManager.getRingtone(this, uri);
 
@@ -106,7 +107,6 @@ public class AlertActivity extends AppCompatActivity implements View.OnClickList
         alertDescription = findViewById(R.id.alert_description);
         mute = findViewById(R.id.mute);
         dismiss = findViewById(R.id.dismiss);
-        buttonContainer = findViewById(R.id.button_container);
 
         mute.setOnClickListener(this);
         dismiss.setOnClickListener(this);

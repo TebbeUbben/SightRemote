@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:paddingLeft="22dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp">
+
+    <LinearLayout
+        android:id="@+id/fingerprint_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <View
+            android:id="@+id/fingerprint_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_fingerprint" />
+
+        <TextView
+            android:id="@+id/fingerprint_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="@string/use_your_fingerprint_for_confirmation"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:visibility="gone"
+        android:id="@+id/spacer" />
+    <TextView
+        android:id="@+id/confirmation_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/or_press_the_buttons_in_the_following_order"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/challenge_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/challenge_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/_1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+
+        <Button
+            android:id="@+id/challenge_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/_2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+
+        <Button
+            android:id="@+id/challenge_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/_3"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+
+        <Button
+            android:id="@+id/challenge_4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/_4"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/pin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:inputType="numberPassword"
+        android:textColor="#FFFFFF"
+        android:visibility="gone" />
+</LinearLayout>

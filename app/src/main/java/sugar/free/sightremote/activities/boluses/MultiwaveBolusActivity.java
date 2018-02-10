@@ -1,6 +1,5 @@
 package sugar.free.sightremote.activities.boluses;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -8,8 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Toast;
-
-import java.text.DecimalFormat;
 
 import sugar.free.sightparser.applayer.messages.remote_control.MultiwaveBolusMessage;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
@@ -19,12 +16,14 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.activities.SightActivity;
 import sugar.free.sightremote.utils.BolusAmountPicker;
+import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.DurationPicker;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
 public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.ResultCallback, View.OnClickListener, BolusAmountPicker.OnAmountChangeListener, DurationPicker.OnDurationChangeListener {
 
+    private ConfirmationDialog confirmationDialog;
     private BolusAmountPicker immediateBolusAmountPicker;
     private BolusAmountPicker delayedBolusAmountPicker;
     private DurationPicker durationPicker;
@@ -99,6 +98,11 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
         } else finish();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (confirmationDialog != null) confirmationDialog.hide();
+    }
 
     @Override
     protected void connectedToService() {
@@ -128,18 +132,13 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
         message.setDelayedAmount(delayedBolusAmountPicker.getPickerValue());
         message.setDuration((short) durationPicker.getPickerValue());
         SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.confirmation)
-                .setMessage(HTMLUtil.getHTML(R.string.multiwave_bolus_confirmation,
-                        UnitFormatter.formatUnits(immediateBolusAmountPicker.getPickerValue()),
-                        UnitFormatter.formatUnits(delayedBolusAmountPicker.getPickerValue()),
-                        UnitFormatter.formatDuration(durationPicker.getPickerValue())))
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    showManualOverlay();
-                    taskRunner.fetch(MultiwaveBolusActivity.this);
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+        (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.multiwave_bolus_confirmation,
+                UnitFormatter.formatUnits(immediateBolusAmountPicker.getPickerValue()),
+                UnitFormatter.formatUnits(delayedBolusAmountPicker.getPickerValue()),
+                UnitFormatter.formatDuration(durationPicker.getPickerValue())), () -> {
+            showManualOverlay();
+            taskRunner.fetch(MultiwaveBolusActivity.this);
+        })).show();
     }
 
     @Override

@@ -3,6 +3,7 @@
     <group android:id="@+id/status">
         <item
             android:id="@+id/nav_status"
+            android:icon="@drawable/ic_status"
             android:title="@string/status" />
     </group>
     <item android:title="@string/bolus">
@@ -10,12 +11,15 @@
             <group>
                 <item
                     android:id="@+id/nav_standard_bolus"
+                    android:icon="@drawable/ic_immediate_bolus"
                     android:title="@string/standard_bolus" />
                 <item
                     android:id="@+id/nav_extended_bolus"
+                    android:icon="@drawable/ic_extended_bolus"
                     android:title="@string/extended_bolus" />
                 <item
                     android:id="@+id/nav_multiwave_bolus"
+                    android:icon="@drawable/ic_multiwave_bolus"
                     android:title="@string/multiwave_bolus" />
             </group>
         </menu>
@@ -25,9 +29,11 @@
             <group>
                 <item
                     android:id="@+id/nav_tbr"
+                    android:icon="@drawable/ic_tbr"
                     android:title="@string/temporary_basalrate" />
                 <item
                     android:id="@+id/nav_br_profiles"
+                    android:icon="@drawable/ic_basal_profile"
                     android:title="@string/profiles" />
             </group>
         </menu>
@@ -37,9 +43,11 @@
             <group>
                 <item
                     android:id="@+id/nav_bolus_data"
+                    android:icon="@drawable/ic_immediate_bolus"
                     android:title="@string/bolus_data" />
                 <item
                     android:id="@+id/nav_tbr_data"
+                    android:icon="@drawable/ic_tbr"
                     android:title="@string/tbr_data" />
             </group>
         </menu>
@@ -47,6 +55,7 @@
     <group android:id="@+id/settings">
         <item
             android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
             android:title="@string/settings" />
     </group>
 </menu>
