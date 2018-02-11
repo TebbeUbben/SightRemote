@@ -14,7 +14,8 @@ android:
     - extra-android-support
 
 before_install:
- - chmod +x gradlew
+  - yes | sdkmanager "platforms;android-27"
+  - chmod +x gradlew
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
