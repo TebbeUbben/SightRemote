@@ -7,11 +7,11 @@ public class InvalidAuthCRCError extends SightError {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private short received;
+    private int received;
     @Getter
-    private short expected;
+    private int expected;
 
-    public InvalidAuthCRCError(short received, short expected) {
+    public InvalidAuthCRCError(int received, int expected) {
         this.received = received;
         this.expected = expected;
     }

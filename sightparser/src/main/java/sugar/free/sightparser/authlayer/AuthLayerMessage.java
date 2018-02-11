@@ -1,6 +1,7 @@
 package sugar.free.sightparser.authlayer;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import org.spongycastle.util.encoders.Hex;
 
@@ -58,12 +59,12 @@ public abstract class AuthLayerMessage extends Message {
         byte[] data = getData();
         byte[] nonceBytes = processNonce(nonce);
         byte[] dataEncrypted = Cryptograph.encryptDataCTR(data, key, nonceBytes);
-        short dataLength = (short) dataEncrypted.length;
-        short length = (short) (29 + dataLength);
+        int dataLength = dataEncrypted.length;
+        int length = (short) (29 + dataLength);
         ByteBuf byteBuf = new ByteBuf(length + 8);
         byteBuf.putBytes(MAGIC_HEADER);
         byteBuf.putUInt16LE(length);
-        byteBuf.putUInt16LE((short) ~length);
+        byteBuf.putUInt16LE(~length);
         byteBuf.putByte(VERSION);
         byteBuf.putByte(getCommand());
         byteBuf.putUInt16LE(dataLength);
@@ -75,7 +76,7 @@ public abstract class AuthLayerMessage extends Message {
     }
 
     public static AuthLayerMessage deserialize(ByteBuf data, BigInteger lastNonce, byte[] key) throws IllegalAccessException, InstantiationException, SightError {
-        data.shift(4); //Magic header
+        data.shift(4); //Preamble
         int packetLength = data.readUInt16LE();
         data.shift(2); //Packet length XOR
         byte[] crcContent = data.getBytes(packetLength - 10);
@@ -103,9 +104,9 @@ public abstract class AuthLayerMessage extends Message {
                 System.arraycopy(payload, dataLength - 2, crcBytes, 0, 2);
                 System.arraycopy(payload, 0, rawData, 0, dataLength - 2);
                 payload = rawData;
-                short crc = (short) (crcBytes[0] & 0xFF | crcBytes[1] << 8);
-                short calculatedCRC = (short) Cryptograph.calculateCRC(crcContent);
-                if (!(crc == calculatedCRC)) throw new InvalidAuthCRCError(crc, calculatedCRC);
+                int crc = (crcBytes[0] & 0xFF | (crcBytes[1] & 0xFF)  << 8);
+                int calculatedCRC = Cryptograph.calculateCRC(crcContent);
+                if (crc != calculatedCRC) throw new InvalidAuthCRCError(crc, calculatedCRC);
             } else {
                 payload = Cryptograph.encryptDataCTR(payload, key, nonceTrailer);
                 byte[] calculatedTrailer = Cryptograph.produceCCMTag(nonceTrailer, payload, header, key);

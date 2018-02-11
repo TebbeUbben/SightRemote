@@ -89,7 +89,19 @@ public class ConfirmationDialog implements TextWatcher, View.OnClickListener {
         dialog = builder.show();
         dialog.setOnDismissListener((dialogInterface -> onClose()));
         if (useFingerprint()) getFingerprintManager().authenticate(null,
-                cancellationSignal = new CancellationSignal(), 0, authenticationCallback, null);
+                cancellationSignal = new CancellationSignal(), 0, new FingerprintManager.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
+                        onConfirm();
+                    }
+
+                    @Override
+                    public void onAuthenticationFailed() {
+                        fingerprintIcon.getBackground().setColorFilter(ContextCompat.getColor(SightRemote.getInstance(), R.color.colorWrong), PorterDuff.Mode.MULTIPLY);
+                        fingerprintText.setText(R.string.couldnt_recognize_fingerprint);
+                        fingerprintText.setTextColor(ContextCompat.getColor(SightRemote.getInstance(), R.color.colorWrong));
+                    }
+                }, null);
         if (getBooleanPref(PREF_BOOLEAN_ENABLE_CONFIRMATION_CHALLENGES)) pin.requestFocus();
     }
 
@@ -266,20 +278,5 @@ public class ConfirmationDialog implements TextWatcher, View.OnClickListener {
             pin.setError(SightRemote.getInstance().getString(R.string.wrong_pin));
         }
     }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private FingerprintManager.AuthenticationCallback authenticationCallback = new FingerprintManager.AuthenticationCallback() {
-        @Override
-        public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-            onConfirm();
-        }
-
-        @Override
-        public void onAuthenticationFailed() {
-            fingerprintIcon.getBackground().setColorFilter(ContextCompat.getColor(SightRemote.getInstance(), R.color.colorWrong), PorterDuff.Mode.MULTIPLY);
-            fingerprintText.setText(R.string.couldnt_recognize_fingerprint);
-            fingerprintText.setTextColor(ContextCompat.getColor(SightRemote.getInstance(), R.color.colorWrong));
-        }
-    };
 
 }

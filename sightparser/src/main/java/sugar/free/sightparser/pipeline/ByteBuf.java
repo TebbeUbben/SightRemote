@@ -154,7 +154,7 @@ public class ByteBuf {
 
     public long readUInt32LE() {
         long l = getUInt32LE();
-        shift(2);
+        shift(4);
         return l;
     }
 
