@@ -54,7 +54,7 @@ public abstract class AuthLayerMessage extends Message {
         return new byte[0];
     }
 
-    public ByteBuf serialize(BigInteger nonce, int commID, byte[] key) {
+    public ByteBuf serialize(BigInteger nonce, long commID, byte[] key) {
         byte[] data = getData();
         byte[] nonceBytes = processNonce(nonce);
         byte[] dataEncrypted = Cryptograph.encryptDataCTR(data, key, nonceBytes);

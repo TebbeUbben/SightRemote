@@ -19,7 +19,7 @@ public class AuthLayerProcessor implements DuplexHandler {
         if (!(message instanceof ByteBuf)) return;
         ByteBuf data = (ByteBuf) message;
         while (data.size() >= 37) {
-            int length = data.getShortLE(4);
+            int length = data.getUInt16LE(4);
             if (data.size() < length + 8) return;
             try {
                 AuthLayerMessage authLayerMessage = AuthLayerMessage.deserialize(data, pipeline.getLastNonceReceived(),

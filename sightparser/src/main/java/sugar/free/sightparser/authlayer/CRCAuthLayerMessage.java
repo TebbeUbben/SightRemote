@@ -8,7 +8,7 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 public abstract class CRCAuthLayerMessage extends AuthLayerMessage {
 
     @Override
-    public ByteBuf serialize(BigInteger nonce, int commID, byte[] key) {
+    public ByteBuf serialize(BigInteger nonce, long commID, byte[] key) {
         byte[] data = getData();
         short dataLength = (short) (data.length + 2);
         short length = (short) (29 + dataLength);
