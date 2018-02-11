@@ -5,9 +5,9 @@ ext {
     buildToolsVersion = '27.0.3'
 
     versionMajor = 1
-    versionMinor = 3
+    versionMinor = 4
     versionRevision = 0
-    versionCompatiblity = 'golden-age'
+    versionCompatiblity = 'asclepius'
 
     versionCode = 1
     versionName = versionMajor + "." + versionMinor + "." + versionRevision + "_" + versionCompatiblity

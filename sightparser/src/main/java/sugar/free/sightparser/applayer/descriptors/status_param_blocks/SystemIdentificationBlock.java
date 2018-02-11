@@ -24,7 +24,7 @@ public class SystemIdentificationBlock extends StatusBlock {
     @Override
     public void parse(ByteBuf byteBuf) {
         serialNumber = byteBuf.readUTF16LE(20);
-        systemIdAppendix = byteBuf.readInt();
+        systemIdAppendix = (int) byteBuf.readUInt32LE();
         manufacturingDate = byteBuf.readUTF16LE(24);
     }
 

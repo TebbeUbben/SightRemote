@@ -31,5 +31,6 @@ public class HistoryBroadcast {
     public static final String EXTRA_NEW_STATUS = "NEW_STATUS";
     public static final String EXTRA_TIME_BEFORE = "TIME_BEFORE";
     public static final String EXTRA_FILL_AMOUNT = "FILL_AMOUNT";
+    public static final String EXTRA_RESYNC = "RESYNC";
 
 }

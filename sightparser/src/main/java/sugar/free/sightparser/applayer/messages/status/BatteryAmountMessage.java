@@ -24,6 +24,6 @@ public class BatteryAmountMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        batteryAmount = byteBuf.getShortLE(2);
+        batteryAmount = byteBuf.getUInt16LE(2);
     }
 }

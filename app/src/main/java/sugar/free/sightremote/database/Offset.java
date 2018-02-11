@@ -19,7 +19,7 @@ import sugar.free.sightparser.applayer.descriptors.HistoryType;
 public class Offset {
 
     @DatabaseField(generatedId = true)
-    private int id;
+    private long id;
 
     @DatabaseField
     private String pump;
@@ -28,9 +28,9 @@ public class Offset {
     private HistoryType historyType;
 
     @DatabaseField
-    private int offset;
+    private long offset;
 
-    public static int getOffset(DatabaseHelper helper, String pump, HistoryType historyType) {
+    public static long getOffset(DatabaseHelper helper, String pump, HistoryType historyType) {
         try {
             List<Offset> result = helper.getOffsetDao().queryBuilder()
                     .where().eq("historyType", historyType)
@@ -42,7 +42,7 @@ public class Offset {
         return -1;
     };
 
-    public static void setOffset(DatabaseHelper helper, String pump, HistoryType historyType, int offset) {
+    public static void setOffset(DatabaseHelper helper, String pump, HistoryType historyType, long offset) {
         try {
             List<Offset> result = helper.getOffsetDao().queryBuilder()
                     .where().eq("historyType", historyType)

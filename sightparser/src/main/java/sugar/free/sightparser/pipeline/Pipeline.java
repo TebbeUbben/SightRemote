@@ -48,7 +48,7 @@ public class Pipeline {
     @Getter
     private DerivedKeys derivedKeys;
     @Getter
-    private int commID = 0;
+    private long commID = 0;
 
     @Getter
     private BigInteger lastNonceSent = BigInteger.ZERO;
@@ -70,7 +70,7 @@ public class Pipeline {
             derivedKeys.setOutgoingKey(Hex.decode(dataStorage.get("OUTGOINGKEY")));
         }
         if (dataStorage.contains("COMMID"))
-            commID = Integer.parseInt(dataStorage.get("COMMID"));
+            commID = Long.parseLong(dataStorage.get("COMMID"));
         if (dataStorage.contains("LASTNONCESENT"))
             lastNonceSent = new BigInteger(Hex.decode(dataStorage.get("LASTNONCESENT")));
         if (dataStorage.contains("LASTNONCERECEIVED"))
@@ -137,7 +137,7 @@ public class Pipeline {
         dataStorage.set("OUTGOINGKEY", Hex.toHexString(derivedKeys.getOutgoingKey()));
     }
 
-    public void setCommID(int commID) {
+    public void setCommID(long commID) {
         dataStorage.set("COMMID", commID + "");
         this.commID = commID;
     }

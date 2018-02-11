@@ -140,7 +140,7 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         byteBuf.putByte(getService().getServiceID());
         byteBuf.putShort(getCommand());
         byteBuf.putBytes(data);
-        if (outCRC()) byteBuf.putShortLE((short) Cryptograph.calculateCRC(data));
+        if (outCRC()) byteBuf.putUInt16LE(Cryptograph.calculateCRC(data));
         return byteBuf.getBytes();
     }
 
@@ -163,9 +163,9 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         ByteBuf dataBuf = new ByteBuf(data.length);
         dataBuf.putBytes(data);
         if (message.inCRC()) {
-            short crc = dataBuf.getShortLE(data.length - 2);
+            int crc = dataBuf.getUInt16LE(data.length - 2);
             byte[] bytes = dataBuf.getBytes(data.length - 2);
-            short calculatedCRC = (short) Cryptograph.calculateCRC(bytes);
+            int calculatedCRC = Cryptograph.calculateCRC(bytes);
             if (crc != calculatedCRC) throw new InvalidAppCRCError(crc, calculatedCRC);
             dataBuf = new ByteBuf(bytes.length);
             dataBuf.putBytes(bytes);

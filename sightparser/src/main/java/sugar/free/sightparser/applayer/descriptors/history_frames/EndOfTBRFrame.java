@@ -12,8 +12,8 @@ public class EndOfTBRFrame extends HistoryFrame {
     private int startHour;
     private int startMinute;
     private int startSecond;
-    private short amount;
-    private short duration;
+    private int amount;
+    private int duration;
 
     @Override
     public void parse(ByteBuf byteBuf) {
@@ -21,7 +21,7 @@ public class EndOfTBRFrame extends HistoryFrame {
         startHour = BOCUtil.parseBOC(byteBuf.readByte());
         startMinute = BOCUtil.parseBOC(byteBuf.readByte());
         startSecond = BOCUtil.parseBOC(byteBuf.readByte());
-        amount = byteBuf.readShortLE();
-        duration = byteBuf.readShortLE();
+        amount = byteBuf.readUInt16LE();
+        duration = byteBuf.readUInt16LE();
     }
 }

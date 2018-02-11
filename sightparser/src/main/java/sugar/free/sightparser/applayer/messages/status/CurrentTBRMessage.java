@@ -33,8 +33,8 @@ public class CurrentTBRMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        percentage = byteBuf.readShortLE();
-        leftoverTime = byteBuf.readShortLE();
-        initialTime = byteBuf.readShortLE();
+        percentage = byteBuf.readUInt16LE();
+        leftoverTime = byteBuf.readUInt16LE();
+        initialTime = byteBuf.readUInt16LE();
     }
 }

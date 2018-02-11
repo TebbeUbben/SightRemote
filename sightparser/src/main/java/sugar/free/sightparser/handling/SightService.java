@@ -35,7 +35,7 @@ import sugar.free.sightparser.pipeline.Status;
 
 public class SightService extends Service {
 
-    public static final String COMPATIBILITY_VERSION = "1.02";
+    public static final String COMPATIBILITY_VERSION = "asclepius";
     private static final int DISCONNECT_DELAY = 20000;
     private static final int MIN_TIMEOUT_WAIT = 4000;
     private static final int MAX_TIMEOUT_WAIT = 60000;

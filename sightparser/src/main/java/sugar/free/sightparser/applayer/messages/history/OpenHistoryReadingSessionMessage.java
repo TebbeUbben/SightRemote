@@ -16,7 +16,7 @@ public class OpenHistoryReadingSessionMessage extends AppLayerMessage {
     @Setter
     private HistoryReadingDirection readingDirection;
     @Setter
-    private int offset;
+    private long offset;
 
     @Override
     public Service getService() {
@@ -38,7 +38,7 @@ public class OpenHistoryReadingSessionMessage extends AppLayerMessage {
         ByteBuf byteBuf = new ByteBuf(8);
         byteBuf.putShort(historyType.getValue());
         byteBuf.putShort(readingDirection.getValue());
-        byteBuf.putIntLE(offset);
+        byteBuf.putUInt32LE(offset);
         return byteBuf.getBytes();
     }
 }

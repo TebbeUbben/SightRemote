@@ -46,7 +46,7 @@ public abstract class AuthLayerMessage extends Message {
     @Getter
     private BigInteger nonce;
     @Getter
-    private int commID;
+    private long commID;
 
     protected abstract byte getCommand();
 
@@ -62,12 +62,12 @@ public abstract class AuthLayerMessage extends Message {
         short length = (short) (29 + dataLength);
         ByteBuf byteBuf = new ByteBuf(length + 8);
         byteBuf.putBytes(MAGIC_HEADER);
-        byteBuf.putShortLE(length);
-        byteBuf.putShortLE((short) ~length);
+        byteBuf.putUInt16LE(length);
+        byteBuf.putUInt16LE((short) ~length);
         byteBuf.putByte(VERSION);
         byteBuf.putByte(getCommand());
-        byteBuf.putShortLE(dataLength);
-        byteBuf.putIntLE(commID);
+        byteBuf.putUInt16LE(dataLength);
+        byteBuf.putUInt32LE(commID);
         byteBuf.putBytes(nonceBytes);
         byteBuf.putBytes(dataEncrypted);
         byteBuf.putBytes(Cryptograph.produceCCMTag(byteBuf.getBytes(16, 13), data, byteBuf.getBytes(8, 21), key));
@@ -76,7 +76,7 @@ public abstract class AuthLayerMessage extends Message {
 
     public static AuthLayerMessage deserialize(ByteBuf data, BigInteger lastNonce, byte[] key) throws IllegalAccessException, InstantiationException, SightError {
         data.shift(4); //Magic header
-        int packetLength = data.readShortLE();
+        int packetLength = data.readUInt16LE();
         data.shift(2); //Packet length XOR
         byte[] crcContent = data.getBytes(packetLength - 10);
         byte[] header = data.getBytes(21);
@@ -84,8 +84,8 @@ public abstract class AuthLayerMessage extends Message {
         byte command = data.readByte();
         Class clazz = MESSAGES.get(command);
         if (clazz == null) throw new UnknownAuthMessageError(command);
-        int dataLength = data.readShortLE();
-        int commID = data.readIntLE();
+        int dataLength = data.readUInt16LE();
+        long commID = data.readUInt32LE();
         byte[] nonceTrailer = data.getBytes(13);
         byte[] nonce = data.readBytesLE(13);
         byte[] payload = data.readBytes(dataLength);

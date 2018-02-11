@@ -10,7 +10,7 @@ public class ExtendedBolusMessage extends BolusMessage {
     @Setter
     private float amount;
     @Setter
-    private short duration;
+    private int duration;
 
     @Override
     protected byte[] getData() throws Exception {
@@ -20,12 +20,12 @@ public class ExtendedBolusMessage extends BolusMessage {
         data.putShort((short) 0x1F00);
         data.putShort((short) 0x0000);
         data.putShort((short) 0x0000);
-        data.putShortLE((short) (amount * 100F));
-        data.putShortLE(duration);
+        data.putUInt16LE((int) (amount * 100F));
+        data.putUInt16LE(duration);
         data.putShort((short) 0x0000);
         data.putShort((short) 0x0000);
-        data.putShortLE((short) (amount * 100F));
-        data.putShortLE(duration);
+        data.putUInt16LE((int) (amount * 100F));
+        data.putUInt16LE(duration);
         return data.getBytes();
     }
 }

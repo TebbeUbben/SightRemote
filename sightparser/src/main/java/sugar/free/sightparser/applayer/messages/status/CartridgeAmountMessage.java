@@ -25,6 +25,6 @@ public class CartridgeAmountMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        cartridgeAmount = RoundingUtil.roundFloat(((float) byteBuf.getShortLE(6)) / 100F, 2);
+        cartridgeAmount = RoundingUtil.roundFloat(((float) byteBuf.getUInt16LE(6)) / 100F, 2);
     }
 }

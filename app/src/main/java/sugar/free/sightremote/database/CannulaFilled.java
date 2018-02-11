@@ -15,10 +15,10 @@ import lombok.Setter;
 public class CannulaFilled {
 
     @DatabaseField(generatedId = true)
-    private int id;
+    private long id;
 
     @DatabaseField
-    private int eventNumber;
+    private long eventNumber;
 
     @DatabaseField
     private String pump;

@@ -24,6 +24,6 @@ public class WarrantyTimerMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        warrantyTimer = byteBuf.readIntLE();
+        warrantyTimer = byteBuf.readUInt16LE();
     }
 }

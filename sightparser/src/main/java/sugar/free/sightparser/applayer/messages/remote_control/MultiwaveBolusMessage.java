@@ -12,7 +12,7 @@ public class MultiwaveBolusMessage extends BolusMessage {
     @Setter
     private float delayedAmount;
     @Setter
-    private short duration;
+    private int duration;
 
     @Override
     protected byte[] getData() throws Exception {
@@ -21,13 +21,13 @@ public class MultiwaveBolusMessage extends BolusMessage {
         data.putShort((short) 0xFC00);
         data.putShort((short) 0x1F00);
         data.putShort((short) 0x0000);
-        data.putShortLE((short) (amount * 100F));
-        data.putShortLE((short) (delayedAmount * 100F));
-        data.putShortLE(duration);
+        data.putUInt16LE((int) (amount * 100F));
+        data.putUInt16LE((int) (delayedAmount * 100F));
+        data.putUInt16LE(duration);
         data.putShort((short) 0x0000);
-        data.putShortLE((short) (amount * 100F));
-        data.putShortLE((short) (delayedAmount * 100F));
-        data.putShortLE(duration);
+        data.putUInt16LE((int) (amount * 100F));
+        data.putUInt16LE((int) (delayedAmount * 100F));
+        data.putUInt16LE(duration);
         return data.getBytes();
     }
 }

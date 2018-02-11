@@ -68,6 +68,7 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
         if (status == Status.CONNECTED) {
             new SingleMessageTaskRunner(getServiceConnector(), new PumpStatusMessage()).fetch(this);
         } else {
+            if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
         }
     }

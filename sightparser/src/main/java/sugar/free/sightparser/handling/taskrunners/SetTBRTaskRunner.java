@@ -26,8 +26,8 @@ public class SetTBRTaskRunner extends TaskRunner {
             SetTBRMessage setTBRMessage;
             if (((CurrentTBRMessage) message).getPercentage() == 100) setTBRMessage = new SetTBRMessage();
             else setTBRMessage = new ChangeTBRMessage();
-            setTBRMessage.setAmount((short) amount);
-            setTBRMessage.setDuration((short) duration);
+            setTBRMessage.setAmount(amount);
+            setTBRMessage.setDuration(duration);
             return setTBRMessage;
         } else if (message instanceof SetTBRMessage) finish(null);
         return null;

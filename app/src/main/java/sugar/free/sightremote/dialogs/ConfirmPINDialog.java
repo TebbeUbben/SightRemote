@@ -31,7 +31,7 @@ public class ConfirmPINDialog implements TextWatcher {
         vibrator = (Vibrator) SightRemote.getInstance().getSystemService(Context.VIBRATOR_SERVICE);
     }
 
-    public void show() {
+    public AlertDialog show() {
         rootLayout = (LinearLayout) LayoutInflater.from(SightRemote.getInstance()).inflate(R.layout.dialog_confirm_pin, null);
         pin = rootLayout.findViewById(R.id.pin);
         pin.addTextChangedListener(this);
@@ -39,6 +39,7 @@ public class ConfirmPINDialog implements TextWatcher {
                 .setNegativeButton(R.string.cancel, null)
                 .setView(rootLayout)
                 .show();
+        return dialog;
     }
 
     private void onConfirm() {

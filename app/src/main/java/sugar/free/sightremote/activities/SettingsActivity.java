@@ -19,6 +19,8 @@ import static sugar.free.sightremote.utils.Preferences.*;
 
 public class SettingsActivity extends SightActivity {
 
+    private AlertDialog dialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,12 @@ public class SettingsActivity extends SightActivity {
     @Override
     protected boolean useOverlay() {
         return false;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (dialog != null) dialog.hide();
     }
 
     public static class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
@@ -64,7 +72,7 @@ public class SettingsActivity extends SightActivity {
                 new ActivationWarningDialogChain(getSettingsActivity(), getSettingsActivity().getServiceConnector()).doActivationWarning();
                 return true;
             } else if (preference.getKey().equals("delete_pairing")) {
-                new AlertDialog.Builder(getSettingsActivity())
+                getSettingsActivity().dialog = new AlertDialog.Builder(getSettingsActivity())
                         .setTitle(R.string.confirmation)
                         .setMessage(HTMLUtil.getHTML(R.string.delete_pairing_confirmation))
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
@@ -78,7 +86,7 @@ public class SettingsActivity extends SightActivity {
                         .show();
                 return true;
             } else if (preference.getKey().equals(PREF_STRING_CONFIRMATION_PIN)) {
-                new ChangePINDialog(getSettingsActivity(), null).show();
+                getSettingsActivity().dialog = new ChangePINDialog(getSettingsActivity(), null).show();
                 return true;
             }
             return false;
@@ -92,19 +100,19 @@ public class SettingsActivity extends SightActivity {
         public boolean onPreferenceChange(Preference preference, Object o) {
             if (preference.getKey().equals(PREF_BOOLEAN_CONFIRMATION_USE_PIN)) {
                 if (getBooleanPref(PREF_BOOLEAN_CONFIRMATION_USE_PIN)) {
-                    new ConfirmPINDialog(getSettingsActivity(), () -> {
+                    getSettingsActivity().dialog = new ConfirmPINDialog(getSettingsActivity(), () -> {
                         ((CheckBoxPreference) preference).setChecked(false);
                         setBooleanPref(PREF_BOOLEAN_CONFIRMATION_USE_PIN, false);
                         setStringPref(PREF_STRING_CONFIRMATION_PIN, null);
                     }).show();
-                } else new ChangePINDialog(getSettingsActivity(), () -> {
+                } else getSettingsActivity().dialog = new ChangePINDialog(getSettingsActivity(), () -> {
                     ((CheckBoxPreference) preference).setChecked(true);
                     setBooleanPref(PREF_BOOLEAN_CONFIRMATION_USE_PIN, true);
                 }).show();
                 return false;
             } else if (preference.getKey().equals(PREF_BOOLEAN_CONFIRMATION_USE_FINGERPRINT)) {
                 if (getBooleanPref(PREF_BOOLEAN_CONFIRMATION_USE_PIN)) {
-                    new ConfirmPINDialog(getSettingsActivity(), () -> {
+                    getSettingsActivity().dialog = new ConfirmPINDialog(getSettingsActivity(), () -> {
                         CheckBoxPreference useFingerprint = (CheckBoxPreference) preference;
                         useFingerprint.setChecked(!useFingerprint.isChecked());
                         setBooleanPref(PREF_BOOLEAN_CONFIRMATION_USE_FINGERPRINT, useFingerprint.isChecked());
@@ -113,7 +121,7 @@ public class SettingsActivity extends SightActivity {
                 }
             } else if (preference.getKey().equals(PREF_BOOLEAN_ENABLE_CONFIRMATION_CHALLENGES)) {
                 if (getBooleanPref(PREF_BOOLEAN_CONFIRMATION_USE_PIN)) {
-                    new ConfirmPINDialog(getSettingsActivity(), () -> {
+                    getSettingsActivity().dialog = new ConfirmPINDialog(getSettingsActivity(), () -> {
                         ((CheckBoxPreference) preference).setChecked(false);
                         ((CheckBoxPreference) getPreferenceScreen().findPreference(PREF_BOOLEAN_CONFIRMATION_USE_PIN)).setChecked(false);
                         setBooleanPref(PREF_BOOLEAN_ENABLE_CONFIRMATION_CHALLENGES, false);

@@ -13,6 +13,6 @@ public class Warning31CartridgeLow extends Alert {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        cartridgeAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
+        cartridgeAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
     }
 }

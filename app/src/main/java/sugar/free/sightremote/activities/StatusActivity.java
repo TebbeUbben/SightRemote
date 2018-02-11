@@ -329,6 +329,8 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         if (status == Status.CONNECTED) {
             taskRunnerRunnable.run();
             sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+        } else {
+            if (confirmationDialog != null) confirmationDialog.hide();
         }
     }
 

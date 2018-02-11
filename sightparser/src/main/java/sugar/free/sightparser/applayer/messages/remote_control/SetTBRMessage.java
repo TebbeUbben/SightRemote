@@ -10,9 +10,9 @@ public class SetTBRMessage extends AppLayerMessage {
     private static final long serialVersionUID = 1L;
 
     @Setter
-    private short amount;
+    private int amount;
     @Setter
-    private short duration;
+    private int duration;
 
     @Override
     public Service getService() {
@@ -27,8 +27,8 @@ public class SetTBRMessage extends AppLayerMessage {
     @Override
     protected byte[] getData() throws Exception {
         ByteBuf byteBuf = new ByteBuf(6);
-        byteBuf.putShortLE(amount);
-        byteBuf.putShortLE(duration);
+        byteBuf.putUInt16LE(amount);
+        byteBuf.putUInt16LE(duration);
         byteBuf.putShort((short) 0x1F00);
         return byteBuf.getBytes();
     }

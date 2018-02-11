@@ -91,6 +91,7 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
             BolusPreparationTaskRunner taskRunner = new BolusPreparationTaskRunner(getServiceConnector());
             taskRunner.fetch(this);
         } else {
+            if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
         }
     }

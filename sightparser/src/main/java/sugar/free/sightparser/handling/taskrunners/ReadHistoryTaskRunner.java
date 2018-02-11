@@ -45,7 +45,7 @@ public class ReadHistoryTaskRunner extends TaskRunner {
 
     @Getter
     public static class HistoryResult {
-        private int latestEventNumber = -1;
+        private long latestEventNumber = -1;
         private List<HistoryFrame> historyFrames = new ArrayList<>();
     }
 

@@ -22,13 +22,13 @@ public class FirmwareVersionMessage extends AppLayerMessage {
     @Getter
     private String safetyProcSwVersion;
     @Getter
-    private short configIndex;
+    private int configIndex;
     @Getter
-    private short historyIndex;
+    private int historyIndex;
     @Getter
-    private short stateIndex;
+    private int stateIndex;
     @Getter
-    private short vocabularyIndex;
+    private int vocabularyIndex;
 
     @Override
     public Service getService() {
@@ -48,9 +48,9 @@ public class FirmwareVersionMessage extends AppLayerMessage {
         mdTelProcSwVersion = byteBuf.readASCII(12);
         btInfoPageVersion = byteBuf.readASCII(12);
         safetyProcSwVersion = byteBuf.readASCII(12);
-        configIndex = byteBuf.readShortLE();
-        historyIndex = byteBuf.readShortLE();
-        stateIndex = byteBuf.readShortLE();
-        vocabularyIndex = byteBuf.readShortLE();
+        configIndex = byteBuf.readUInt16LE();
+        historyIndex = byteBuf.readUInt16LE();
+        stateIndex = byteBuf.readUInt16LE();
+        vocabularyIndex = byteBuf.readUInt16LE();
     }
 }

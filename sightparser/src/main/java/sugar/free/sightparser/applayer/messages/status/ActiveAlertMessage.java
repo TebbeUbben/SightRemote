@@ -13,7 +13,7 @@ public class ActiveAlertMessage extends AppLayerMessage {
 
     private static final long serialVersionUID = 1L;
 
-    private short alertID;
+    private int alertID;
     private AlertCategory alertCategory;
     private AlertStatus alertStatus;
     private Alert alert;
@@ -30,7 +30,7 @@ public class ActiveAlertMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        alertID = byteBuf.readShortLE();
+        alertID = byteBuf.readUInt16LE();
         alertCategory = AlertCategory.getAlertCategory(byteBuf.readShort());
         Class<? extends Alert> alertClass = Alert.ALERTS.get(byteBuf.readShort());
         alertStatus = AlertStatus.getAlertStaus(byteBuf.readShort());

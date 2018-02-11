@@ -28,7 +28,7 @@ public abstract class HistoryFrame implements Serializable {
     private int eventHour;
     private int eventMinute;
     private int eventSecond;
-    private int eventNumber;
+    private long eventNumber;
 
     public final void parseHeader(ByteBuf byteBuf) {
         eventYear = BOCUtil.parseBOC(byteBuf.readByte()) * 100 + BOCUtil.parseBOC(byteBuf.readByte());
@@ -38,7 +38,7 @@ public abstract class HistoryFrame implements Serializable {
         eventHour = BOCUtil.parseBOC(byteBuf.readByte());
         eventMinute = BOCUtil.parseBOC(byteBuf.readByte());
         eventSecond = BOCUtil.parseBOC(byteBuf.readByte());
-        eventNumber = byteBuf.readIntLE();
+        eventNumber = byteBuf.readUInt32LE();
     }
 
     public abstract void parse(ByteBuf byteBuf);

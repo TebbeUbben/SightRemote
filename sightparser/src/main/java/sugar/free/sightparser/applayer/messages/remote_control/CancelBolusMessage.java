@@ -10,7 +10,7 @@ public class CancelBolusMessage extends AppLayerMessage {
     private static final long serialVersionUID = 1L;
 
     @Setter
-    private short bolusId;
+    private int bolusId;
 
     @Override
     public Service getService() {
@@ -25,7 +25,7 @@ public class CancelBolusMessage extends AppLayerMessage {
     @Override
     protected byte[] getData() throws Exception {
         ByteBuf byteBuf = new ByteBuf(2);
-        byteBuf.putShortLE(bolusId);
+        byteBuf.putUInt16LE(bolusId);
         return byteBuf.getBytes();
     }
 

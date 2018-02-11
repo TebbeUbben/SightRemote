@@ -10,7 +10,7 @@ public class BolusMessage extends AppLayerMessage {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private short bolusId;
+    private int bolusId;
 
     @Override
     public Service getService() {
@@ -24,7 +24,7 @@ public class BolusMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        bolusId = byteBuf.readShortLE();
+        bolusId = byteBuf.readUInt16LE();
     }
 
     @Override

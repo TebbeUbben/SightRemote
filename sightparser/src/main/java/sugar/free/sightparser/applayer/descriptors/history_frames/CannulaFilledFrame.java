@@ -11,6 +11,6 @@ public class CannulaFilledFrame extends HistoryFrame {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        amount = RoundingUtil.roundFloat(byteBuf.readShortLE() / 100F, 2);
+        amount = RoundingUtil.roundFloat(byteBuf.readUInt16LE() / 100F, 2);
     }
 }

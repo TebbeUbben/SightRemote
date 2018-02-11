@@ -113,6 +113,8 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
             ids.add(FactoryMinBRAmountBlock.ID);
             ReadConfigurationTaskRunner taskRunner = new ReadConfigurationTaskRunner(getServiceConnector(), ids);
             taskRunner.fetch(this);
+        } else {
+            if (confirmationDialog != null) confirmationDialog.hide();
         }
     }
 
@@ -138,7 +140,7 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
             finish();
             return true;
         } else if (item.getItemId() == R.id.edit_br_nav_done) {
-            new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.edit_br_profile_confirmation), () -> {
+            (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.edit_br_profile_confirmation), () -> {
                 showManualOverlay();
                 List<ConfigurationBlock> blocks = new ArrayList<>();
                 blocks.add(nameBlock);
@@ -146,7 +148,7 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
                 blocks.add(profileBlock);
                 WriteConfigurationTaskRunner taskRunner = new WriteConfigurationTaskRunner(getServiceConnector(), blocks);
                 taskRunner.fetch(this);
-            }).show();
+            })).show();
         } else if (item.getItemId() == R.id.edit_br_nav_edit_name) {
             EditText editName = new EditText(this);
             editName.setInputType(InputType.TYPE_CLASS_TEXT);

@@ -20,7 +20,7 @@ public class Warning38BolusCancelled extends Alert {
     public void parse(ByteBuf byteBuf) {
         bolusType = HistoryBolusType.getBolusType(byteBuf.readShort());
         byteBuf.shift(2);
-        programmedAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
-        deliveredAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
+        programmedAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        deliveredAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
     }
 }

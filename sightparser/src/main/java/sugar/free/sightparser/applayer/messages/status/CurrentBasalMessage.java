@@ -34,6 +34,6 @@ public class CurrentBasalMessage extends AppLayerMessage {
     protected void parse(ByteBuf byteBuf) throws Exception {
         byteBuf.shift(2);
         currentBasalName = byteBuf.readUTF16LE(62);
-        currentBasalAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) /  100F, 2);
+        currentBasalAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) /  100F, 2);
     }
 }

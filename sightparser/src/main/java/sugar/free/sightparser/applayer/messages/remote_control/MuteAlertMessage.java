@@ -8,7 +8,7 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 public class MuteAlertMessage extends AppLayerMessage {
 
     @Setter
-    private short alertID;
+    private int alertID;
 
     @Override
     public Service getService() {
@@ -23,7 +23,7 @@ public class MuteAlertMessage extends AppLayerMessage {
     @Override
     protected byte[] getData() throws Exception {
         ByteBuf byteBuf = new ByteBuf(2);
-        byteBuf.putShortLE(alertID);
+        byteBuf.putUInt16LE(alertID);
         return byteBuf.getBytes();
     }
 

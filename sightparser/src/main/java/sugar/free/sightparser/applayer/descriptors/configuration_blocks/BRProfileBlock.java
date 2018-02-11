@@ -18,12 +18,12 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
     @Override
     public void parse(ByteBuf byteBuf) {
         profileBlocks = new ArrayList<>();
-        short duration;
+        int duration;
         for (int i = 0; i < 24; i++)
-            if ((duration = byteBuf.readShortLE()) > 0)
+            if ((duration = byteBuf.readUInt16LE()) > 0)
                 profileBlocks.add(new ProfileBlock(duration, 0));
         for (ProfileBlock profileBlock : profileBlocks)
-            profileBlock.setAmount(((float) byteBuf.readShortLE()) / 100F);
+            profileBlock.setAmount(((float) byteBuf.readUInt16LE()) / 100F);
     }
 
     @Override
@@ -31,12 +31,12 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
         ByteBuf byteBuf = new ByteBuf(96);
         for (int i = 0; i < 24; i++) {
             if (i < profileBlocks.size())
-                byteBuf.putShortLE(profileBlocks.get(i).getDuration());
+                byteBuf.putUInt16LE(profileBlocks.get(i).getDuration());
             else byteBuf.putShort((short) 0x0000);
         }
         for (int i = 0; i < 24; i++) {
             if (i < profileBlocks.size())
-                byteBuf.putShortLE((short) (profileBlocks.get(i).getAmount() * 100F));
+                byteBuf.putUInt16LE((short) (profileBlocks.get(i).getAmount() * 100F));
             else byteBuf.putShort((short) 0x0000);
         }
         return byteBuf.getBytes();
@@ -45,10 +45,10 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
     @Setter
     @Getter
     public static class ProfileBlock implements Serializable {
-        private short duration;
+        private int duration;
         private float amount;
 
-        public ProfileBlock(short duration, float amount) {
+        public ProfileBlock(int duration, float amount) {
             this.duration = duration;
             this.amount = amount;
         }

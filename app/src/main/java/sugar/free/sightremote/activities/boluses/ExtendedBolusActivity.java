@@ -101,6 +101,7 @@ public class ExtendedBolusActivity extends SightActivity implements TaskRunner.R
             BolusPreparationTaskRunner taskRunner = new BolusPreparationTaskRunner(getServiceConnector());
             taskRunner.fetch(this);
         } else {
+            if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
         }
     }
@@ -115,7 +116,7 @@ public class ExtendedBolusActivity extends SightActivity implements TaskRunner.R
     public void onClick(View view) {
         ExtendedBolusMessage message = new ExtendedBolusMessage();
         message.setAmount(bolusAmountPicker.getPickerValue());
-        message.setDuration((short) durationPicker.getPickerValue());
+        message.setDuration(durationPicker.getPickerValue());
         SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
         (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.extended_bolus_confirmation,
                 UnitFormatter.formatUnits(bolusAmountPicker.getPickerValue()),

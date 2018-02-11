@@ -33,7 +33,7 @@ public class FixedSizeProfileBlock {
     public static List<BRProfileBlock.ProfileBlock> convertToRelative(List<FixedSizeProfileBlock> fixedSizeProfileBlocks) {
         List<BRProfileBlock.ProfileBlock> profileBlocks = new ArrayList<>();
         for (FixedSizeProfileBlock fixedSizeProfileBlock : fixedSizeProfileBlocks)
-            profileBlocks.add(new BRProfileBlock.ProfileBlock((short) fixedSizeProfileBlock.getDuration(), fixedSizeProfileBlock.getAmount()));
+            profileBlocks.add(new BRProfileBlock.ProfileBlock(fixedSizeProfileBlock.getDuration(), fixedSizeProfileBlock.getAmount()));
         return profileBlocks;
     }
 

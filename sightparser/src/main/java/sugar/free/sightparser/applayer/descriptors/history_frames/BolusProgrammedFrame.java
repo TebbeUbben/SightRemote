@@ -13,16 +13,16 @@ public class BolusProgrammedFrame extends HistoryFrame {
     private HistoryBolusType bolusType;
     private float immediateAmount;
     private float extendedAmount;
-    private short duration;
-    private short bolusId;
+    private int duration;
+    private int bolusId;
 
     @Override
     public void parse(ByteBuf byteBuf) {
         bolusType = HistoryBolusType.getBolusType(byteBuf.readShort());
-        immediateAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F,2 );
-        extendedAmount =  RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
-        duration = byteBuf.readShortLE();
+        immediateAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F,2 );
+        extendedAmount =  RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        duration = byteBuf.readUInt16LE();
         byteBuf.shift(4);
-        bolusId = byteBuf.readShortLE();
+        bolusId = byteBuf.readUInt16LE();
     }
 }

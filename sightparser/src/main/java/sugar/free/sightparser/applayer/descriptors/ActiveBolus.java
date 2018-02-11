@@ -11,7 +11,7 @@ public class ActiveBolus implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private short bolusID;
+    private int bolusID;
     @Getter
     private ActiveBolusType bolusType;
     @Getter
@@ -23,13 +23,13 @@ public class ActiveBolus implements Serializable {
 
     public static ActiveBolus parse(ByteBuf byteBuf) {
         ActiveBolus activeBolus = new ActiveBolus();
-        activeBolus.bolusID = byteBuf.readShortLE();
+        activeBolus.bolusID = byteBuf.readUInt16LE();
         activeBolus.bolusType = ActiveBolusType.getBolusType(byteBuf.readShort());
         byteBuf.shift(2);
         byteBuf.shift(2);
-        activeBolus.initialAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
-        activeBolus.leftoverAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
-        activeBolus.duration = byteBuf.readShortLE();
+        activeBolus.initialAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        activeBolus.leftoverAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        activeBolus.duration = byteBuf.readUInt16LE();
         return activeBolus;
     }
 }

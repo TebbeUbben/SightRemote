@@ -1,14 +1,12 @@
 package sugar.free.sightparser.pipeline.handlers;
 
-import android.os.RemoteException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import sugar.free.sightparser.SerializationUtils;
-import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.descriptors.Service;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.connection.ActivateServiceMessage;
 import sugar.free.sightparser.applayer.messages.connection.ServiceChallengeMessage;
 import sugar.free.sightparser.crypto.Cryptograph;
@@ -65,14 +63,14 @@ public class RequestWorker implements DuplexHandler {
     private void sendError(MessageRequest messageRequest, Exception exception) {
         try {
             messageRequest.getMessageCallback().onError(SerializationUtils.serialize((Serializable) exception));
-        } catch (RemoteException e) {
+        } catch (Exception e) {
         }
     }
 
     private void sendMessage(MessageRequest messageRequest, AppLayerMessage message) {
         try {
             messageRequest.getMessageCallback().onMessage(SerializationUtils.serialize(message));
-        } catch (RemoteException e) {
+        } catch (Exception e) {
         }
     }
 

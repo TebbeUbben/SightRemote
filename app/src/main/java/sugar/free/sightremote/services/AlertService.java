@@ -33,7 +33,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
     private Timer fetchTimer;
     @Setter
     private AlertActivity alertActivity;
-    private short latestId;
+    private int latestId;
 
     @Override
     public IBinder onBind(Intent intent) {

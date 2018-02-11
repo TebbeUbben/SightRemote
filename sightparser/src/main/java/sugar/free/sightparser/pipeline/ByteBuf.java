@@ -51,62 +51,16 @@ public class ByteBuf {
         putByte((byte) s);
     }
 
-    public void putShortLE(short s) {
-        putByte((byte) s);
-        putByte((byte) (s >> 8));
-
+    public void putUInt16LE(int i) {
+        putByte((byte) (i & 0xFF));
+        putByte((byte) ((i >> 8) & 0xFF));
     }
 
-    public void putInt(int i) {
-        putByte((byte) (i >> 24));
-        putByte((byte) (i >> 16));
-        putByte((byte) (i >> 8));
-        putByte((byte) i);
-    }
-
-    public void putIntLE(int i) {
-        putByte((byte) i);
-        putByte((byte) (i >> 8));
-        putByte((byte) (i >> 16));
-        putByte((byte) (i >> 24));
-    }
-
-    public void putFloat(float f) {
-        putInt(Float.floatToIntBits(f));
-    }
-
-    public void putFloatLE(float f) {
-        putIntLE(Float.floatToIntBits(f));
-    }
-
-    public void putDouble(double d) {
-        putLong(Double.doubleToLongBits(d));
-    }
-
-    public void putDoubleLE(double d) {
-        putLongLE(Double.doubleToLongBits(d));
-    }
-
-    public void putLong(long l) {
-        putByte((byte) (l >> 56));
-        putByte((byte) (l >> 48));
-        putByte((byte) (l >> 40));
-        putByte((byte) (l >> 32));
-        putByte((byte) (l >> 24));
-        putByte((byte) (l >> 16));
-        putByte((byte) (l >> 8));
-        putByte((byte) l);
-    }
-
-    public void putLongLE(long l) {
-        putByte((byte) l);
-        putByte((byte) (l >> 8));
-        putByte((byte) (l >> 16));
-        putByte((byte) (l >> 24));
-        putByte((byte) (l >> 32));
-        putByte((byte) (l >> 40));
-        putByte((byte) (l >> 48));
-        putByte((byte) (l >> 56));
+    public void putUInt32LE(long l) {
+        putByte((byte) (l & 0xFF));
+        putByte((byte) ((l >> 8) & 0xFF));
+        putByte((byte) ((l >> 16) & 0xFF));
+        putByte((byte) ((l >> 24) & 0xFF));
     }
 
     public byte getByte(int position) {
@@ -162,156 +116,45 @@ public class ByteBuf {
                 bytes[position] & 0xFF);
     }
 
-    public short getShortLE(int position) {
-        return (short) (bytes[position++] & 0xFF |
-                bytes[position]  << 8);
-    }
-
     public short getShort() {
         return getShort(0);
     }
 
-    public short getShortLE() {
-        return getShortLE(0);
-    }
-
     public short readShort() {
-        short s = getShort(0);
+        short s = getShort();
         shift(2);
         return s;
     }
 
-    public short readShortLE() {
-        short s = getShortLE(0);
+    public int getUInt16LE(int position) {
+        return (bytes[position++] & 0xFF |
+                (bytes[position] & 0xFF)  << 8);
+    }
+
+    public int getUInt16LE() {
+        return getUInt16LE(0);
+    }
+
+    public int readUInt16LE() {
+        int i = getUInt16LE();
         shift(2);
-        return s;
-    }
-
-    public int getInt(int position) {
-        return bytes[position++] << 24 |
-                (bytes[position++] & 0xFF) << 16 |
-                (bytes[position++] & 0xFF) << 8 |
-                bytes[position] & 0xFF;
-    }
-
-    public int getIntLE(int position) {
-        return bytes[position++] & 0xFF |
-                (bytes[position++] & 0xFF) << 8  |
-                (bytes[position++] & 0xFF) << 16 |
-                bytes[position] << 24;
-    }
-
-    public int getInt() {
-        return getInt(0);
-    }
-
-    public int readInt() {
-        int i = getInt(0);
-        shift(4);
         return i;
     }
 
-    public int readIntLE() {
-        int i = getIntLE(0);
-        shift(4);
-        return i;
+    public long getUInt32LE(int position) {
+        return ((long) bytes[position++] & 0xFF) |
+                ((long) bytes[position++] & 0xFF) << 8 |
+                ((long) bytes[position++] & 0xFF) << 16 |
+                ((long) bytes[position] & 0xFF) << 24;
     }
 
-    public float getFloat(int position) {
-        return Float.intBitsToFloat(getInt(position));
+    public long getUInt32LE() {
+        return getUInt32LE(0);
     }
 
-    public float getFloatLE(int position) {
-        return Float.intBitsToFloat(getIntLE(position));
-    }
-
-    public float getFloat() {
-        return getFloat(0);
-    }
-
-    public float getFloatLE() {
-        return getFloatLE(0);
-    }
-
-    public float readFloat() {
-        float f = getFloat(0);
-        shift(4);
-        return f;
-    }
-
-    public float readFloatLE() {
-        float f = getFloatLE(0);
-        shift(4);
-        return f;
-    }
-
-    public double getDouble(int position) {
-        return Double.longBitsToDouble(getLong(position));
-    }
-
-    public double getDouble() {
-        return getDouble(0);
-    }
-
-    public double readDouble() {
-        double d = getDouble(0);
-        shift(8);
-        return d;
-    }
-
-    public double getDoubleLE(int position) {
-        return Double.longBitsToDouble(getLongLE(position));
-    }
-
-    public double getDoubleLE() {
-        return getDoubleLE(0);
-    }
-
-    public double readDoubleLE() {
-        double d = getDoubleLE(0);
-        shift(8);
-        return d;
-    }
-
-    public long getLong(int position) {
-        return ((long) bytes[position++]) << 56 |
-                ((long) (bytes[position++] & 0xFF)) << 48 |
-                ((long) (bytes[position++] & 0xFF)) << 40 |
-                ((long) (bytes[position++] & 0xFF)) << 32 |
-                ((long) (bytes[position++] & 0xFF)) << 24 |
-                ((long) (bytes[position++] & 0xFF)) << 16 |
-                ((long) (bytes[position++] & 0xFF)) << 8 |
-                (long) bytes[position] & 0xFF;
-    }
-
-    public long getLongLE(int position) {
-        return (long) bytes[position++] & 0xFF |
-                ((long) (bytes[position++] & 0xFF)) << 8 |
-                ((long) (bytes[position++] & 0xFF)) << 16 |
-                ((long) (bytes[position++] & 0xFF)) << 24 |
-                ((long) (bytes[position++] & 0xFF)) << 32 |
-                ((long) (bytes[position++] & 0xFF)) << 40 |
-                ((long) (bytes[position++] & 0xFF)) << 48 |
-                ((long) bytes[position]) << 56;
-    }
-
-    public long getLong() {
-        return getLong(0);
-    }
-
-    public long getLongLE() {
-        return getLongLE(0);
-    }
-
-    public long readLong() {
-        long l = getLong(0);
-        shift(8);
-        return l;
-    }
-
-    public long readLongLE() {
-        long l = getLongLE(0);
-        shift(8);
+    public long readUInt32LE() {
+        long l = getUInt32LE();
+        shift(2);
         return l;
     }
 
@@ -349,15 +192,6 @@ public class ByteBuf {
         return stringBuilder.toString();
     }
 
-    public String readUTF16LE(int length) {
-        try {
-           return new String(readBytes(length), "UTF-16LE").replace(Character.toString((char) 0), "");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public String getUTF16LE(int position, int length) {
         try {
             return new String(getBytes(position, length), "UTF-16LE").replace(Character.toString((char) 0), "");
@@ -369,6 +203,12 @@ public class ByteBuf {
 
     public String getUTF16LE(int length) {
         return getUTF16LE(0, length);
+    }
+
+    public String readUTF16LE(int length) {
+        String s = getUTF16LE(length);
+        shift(length);
+        return s;
     }
 
     public void putUTF16LE(String string, int length) {
@@ -385,15 +225,24 @@ public class ByteBuf {
         putUTF16LE(string, 0);
     }
 
-    public String readASCII(int length) {
+
+    public String getASCII(int position, int length) {
         try {
-            String string = new String(readBytes(length), "US-ASCII").replace(Character.toString((char) 0), "");
-            shift(length);
-            return string;
+            return new String(getBytes(position, length), "US-ASCII").replace(Character.toString((char) 0), "");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String getASCII(int length) {
+        return getASCII(0, length);
+    }
+
+    public String readASCII(int length) {
+        String s = getASCII(length);
+        shift(length);
+        return s;
     }
 
     public void putBoolean(boolean b) {

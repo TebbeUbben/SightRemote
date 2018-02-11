@@ -20,13 +20,13 @@ public class MaxBolusAmountBlock extends ConfigurationBlock {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        maximumAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
+        maximumAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
     }
 
     @Override
     public byte[] getData() {
         ByteBuf byteBuf = new ByteBuf(2);
-        byteBuf.putShortLE((short) (maximumAmount * 100F));
+        byteBuf.putUInt16LE((short) (maximumAmount * 100F));
         return byteBuf.getBytes();
     }
 }

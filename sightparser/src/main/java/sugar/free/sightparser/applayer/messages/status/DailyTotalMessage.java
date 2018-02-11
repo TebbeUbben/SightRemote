@@ -27,9 +27,9 @@ public class DailyTotalMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        bolusTotal = RoundingUtil.roundFloat(((double) byteBuf.readIntLE()) / 100D, 3);
-        basalTotal = RoundingUtil.roundFloat(((double) byteBuf.readIntLE()) / 100D, 3);
-        total = RoundingUtil.roundFloat(((double) byteBuf.readIntLE()) / 100D, 3);
+        bolusTotal = RoundingUtil.roundFloat(((double) byteBuf.readUInt16LE()) / 100D, 3);
+        basalTotal = RoundingUtil.roundFloat(((double) byteBuf.readUInt16LE()) / 100D, 3);
+        total = RoundingUtil.roundFloat(((double) byteBuf.readUInt16LE()) / 100D, 3);
     }
 
     @Override

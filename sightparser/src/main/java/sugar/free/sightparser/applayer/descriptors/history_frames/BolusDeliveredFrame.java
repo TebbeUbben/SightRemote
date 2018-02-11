@@ -17,8 +17,8 @@ public class BolusDeliveredFrame extends HistoryFrame {
     private int startSecond;
     private float immediateAmount;
     private float extendedAmount;
-    private short duration;
-    private short bolusId;
+    private int duration;
+    private int bolusId;
 
     @Override
     public void parse(ByteBuf byteBuf) {
@@ -27,10 +27,10 @@ public class BolusDeliveredFrame extends HistoryFrame {
         startHour = BOCUtil.parseBOC(byteBuf.readByte());
         startMinute = BOCUtil.parseBOC(byteBuf.readByte());
         startSecond = BOCUtil.parseBOC(byteBuf.readByte());
-        immediateAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
-        extendedAmount = RoundingUtil.roundFloat(((float) byteBuf.readShortLE()) / 100F, 2);
-        duration = byteBuf.readShortLE();
+        immediateAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        extendedAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        duration = byteBuf.readUInt16LE();
         byteBuf.shift(2);
-        bolusId = byteBuf.readShortLE();
+        bolusId = byteBuf.readUInt16LE();
     }
 }

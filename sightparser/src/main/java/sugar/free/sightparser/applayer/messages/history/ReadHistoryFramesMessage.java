@@ -20,7 +20,7 @@ public class ReadHistoryFramesMessage extends AppLayerMessage {
     @Getter
     private List<HistoryFrame> historyFrames;
     @Getter
-    private int latestEventNumber = -1;
+    private long latestEventNumber = -1;
 
     @Override
     public Service getService() {
@@ -41,14 +41,14 @@ public class ReadHistoryFramesMessage extends AppLayerMessage {
     protected void parse(ByteBuf byteBuf) throws Exception {
         historyFrames = new ArrayList<>();
         byteBuf.shift(2);
-        int frameCount = byteBuf.readShortLE();
+        int frameCount = byteBuf.readUInt16LE();
         for (int i = 0; i < frameCount; i++) {
-            short length = byteBuf.readShortLE();
+            int length = byteBuf.readUInt16LE();
             short eventType = byteBuf.readShort();
             ByteBuf eventBuf = new ByteBuf(length - 2);
             eventBuf.putBytes(byteBuf.readBytes(length - 2));
 
-            int eventNumber = eventBuf.getIntLE(8);
+            long eventNumber = eventBuf.getUInt32LE(8);
             if (eventNumber > latestEventNumber) latestEventNumber = eventNumber;
 
             Class<? extends HistoryFrame> clazz = HistoryFrame.HISTORY_FRAMES.get(eventType);

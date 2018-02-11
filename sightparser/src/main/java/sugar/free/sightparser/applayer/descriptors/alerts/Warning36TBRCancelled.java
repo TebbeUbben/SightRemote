@@ -7,16 +7,16 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 public class Warning36TBRCancelled extends Alert {
 
     @Getter
-    private short amount;
+    private int amount;
     @Getter
-    private short duration;
+    private int duration;
 
     private static final long serialVersionUID = 1L;
 
     @Override
     public void parse(ByteBuf byteBuf) {
         byteBuf.shift(2);
-        amount = byteBuf.readShortLE();
-        duration = byteBuf.readShortLE();
+        amount = byteBuf.readUInt16LE();
+        duration = byteBuf.readUInt16LE();
     }
 }

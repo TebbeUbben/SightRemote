@@ -180,37 +180,37 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 if (getDatabaseHelper().getBolusDeliveredDao().queryBuilder().where()
                         .eq("eventNumber", bolusDelivered.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusDeliveredDao().create(bolusDelivered);
-                HistorySendIntent.sendBolusDelivered(getApplicationContext(), bolusDelivered);
+                HistorySendIntent.sendBolusDelivered(getApplicationContext(), bolusDelivered, false);
             }
             for (BolusProgrammed bolusProgrammed : bolusProgrammedEntries) {
                 if (getDatabaseHelper().getBolusProgrammedDao().queryBuilder().where()
                         .eq("eventNumber", bolusProgrammed.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusProgrammedDao().create(bolusProgrammed);
-                HistorySendIntent.sendBolusProgrammed(getApplicationContext(),bolusProgrammed);
+                HistorySendIntent.sendBolusProgrammed(getApplicationContext(),bolusProgrammed, false);
             }
             for (EndOfTBR endOfTBR : endOfTBREntries) {
                 if (getDatabaseHelper().getEndOfTBRDao().queryBuilder().where()
                         .eq("eventNumber", endOfTBR.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getEndOfTBRDao().create(endOfTBR);
-                HistorySendIntent.sendEndOfTBR(getApplicationContext(), endOfTBR);
+                HistorySendIntent.sendEndOfTBR(getApplicationContext(), endOfTBR, false);
             }
             for (PumpStatusChanged pumpStatusChanged : pumpStatusChangedEntries) {
                 if (getDatabaseHelper().getPumpStatusChangedDao().queryBuilder().where()
                         .eq("eventNumber", pumpStatusChanged.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getPumpStatusChangedDao().create(pumpStatusChanged);
-                HistorySendIntent.sendPumpStatusChanged(getApplicationContext(), pumpStatusChanged);
+                HistorySendIntent.sendPumpStatusChanged(getApplicationContext(), pumpStatusChanged, false);
             }
             for (TimeChanged timeChanged : timeChangedEntries) {
                 if (getDatabaseHelper().getTimeChangedDao().queryBuilder().where()
                         .eq("eventNumber", timeChanged.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getTimeChangedDao().create(timeChanged);
-                HistorySendIntent.sendTimeChanged(getApplicationContext(), timeChanged);
+                HistorySendIntent.sendTimeChanged(getApplicationContext(), timeChanged, false);
             }
             for (CannulaFilled cannulaFilled : cannulaFilledEntries) {
                 if (getDatabaseHelper().getCannulaFilledDao().queryBuilder().where()
                         .eq("eventNumber", cannulaFilled.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getCannulaFilledDao().create(cannulaFilled);
-                HistorySendIntent.sendCannulaFilled(getApplicationContext(),cannulaFilled);
+                HistorySendIntent.sendCannulaFilled(getApplicationContext(),cannulaFilled, false);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -321,7 +321,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     private OpenHistoryReadingSessionMessage createOpenMessage(HistoryType historyType) {
         OpenHistoryReadingSessionMessage openMessage = new OpenHistoryReadingSessionMessage();
         openMessage.setHistoryType(historyType);
-        int offset = Offset.getOffset(getDatabaseHelper(), pumpSerialNumber, historyType);
+        long offset = Offset.getOffset(getDatabaseHelper(), pumpSerialNumber, historyType);
         if (offset != -1) {
             openMessage.setOffset(offset + 1);
             openMessage.setReadingDirection(HistoryReadingDirection.FORWARD);

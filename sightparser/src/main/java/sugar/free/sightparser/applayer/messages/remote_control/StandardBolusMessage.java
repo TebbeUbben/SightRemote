@@ -17,11 +17,11 @@ public class StandardBolusMessage extends BolusMessage {
         data.putShort((short) 0x1F00);
         data.putShort((short) 0x1F00);
         data.putShort((short) 0x0000);
-        data.putShortLE((short) (amount * 100F));
+        data.putUInt16LE((int) (amount * 100F));
         data.putShort((short) 0x0000);
         data.putShort((short) 0x0000);
         data.putShort((short) 0x0000);
-        data.putShortLE((short) (amount * 100F));
+        data.putUInt16LE((int) (amount * 100F));
         data.putShort((short) 0x0000);
         data.putShort((short) 0x0000);
         return data.getBytes();

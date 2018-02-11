@@ -35,7 +35,7 @@ public class WriteDateTimeMessage extends AppLayerMessage {
     @Override
     protected byte[] getData() throws Exception {
         ByteBuf byteBuf = new ByteBuf(7);
-        byteBuf.putShortLE((short) year);
+        byteBuf.putUInt16LE((short) year);
         byteBuf.putByte((byte) month);
         byteBuf.putByte((byte) day);
         byteBuf.putByte((byte) hour);

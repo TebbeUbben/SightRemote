@@ -26,7 +26,7 @@ public final class KeyRequest extends CRCAuthLayerMessage {
     protected byte[] getData() {
         ByteBuf byteBuf = new ByteBuf(288);
         byteBuf.putBytes(randomBytes);
-        byteBuf.putIntLE(translateDate());
+        byteBuf.putUInt32LE(translateDate());
         byteBuf.putBytes(preMasterKey);
         return byteBuf.getBytes();
     }

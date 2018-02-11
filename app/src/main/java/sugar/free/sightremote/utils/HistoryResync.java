@@ -42,7 +42,7 @@ public class HistoryResync {
 
             android.util.Log.d(TAG, "Resending TBR list " + records.size());
             for (EndOfTBR endOfTBR : records) {
-                HistorySendIntent.sendEndOfTBR(context, endOfTBR);
+                HistorySendIntent.sendEndOfTBR(context, endOfTBR, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -55,7 +55,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending Bolus list " + records.size());
             for (BolusDelivered bolusDelivered : records) {
-                HistorySendIntent.sendBolusDelivered(context, bolusDelivered);
+                HistorySendIntent.sendBolusDelivered(context, bolusDelivered, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);

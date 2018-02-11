@@ -26,8 +26,8 @@ public class AvailableBolusesMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        standardAvailable = byteBuf.readShort() == 0x4B00;
-        extendedAvailable = byteBuf.readShort() == 0x4B00;
-        multiwaveAvailable = byteBuf.readShort() == 0x4B00;
+        standardAvailable = byteBuf.readBoolean();
+        extendedAvailable = byteBuf.readBoolean();
+        multiwaveAvailable = byteBuf.readBoolean();
     }
 }

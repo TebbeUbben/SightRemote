@@ -34,7 +34,7 @@ public class ReadDateTimeMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        year = byteBuf.readShortLE();
+        year = byteBuf.readUInt16LE();
         month = byteBuf.readByte();
         day = byteBuf.readByte();
         hour = byteBuf.readByte();

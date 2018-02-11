@@ -37,7 +37,7 @@ public class ChangePINDialog implements TextWatcher {
         this.pinChangedCallback = pinChangedCallback;
     }
 
-    public void show() {
+    public AlertDialog show() {
         rootLayout = (LinearLayout) LayoutInflater.from(SightRemote.getInstance()).inflate(R.layout.dialog_change_pin, null);
         oldPinContainer = rootLayout.findViewById(R.id.old_pin_container);
         oldPin = rootLayout.findViewById(R.id.old_pin);
@@ -54,6 +54,7 @@ public class ChangePINDialog implements TextWatcher {
                 .show();
         okayButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         okayButton.setEnabled(false);
+        return dialog;
     }
 
     private void onConfirm() {

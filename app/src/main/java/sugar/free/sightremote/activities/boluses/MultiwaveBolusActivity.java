@@ -121,6 +121,7 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
             BolusPreparationTaskRunner taskRunner = new BolusPreparationTaskRunner(getServiceConnector());
             taskRunner.fetch(this);
         } else {
+            if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
         }
     }
@@ -130,7 +131,7 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
         MultiwaveBolusMessage message = new MultiwaveBolusMessage();
         message.setAmount(immediateBolusAmountPicker.getPickerValue());
         message.setDelayedAmount(delayedBolusAmountPicker.getPickerValue());
-        message.setDuration((short) durationPicker.getPickerValue());
+        message.setDuration(durationPicker.getPickerValue());
         SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
         (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.multiwave_bolus_confirmation,
                 UnitFormatter.formatUnits(immediateBolusAmountPicker.getPickerValue()),

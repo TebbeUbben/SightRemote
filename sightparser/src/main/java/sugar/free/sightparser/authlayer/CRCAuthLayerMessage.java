@@ -14,15 +14,15 @@ public abstract class CRCAuthLayerMessage extends AuthLayerMessage {
         short length = (short) (29 + dataLength);
         ByteBuf byteBuf = new ByteBuf(length + 8);
         byteBuf.putBytes(MAGIC_HEADER);
-        byteBuf.putShortLE(length);
-        byteBuf.putShortLE((short) ~length);
+        byteBuf.putUInt16LE(length);
+        byteBuf.putUInt16LE((short) ~length);
         byteBuf.putByte(VERSION);
         byteBuf.putByte(getCommand());
-        byteBuf.putShortLE(dataLength);
-        byteBuf.putIntLE(commID);
+        byteBuf.putUInt16LE(dataLength);
+        byteBuf.putUInt32LE(commID);
         byteBuf.putBytes(processNonce(nonce));
         byteBuf.putBytes(data);
-        byteBuf.putShortLE((short) Cryptograph.calculateCRC(byteBuf.getBytes(8, length - 10)));
+        byteBuf.putUInt16LE((short) Cryptograph.calculateCRC(byteBuf.getBytes(8, length - 10)));
         byteBuf.putBytes((byte) 0x00, 8);
         return byteBuf;
     }

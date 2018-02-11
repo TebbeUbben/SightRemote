@@ -80,6 +80,7 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
             blockIDs.add(ActiveProfileBlock.ID);
             new ReadConfigurationTaskRunner(getServiceConnector(), blockIDs).fetch(this);
         } else {
+            if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
         }
     }
