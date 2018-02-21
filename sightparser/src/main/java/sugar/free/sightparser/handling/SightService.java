@@ -118,7 +118,7 @@ public class SightService extends Service {
                 final AppLayerMessage msg = (AppLayerMessage) SerializationUtils.deserialize(message);
                 Answers.getInstance().logCustom(new CustomEvent("Message Requested")
                         .putCustomAttribute("Application", getCallerName())
-                        .putCustomAttribute("Message", msg.getClass().getName()));
+                        .putCustomAttribute("Message", msg.getClass().getSimpleName()));
                 if (firewall.isAllowed(msg)) {
                     MessageRequest messageRequest = new MessageRequest(msg, callback, callback.asBinder());
                     if (pipeline != null && status == Status.CONNECTED)

@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -55,6 +56,7 @@ import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.Offset;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
+import sugar.free.sightremote.utils.ExceptionUtil;
 import sugar.free.sightremote.utils.HistoryResync;
 import sugar.free.sightremote.utils.HistorySendIntent;
 
@@ -386,6 +388,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         syncing = false;
         sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
         if (wakeLock.isHeld()) wakeLock.release();
+        Crashlytics.logException(ExceptionUtil.wrapException(e));
     }
 
     private void startSync() {

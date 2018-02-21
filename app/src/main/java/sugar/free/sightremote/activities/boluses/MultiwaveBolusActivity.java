@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
@@ -21,6 +22,7 @@ import sugar.free.sightremote.activities.SightActivity;
 import sugar.free.sightremote.utils.BolusAmountPicker;
 import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.DurationPicker;
+import sugar.free.sightremote.utils.ExceptionUtil;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
@@ -124,6 +126,7 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
     @Override
     public void onError(Exception e) {
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
+        Crashlytics.logException(ExceptionUtil.wrapException(e));
     }
 
     @Override

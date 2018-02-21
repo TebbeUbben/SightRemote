@@ -23,7 +23,7 @@ public class AppLayerProcessor implements DuplexHandler {
         Log.d("SightService", "RECEIVE: " + appLayerMessage.getClass());
         pipeline.receive(appLayerMessage);
         Answers.getInstance().logCustom(new CustomEvent("Received Application Layer Message")
-                .putCustomAttribute("Message", appLayerMessage.getClass().getName()));
+                .putCustomAttribute("Message", appLayerMessage.getClass().getSimpleName()));
     }
 
     @Override
@@ -34,7 +34,7 @@ public class AppLayerProcessor implements DuplexHandler {
         dataMessage.setData(((AppLayerMessage) message).serialize());
         pipeline.send(dataMessage);
         Answers.getInstance().logCustom(new CustomEvent("Sent Application Layer Message")
-            .putCustomAttribute("Message", message.getClass().getName()));
+            .putCustomAttribute("Message", message.getClass().getSimpleName()));
     }
 
 }

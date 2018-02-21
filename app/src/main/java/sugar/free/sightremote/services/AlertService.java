@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
@@ -29,6 +30,7 @@ import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.activities.AlertActivity;
+import sugar.free.sightremote.utils.ExceptionUtil;
 
 public class AlertService extends Service implements StatusCallback, ServiceConnectionCallback, TaskRunner.ResultCallback {
 
@@ -138,6 +140,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
 
     @Override
     public void onError(Exception e) {
+        Crashlytics.logException(ExceptionUtil.wrapException(e));
     }
 
     public class AlertServiceBinder extends Binder {
@@ -157,6 +160,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
         @Override
         public void onError(Exception e) {
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(AlertService.this, R.string.error, Toast.LENGTH_SHORT).show());
+            Crashlytics.logException(ExceptionUtil.wrapException(e));
         }
     };
 }
