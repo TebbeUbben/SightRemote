@@ -14,7 +14,6 @@ What's working:
 * Show battery amount
 * Show current TBR
 * Show active boluses
-* Show history
 * Change active basal profile
 * Issue boluses
 * Issue TBRs
