@@ -43,7 +43,7 @@ public class ConfirmPINDialog implements TextWatcher {
     }
 
     private void onConfirm() {
-        dialog.hide();
+        dialog.dismiss();
         callback.onDialogConfirmed();
     }
 

@@ -111,12 +111,12 @@ public class ConfirmationDialog implements TextWatcher, View.OnClickListener {
     }
 
     private void onConfirm() {
-        dialog.hide();
+        dialog.dismiss();
         callback.onDialogConfirmed();
     }
 
     public void hide() {
-        dialog.hide();
+        dialog.dismiss();
         onClose();
     }
 

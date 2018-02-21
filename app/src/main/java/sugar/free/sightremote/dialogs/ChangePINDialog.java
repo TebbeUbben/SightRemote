@@ -13,10 +13,8 @@ import android.widget.LinearLayout;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.SightRemote;
 
-import static sugar.free.sightremote.utils.Preferences.PREF_BOOLEAN_CONFIRMATION_USE_PIN;
 import static sugar.free.sightremote.utils.Preferences.PREF_STRING_CONFIRMATION_PIN;
 import static sugar.free.sightremote.utils.Preferences.getStringPref;
-import static sugar.free.sightremote.utils.Preferences.setBooleanPref;
 import static sugar.free.sightremote.utils.Preferences.setStringPref;
 
 public class ChangePINDialog implements TextWatcher {

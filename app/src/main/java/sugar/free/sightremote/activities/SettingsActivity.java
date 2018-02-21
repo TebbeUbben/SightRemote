@@ -47,7 +47,7 @@ public class SettingsActivity extends SightActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (dialog != null) dialog.hide();
+        if (dialog != null) dialog.dismiss();
     }
 
     public static class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
@@ -56,6 +56,7 @@ public class SettingsActivity extends SightActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings);
             getPreferenceScreen().findPreference("enter_password").setOnPreferenceClickListener(this);
+            getPreferenceScreen().findPreference("delete_pairing").setOnPreferenceClickListener(this);
             getPreferenceScreen().findPreference("enable_confirmation_challenges").setOnPreferenceClickListener(this);
             getPreferenceScreen().findPreference(PREF_BOOLEAN_ENABLE_CONFIRMATION_CHALLENGES).setOnPreferenceChangeListener(this);
             getPreferenceScreen().findPreference(PREF_BOOLEAN_CONFIRMATION_USE_FINGERPRINT).setOnPreferenceChangeListener(this);
