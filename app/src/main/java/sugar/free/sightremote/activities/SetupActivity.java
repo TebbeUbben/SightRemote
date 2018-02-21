@@ -26,6 +26,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -231,28 +234,27 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onStatusChange(final Status status) {
             if (viewPager.getCurrentItem() != 2) return;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (status == Status.CONNECTING)
-                        pairingProgressAdapter.setProgress(1);
-                    else if  (status == Status.EXCHANGING_KEYS)
-                        pairingProgressAdapter.setProgress(2);
-                    else if (status == Status.WAITING_FOR_CODE_CONFIRMATION)
-                        pairingProgressAdapter.setProgress(3);
-                    else if (status == Status.APP_BINDING)
-                        pairingProgressAdapter.setProgress(4);
-                    else if (status == Status.CONNECTED)
-                        viewPager.setCurrentItem(3);
-                    else if (status == Status.CODE_REJECTED) {
-                        Toast.makeText(SetupActivity.this, R.string.connection_declined, Toast.LENGTH_SHORT).show();
-                        viewPager.setCurrentItem(1);
-                        startBluetoothScan();
-                    } else if (status == Status.DISCONNECTED) {
-                        Toast.makeText(SetupActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
-                        viewPager.setCurrentItem(1);
-                        startBluetoothScan();
-                    }
+            runOnUiThread(() -> {
+                if (status == Status.CONNECTING)
+                    pairingProgressAdapter.setProgress(1);
+                else if  (status == Status.EXCHANGING_KEYS)
+                    pairingProgressAdapter.setProgress(2);
+                else if (status == Status.WAITING_FOR_CODE_CONFIRMATION)
+                    pairingProgressAdapter.setProgress(3);
+                else if (status == Status.APP_BINDING)
+                    pairingProgressAdapter.setProgress(4);
+                else if (status == Status.CONNECTED) {
+                    Answers.getInstance().logCustom(new CustomEvent("Setup Completed"));
+                    viewPager.setCurrentItem(3);
+                }
+                else if (status == Status.CODE_REJECTED) {
+                    Toast.makeText(SetupActivity.this, R.string.connection_declined, Toast.LENGTH_SHORT).show();
+                    viewPager.setCurrentItem(1);
+                    startBluetoothScan();
+                } else if (status == Status.DISCONNECTED) {
+                    Toast.makeText(SetupActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+                    viewPager.setCurrentItem(1);
+                    startBluetoothScan();
                 }
             });
         }

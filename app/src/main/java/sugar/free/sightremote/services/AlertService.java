@@ -8,6 +8,9 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -111,6 +114,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("alertMessage", SerializationUtils.serialize(activeAlertMessage));
                 startActivity(intent);
+                Answers.getInstance().logCustom(new CustomEvent("Active Alert").putCustomAttribute("Alert", alert.getClass().getSimpleName()));
             } else if (alertActivity != null) {
                 alertActivity.setAlertMessage(activeAlertMessage);
                 alertActivity.update();
@@ -122,12 +126,14 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
         MuteAlertMessage muteAlertMessage = new MuteAlertMessage();
         muteAlertMessage.setAlertID(latestId);
         new SingleMessageTaskRunner(serviceConnector, muteAlertMessage).fetch(errorToastCallback);
+        Answers.getInstance().logCustom(new CustomEvent("Mute Alert"));
     }
 
     public void dismissAlert() {
         DismissAlertMessage dismissAlertMessage = new DismissAlertMessage();
         dismissAlertMessage.setAlertID(latestId);
         new SingleMessageTaskRunner(serviceConnector, dismissAlertMessage).fetch(errorToastCallback);
+        Answers.getInstance().logCustom(new CustomEvent("Dismiss Alert"));
     }
 
     @Override

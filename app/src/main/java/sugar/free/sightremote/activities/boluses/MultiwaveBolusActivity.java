@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import sugar.free.sightparser.applayer.messages.remote_control.MultiwaveBolusMessage;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
 import sugar.free.sightparser.handling.TaskRunner;
@@ -95,7 +98,15 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
                 showManualOverlay();
                 showSnackbar(Snackbar.make(getRootView(), R.string.pump_not_started, Snackbar.LENGTH_INDEFINITE));
             }
-        } else finish();
+        } else {
+            Answers.getInstance().logCustom(
+                    new CustomEvent("Bolus Programmed")
+                            .putCustomAttribute("Bolus Type", "Multiwave")
+                            .putCustomAttribute("Immediate Amount", immediateBolusAmountPicker.getPickerValue())
+                            .putCustomAttribute("Extended Amount", delayedBolusAmountPicker.getPickerValue())
+                            .putCustomAttribute("Duration", durationPicker.getPickerValue()));
+            finish();
+        }
     }
 
     @Override

@@ -14,6 +14,9 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -114,6 +117,9 @@ public class SightService extends Service {
         public void requestMessage(byte[] message, IMessageCallback callback) throws RemoteException {
             if (verifyCaller("requestMessage")) {
                 final AppLayerMessage msg = (AppLayerMessage) SerializationUtils.deserialize(message);
+                Answers.getInstance().logCustom(new CustomEvent("Message Requested")
+                        .putCustomAttribute("Application", getCallerName())
+                        .putCustomAttribute("Message", msg.getClass().getName()));
                 if (firewall.isAllowed(msg)) {
                     MessageRequest messageRequest = new MessageRequest(msg, callback, callback.asBinder());
                     if (pipeline != null && status == Status.CONNECTED)
@@ -156,6 +162,8 @@ public class SightService extends Service {
         @Override
         public void connect(final IBinder binder) throws RemoteException {
             if (verifyCaller("connect")) {
+                Answers.getInstance().logCustom(new CustomEvent("Requested Connection To Pump")
+                        .putCustomAttribute("Application", getCallerName()));
                 if (!connectedClients.containsKey(binder)) {
                     Log.d("SightService", "CLIENT CONNECTS TO PUMP");
                     if (disconnectTimer != null) disconnectTimer.cancel();
@@ -184,6 +192,8 @@ public class SightService extends Service {
         @Override
         public void disconnect(IBinder binder) throws RemoteException {
             if (connectedClients.containsKey(binder)) {
+                Answers.getInstance().logCustom(new CustomEvent("Connection Request Withdrawn")
+                        .putCustomAttribute("Application", getCallerName()));
                 Log.d("SightService", "CLIENT DISCONNECTS FROM PUMP");
                 binder.unlinkToDeath(connectedClients.get(binder), 0);
                 connectedClients.remove(binder);
@@ -290,23 +300,32 @@ public class SightService extends Service {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            Answers.getInstance().logCustom(new CustomEvent("Connection Status Changed")
+                    .putCustomAttribute("Status", status.toString()));
         }
     };
 
     @Override
     public IBinder onBind(Intent intent) {
         Log.d("SightService", "CLIENT BOUND TO SERVICE");
+        Answers.getInstance().logCustom(new CustomEvent("Client Bound To Service")
+                .putCustomAttribute("Application", getCallerName()));
         return binder;
     }
 
     @Override
     public void onRebind(Intent intent) {
         Log.d("SightService", "CLIENT REBOUND TO SERVICE");
+
+        Answers.getInstance().logCustom(new CustomEvent("Client Rebound To Service")
+                .putCustomAttribute("Application", getCallerName()));
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
         Log.d("SightService", "CLIENT UNBOUND FROM SERVICE");
+        Answers.getInstance().logCustom(new CustomEvent("Client Unbound From Service")
+                .putCustomAttribute("Application", getCallerName()));
         return true;
     }
 
@@ -372,6 +391,10 @@ public class SightService extends Service {
             }
         }
         return false;
+    }
+
+    private String getCallerName() {
+        return getPackageManager().getNameForUid(Binder.getCallingUid());
     }
 
     private boolean allowedPackage(String packageName) {

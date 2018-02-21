@@ -1,5 +1,10 @@
 package sugar.free.sightparser.pipeline;
 
+import android.util.Log;
+
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.IOException;
@@ -24,6 +29,7 @@ import sugar.free.sightparser.authlayer.ConnectionRequest;
 import sugar.free.sightparser.authlayer.DisconnectRequest;
 import sugar.free.sightparser.authlayer.SynRequest;
 import sugar.free.sightparser.crypto.DerivedKeys;
+import sugar.free.sightparser.error.DisconnectedError;
 import sugar.free.sightparser.handling.MessageRequest;
 import sugar.free.sightparser.handling.StatusCallback;
 import sugar.free.sightparser.pipeline.handlers.AppLayerProcessor;
@@ -88,7 +94,12 @@ public class Pipeline {
     }
 
     public void receive(Object message) {
-        if (message instanceof Exception) ((Exception) message).printStackTrace();
+        if (message instanceof Exception) {
+            Exception exception = (Exception) message;
+            Log.d("SightService", "EXCEPTION: " + exception.getClass().getName() + ": " + exception.getMessage());
+            if (!(exception instanceof DisconnectedError)) Answers.getInstance().logCustom(new CustomEvent("Exception In Pipeline")
+                    .putCustomAttribute("Message", exception.getClass().getName() + ": " + exception.getMessage()));
+        }
         for (Handler handler : handlers) {
             if (handler instanceof InboundHandler) {
                 InboundHandler inboundHandler = (InboundHandler) handler;
@@ -104,7 +115,12 @@ public class Pipeline {
     }
 
     public void send(Object message) {
-        if (message instanceof Exception) ((Exception) message).printStackTrace();
+        if (message instanceof Exception) {
+            Exception exception = (Exception) message;
+            Log.d("SightService", "EXCEPTION: " + exception.getClass().getName() + ": " + exception.getMessage());
+            if (!(exception instanceof DisconnectedError)) Answers.getInstance().logCustom(new CustomEvent("Exception In Pipeline")
+                    .putCustomAttribute("Message", exception.getClass().getName() + ": " + exception.getMessage()));
+        }
         for (Handler handler : handlers) {
             if (handler instanceof OutboundHandler) {
                 OutboundHandler outboundHandler = (OutboundHandler) handler;

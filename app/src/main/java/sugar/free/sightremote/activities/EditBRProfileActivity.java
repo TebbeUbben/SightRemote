@@ -13,6 +13,9 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +55,7 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
 
     private float maxBRAmount = -1;
     private float minBRAmount = -1;
+    private int brNumber;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +90,7 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
 
     private void adjustTitle() {
         if (nameBlock.getName().equals("")) {
-            int brNumber = 0;
+            brNumber = 0;
             if (profileBlock instanceof BRProfile1Block) brNumber = 1;
             else if (profileBlock instanceof BRProfile2Block) brNumber = 2;
             else if (profileBlock instanceof BRProfile3Block) brNumber = 3;
@@ -186,7 +190,10 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
             maxBRAmount = ((MaxBRAmountBlock) blocks.get(0)).getMaximumAmount();
             minBRAmount = ((FactoryMinBRAmountBlock) blocks.get(1)).getMinimumAmount();
             hideManualOverlay();
-        } else if (result == null) finish();
+        } else if (result == null) {
+            Answers.getInstance().logCustom(new CustomEvent("BR Profile Edited"));
+            finish();
+        }
     }
 
     @Override

@@ -2,6 +2,9 @@ package sugar.free.sightparser.pipeline.handlers;
 
 import android.util.Log;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.authlayer.DataMessage;
 import sugar.free.sightparser.pipeline.ByteBuf;
@@ -19,6 +22,8 @@ public class AppLayerProcessor implements DuplexHandler {
         AppLayerMessage appLayerMessage = AppLayerMessage.deserialize(byteBuf);
         Log.d("SightService", "RECEIVE: " + appLayerMessage.getClass());
         pipeline.receive(appLayerMessage);
+        Answers.getInstance().logCustom(new CustomEvent("Received Appplication Layer Message")
+                .putCustomAttribute("Message", appLayerMessage.getClass().getName()));
     }
 
     @Override
@@ -28,6 +33,8 @@ public class AppLayerProcessor implements DuplexHandler {
         DataMessage dataMessage = new DataMessage();
         dataMessage.setData(((AppLayerMessage) message).serialize());
         pipeline.send(dataMessage);
+        Answers.getInstance().logCustom(new CustomEvent("Sent Appplication Layer Message")
+            .putCustomAttribute("Message", message.getClass().getName()));
     }
 
 }

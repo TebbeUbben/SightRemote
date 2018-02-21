@@ -7,6 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,6 +112,8 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
                 adapter.notifyDataSetChanged();
                 hideManualOverlay();
             });
+        } else if (result == null) {
+            Answers.getInstance().logCustom(new CustomEvent("BR Profile Switched"));
         }
     }
 

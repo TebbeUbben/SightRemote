@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import sugar.free.sightparser.applayer.descriptors.PumpStatus;
 import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
@@ -102,7 +105,13 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
                 hideManualOverlay();
                 dismissSnackbar();
             }
-        } else finish();
+        } else {
+            Answers.getInstance().logCustom(
+                    new CustomEvent("TBR Programmed")
+                            .putCustomAttribute("Amount", percentage.getValue() * 10)
+                            .putCustomAttribute("Duration", durationPicker.getPickerValue()));
+            finish();
+        }
     }
 
     @Override
