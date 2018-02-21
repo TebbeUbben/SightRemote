@@ -21,6 +21,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
@@ -347,21 +350,25 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         if (v == tbrCancel) {
             tbrCancel.setVisibility(View.GONE);
             message = new CancelTBRMessage();
+            Answers.getInstance().logCustom(new CustomEvent("TBR Cancelled"));
         } else if (v == bolus1Cancel) {
             bolus1Cancel.setVisibility(View.INVISIBLE);
             CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
             cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus1().getBolusID());
             message = cancelBolusMessage;
+            Answers.getInstance().logCustom(new CustomEvent("Bolus Cancelled"));
         } else if (v == bolus2Cancel) {
             bolus2Cancel.setVisibility(View.INVISIBLE);
             CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
             cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus2().getBolusID());
             message = cancelBolusMessage;
+            Answers.getInstance().logCustom(new CustomEvent("Bolus Cancelled"));
         } else if (v == bolus3Cancel) {
             bolus3Cancel.setVisibility(View.INVISIBLE);
             CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
             cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus3().getBolusID());
             message = cancelBolusMessage;
+            Answers.getInstance().logCustom(new CustomEvent("Bolus Cancelled"));
         }
         SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
         taskRunner.fetch(errorToastResultCallback);
