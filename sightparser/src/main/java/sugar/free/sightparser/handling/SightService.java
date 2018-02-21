@@ -58,7 +58,6 @@ public class SightService extends Service {
     private Timer disconnectTimer;
     private Timer timeoutTimer;
     private boolean reconnect;
-    private Timer pingTimer;
     private long timeoutWait = MIN_TIMEOUT_WAIT;
     private volatile BluetoothSocket bluetoothSocket = null;
     private long lastAuthPoll = 0;
@@ -258,42 +257,12 @@ public class SightService extends Service {
             SightService.this.status = status;
             if (status == Status.CONNECTED) {
                 timeoutTimer.cancel();
-                pingTimer = new Timer();
-                pingTimer.schedule(new TimerTask() {
-
-                    private boolean received = true;
-
-                    @Override
-                    public void run() {
-                        if (received) {
-                            received = false;
-                            pipeline.requestMessage(new MessageRequest(new PumpStatusMessage(), new IMessageCallback() {
-                                @Override
-                                public IBinder asBinder() {
-                                    return null;
-                                }
-
-                                @Override
-                                public void onMessage(byte[] getClass) throws RemoteException {
-                                    received = true;
-                                }
-
-                                @Override
-                                public void onError(byte[] error) throws RemoteException {
-                                    received = true;
-                                }
-                            }, binder.asBinder()));
-                        } else {
-                            disconnect(true);
-                        }
-                    }
-                }, 2000, 2000);
                 if (tempMac != null) {
                     getDataStorage().set("DEVICEMAC", tempMac);
                     tempMac = null;
                     reconnect = true;
                 }
-            } else if (status == Status.DISCONNECTED && pingTimer != null) pingTimer.cancel();
+            }
             for (IStatusCallback sc : new ArrayList<>(statusCallbackIds.values()))
                 try {
                     sc.onStatusChange(status.name());
