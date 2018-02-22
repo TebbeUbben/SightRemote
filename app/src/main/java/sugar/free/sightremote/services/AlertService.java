@@ -30,7 +30,7 @@ import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.activities.AlertActivity;
-import sugar.free.sightremote.utils.ExceptionUtil;
+import sugar.free.sightremote.utils.CrashlyticsUtil;
 
 public class AlertService extends Service implements StatusCallback, ServiceConnectionCallback, TaskRunner.ResultCallback {
 
@@ -140,7 +140,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
 
     @Override
     public void onError(Exception e) {
-        Crashlytics.logException(ExceptionUtil.wrapException(e));
+        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     public class AlertServiceBinder extends Binder {
@@ -160,7 +160,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
         @Override
         public void onError(Exception e) {
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(AlertService.this, R.string.error, Toast.LENGTH_SHORT).show());
-            Crashlytics.logException(ExceptionUtil.wrapException(e));
+            CrashlyticsUtil.logExceptionWithCallStackTrace(e);
         }
     };
 }

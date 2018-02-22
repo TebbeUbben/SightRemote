@@ -36,7 +36,7 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.adapters.BRProfileAdapter;
 import sugar.free.sightremote.dialogs.ConfirmationDialog;
-import sugar.free.sightremote.utils.ExceptionUtil;
+import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HTMLUtil;
 
 public class ChangeActiveBRProfileActivity extends SightActivity implements TaskRunner.ResultCallback, BRProfileAdapter.BRProfileChangeListener, BRProfileAdapter.OnClickListener {
@@ -128,7 +128,7 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
     @Override
     public void onError(Exception e) {
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
-        Crashlytics.logException(ExceptionUtil.wrapException(e));
+        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     @Override

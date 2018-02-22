@@ -47,7 +47,6 @@ import sugar.free.sightparser.handling.StatusCallback;
 import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.ReadHistoryTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
-import sugar.free.sightremote.SightRemote;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.database.BolusProgrammed;
 import sugar.free.sightremote.database.CannulaFilled;
@@ -56,7 +55,7 @@ import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.Offset;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
-import sugar.free.sightremote.utils.ExceptionUtil;
+import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HistoryResync;
 import sugar.free.sightremote.utils.HistorySendIntent;
 
@@ -185,62 +184,36 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                         .eq("eventNumber", bolusDelivered.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusDeliveredDao().create(bolusDelivered);
                 HistorySendIntent.sendBolusDelivered(getApplicationContext(), bolusDelivered, false);
-                Answers.getInstance().logCustom(new CustomEvent("History: Bolus Delivered")
-                        .putCustomAttribute("Date", bolusDelivered.getDateTime().getTime())
-                        .putCustomAttribute("Bolus Type", bolusDelivered.getBolusType().toString())
-                        .putCustomAttribute("Immediate Amount", bolusDelivered.getImmediateAmount())
-                        .putCustomAttribute("Extended Amount", bolusDelivered.getExtendedAmount())
-                        .putCustomAttribute("Duration", bolusDelivered.getDuration()));
             }
             for (BolusProgrammed bolusProgrammed : bolusProgrammedEntries) {
                 if (getDatabaseHelper().getBolusProgrammedDao().queryBuilder().where()
                         .eq("eventNumber", bolusProgrammed.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusProgrammedDao().create(bolusProgrammed);
                 HistorySendIntent.sendBolusProgrammed(getApplicationContext(),bolusProgrammed, false);
-                Answers.getInstance().logCustom(new CustomEvent("History: Bolus Programmed")
-                        .putCustomAttribute("Date", bolusProgrammed.getDateTime().getTime())
-                        .putCustomAttribute("Bolus Type", bolusProgrammed.getBolusType().toString())
-                        .putCustomAttribute("Immediate Amount", bolusProgrammed.getImmediateAmount())
-                        .putCustomAttribute("Extended Amount", bolusProgrammed.getExtendedAmount())
-                        .putCustomAttribute("Duration", bolusProgrammed.getDuration()));
             }
             for (EndOfTBR endOfTBR : endOfTBREntries) {
                 if (getDatabaseHelper().getEndOfTBRDao().queryBuilder().where()
                         .eq("eventNumber", endOfTBR.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getEndOfTBRDao().create(endOfTBR);
                 HistorySendIntent.sendEndOfTBR(getApplicationContext(), endOfTBR, false);
-                Answers.getInstance().logCustom(new CustomEvent("History: End Of TBR")
-                        .putCustomAttribute("Date", endOfTBR.getDateTime().getTime())
-                        .putCustomAttribute("Amount", endOfTBR.getAmount())
-                        .putCustomAttribute("Duration", endOfTBR.getDuration()));
             }
             for (PumpStatusChanged pumpStatusChanged : pumpStatusChangedEntries) {
                 if (getDatabaseHelper().getPumpStatusChangedDao().queryBuilder().where()
                         .eq("eventNumber", pumpStatusChanged.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getPumpStatusChangedDao().create(pumpStatusChanged);
                 HistorySendIntent.sendPumpStatusChanged(getApplicationContext(), pumpStatusChanged, false);
-                Answers.getInstance().logCustom(new CustomEvent("History: Pump Status Changed")
-                        .putCustomAttribute("Date", pumpStatusChanged.getDateTime().getTime())
-                        .putCustomAttribute("From", pumpStatusChanged.getOldValue().toString())
-                        .putCustomAttribute("To", pumpStatusChanged.getNewValue().toString()));
             }
             for (TimeChanged timeChanged : timeChangedEntries) {
                 if (getDatabaseHelper().getTimeChangedDao().queryBuilder().where()
                         .eq("eventNumber", timeChanged.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getTimeChangedDao().create(timeChanged);
                 HistorySendIntent.sendTimeChanged(getApplicationContext(), timeChanged, false);
-                Answers.getInstance().logCustom(new CustomEvent("History: Time Changed")
-                        .putCustomAttribute("Date", timeChanged.getDateTime().getTime())
-                        .putCustomAttribute("From", timeChanged.getTimeBefore().getTime()));
             }
             for (CannulaFilled cannulaFilled : cannulaFilledEntries) {
                 if (getDatabaseHelper().getCannulaFilledDao().queryBuilder().where()
                         .eq("eventNumber", cannulaFilled.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getCannulaFilledDao().create(cannulaFilled);
                 HistorySendIntent.sendCannulaFilled(getApplicationContext(),cannulaFilled, false);
-                Answers.getInstance().logCustom(new CustomEvent("History: Cannula Filled")
-                        .putCustomAttribute("Date", cannulaFilled.getDateTime().getTime())
-                        .putCustomAttribute("Amount", cannulaFilled.getAmount()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -388,7 +361,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         syncing = false;
         sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
         if (wakeLock.isHeld()) wakeLock.release();
-        Crashlytics.logException(ExceptionUtil.wrapException(e));
+        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     private void startSync() {

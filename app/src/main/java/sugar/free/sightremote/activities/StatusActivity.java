@@ -28,7 +28,6 @@ import com.crashlytics.android.answers.CustomEvent;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
-import io.fabric.sdk.android.services.common.Crash;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolus;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolusType;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
@@ -47,7 +46,7 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.dialogs.ConfirmationDialog;
-import sugar.free.sightremote.utils.ExceptionUtil;
+import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
@@ -112,7 +111,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         @Override
         public void onError(Exception e) {
             runOnUiThread(() -> Toast.makeText(StatusActivity.this, R.string.error, Toast.LENGTH_SHORT).show());
-            Crashlytics.logException(ExceptionUtil.wrapException(e));
+            CrashlyticsUtil.logExceptionWithCallStackTrace(e);
         }
     };
     private BroadcastReceiver historyBroadcastReceiver = new BroadcastReceiver() {
@@ -395,7 +394,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
             Snackbar snackbar = Snackbar.make(getRootView(), R.string.error, Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction(R.string.retry, view -> taskRunnerRunnable.run());
             showSnackbar(snackbar);
-            Crashlytics.logException(ExceptionUtil.wrapException(e));
+            CrashlyticsUtil.logExceptionWithCallStackTrace(e);
         }
     }
 

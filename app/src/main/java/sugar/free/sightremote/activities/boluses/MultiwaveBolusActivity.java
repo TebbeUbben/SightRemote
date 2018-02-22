@@ -22,7 +22,7 @@ import sugar.free.sightremote.activities.SightActivity;
 import sugar.free.sightremote.utils.BolusAmountPicker;
 import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.DurationPicker;
-import sugar.free.sightremote.utils.ExceptionUtil;
+import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
@@ -103,10 +103,7 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
         } else {
             Answers.getInstance().logCustom(
                     new CustomEvent("Bolus Programmed")
-                            .putCustomAttribute("Bolus Type", "Multiwave")
-                            .putCustomAttribute("Immediate Amount", immediateBolusAmountPicker.getPickerValue())
-                            .putCustomAttribute("Extended Amount", delayedBolusAmountPicker.getPickerValue())
-                            .putCustomAttribute("Duration", durationPicker.getPickerValue()));
+                            .putCustomAttribute("Bolus Type", "Multiwave"));
             finish();
         }
     }
@@ -126,7 +123,7 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
     @Override
     public void onError(Exception e) {
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
-        Crashlytics.logException(ExceptionUtil.wrapException(e));
+        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     @Override

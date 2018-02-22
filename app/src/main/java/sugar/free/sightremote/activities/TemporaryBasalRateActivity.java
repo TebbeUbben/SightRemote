@@ -21,7 +21,7 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.DurationPicker;
-import sugar.free.sightremote.utils.ExceptionUtil;
+import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
@@ -109,9 +109,7 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
             }
         } else {
             Answers.getInstance().logCustom(
-                    new CustomEvent("TBR Programmed")
-                            .putCustomAttribute("Amount", percentage.getValue() * 10)
-                            .putCustomAttribute("Duration", durationPicker.getPickerValue()));
+                    new CustomEvent("TBR Programmed"));
             finish();
         }
     }
@@ -119,7 +117,7 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
     @Override
     public void onError(Exception e) {
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
-        Crashlytics.logException(ExceptionUtil.wrapException(e));
+        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     @Override
