@@ -55,7 +55,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
 
     @Override
     public void onDestroy() {
-        fetchTimer.cancel();
+        if (fetchTimer != null) fetchTimer.cancel();
         serviceConnector.disconnectFromService();
     }
 
