@@ -1,5 +1,7 @@
 package sugar.free.sightparser.applayer.messages.status;
 
+import android.util.Log;
+
 import lombok.Getter;
 import sugar.free.sightparser.RoundingUtil;
 import sugar.free.sightparser.applayer.descriptors.Service;
@@ -27,9 +29,9 @@ public class DailyTotalMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        bolusTotal = RoundingUtil.roundFloat(((double) byteBuf.readUInt16LE()) / 100D, 3);
-        basalTotal = RoundingUtil.roundFloat(((double) byteBuf.readUInt16LE()) / 100D, 3);
-        total = RoundingUtil.roundFloat(((double) byteBuf.readUInt16LE()) / 100D, 3);
+        bolusTotal = RoundingUtil.roundFloat(((double) byteBuf.readUInt32LE()) / 100D, 3);
+        basalTotal = RoundingUtil.roundFloat(((double) byteBuf.readUInt32LE()) / 100D, 3);
+        total = RoundingUtil.roundFloat(((double) byteBuf.readUInt32LE()) / 100D, 3);
     }
 
     @Override
