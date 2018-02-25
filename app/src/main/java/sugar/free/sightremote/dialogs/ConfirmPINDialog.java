@@ -1,8 +1,8 @@
 package sugar.free.sightremote.dialogs;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Vibrator;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -36,6 +36,7 @@ public class ConfirmPINDialog implements TextWatcher {
         pin = rootLayout.findViewById(R.id.pin);
         pin.addTextChangedListener(this);
         dialog = new AlertDialog.Builder(context)
+                .setTitle(R.string.confirm_pin)
                 .setNegativeButton(R.string.cancel, null)
                 .setView(rootLayout)
                 .show();

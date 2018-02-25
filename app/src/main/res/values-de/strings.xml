@@ -146,4 +146,5 @@
     <string name="pin_must_have_a_least_four_digits">PIN muss mindestens vier Ziffern haben</string>
     <string name="edit_br_profile_confirmation"><![CDATA[Bist du dir sicher, dass du dieses <b>BR-Profil ändern</b> möchtest?]]></string>
     <string name="connection">Verbindung</string>
+    <string name="confirm_pin">PIN bestätigen</string>
 </resources>

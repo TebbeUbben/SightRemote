@@ -2,7 +2,6 @@ package sugar.free.sightremote.dialogs;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
@@ -14,6 +13,7 @@ import android.os.Looper;
 import android.os.Vibrator;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.Spanned;
 import android.text.TextWatcher;

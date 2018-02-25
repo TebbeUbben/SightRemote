@@ -1,12 +1,12 @@
 package sugar.free.sightremote.activities;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.dialogs.ActivationWarningDialogChain;

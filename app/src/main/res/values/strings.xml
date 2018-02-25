@@ -147,4 +147,5 @@
     <string name="_3">3</string>
     <string name="_4">4</string>
     <string name="connection">Connection</string>
+    <string name="confirm_pin">Confirm PIN</string>
 </resources>

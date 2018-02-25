@@ -1,8 +1,8 @@
 package sugar.free.sightremote.dialogs;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.widget.EditText;
 
@@ -27,7 +27,6 @@ public class ActivationWarningDialogChain {
     }
 
     public void doActivationWarning() {
-
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.safety_warning));
         builder.setMessage(R.string.safety_warning_text1);
