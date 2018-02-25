@@ -127,7 +127,7 @@
     <string name="use_pin">PIN benutzen</string>
     <string name="use_a_pin_instead_of_a_challenge">Benutze eine PIN anstelle einer Aufgabe</string>
     <string name="change_pin">PIN ändern</string>
-    <string name="change_the_pin_used_for_confirmation">Ändere die PIN, der zur Bestätigung genutzt wird</string>
+    <string name="change_the_pin_used_for_confirmation">Ändere die PIN, die zur Bestätigung genutzt wird</string>
     <string name="or_enter_your_pin">Oder gib deine PIN ein:</string>
     <string name="or_press_the_buttons_in_the_following_order"><![CDATA[Oder drücke die Knöpfe in der folgenden Reihenfolge: <b>%1$d-%2$d-%3$d-%4$d</b>]]></string>
     <string name="enter_your_pin">Gib deine PIN ein:</string>
