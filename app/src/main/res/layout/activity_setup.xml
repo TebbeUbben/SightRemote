@@ -12,6 +12,7 @@
         <include layout="@layout/content_pairing" />
         <include layout="@layout/content_progress" />
         <include layout="@layout/content_setup_complete" />
+        <include layout="@layout/content_doze_mode" />
     </sugar.free.sightremote.views.NonSwipeableViewPager>
 
 </LinearLayout>

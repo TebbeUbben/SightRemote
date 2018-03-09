@@ -368,15 +368,20 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         if (!wakeLock.isHeld()) wakeLock.acquire(60000);
         syncing = true;
         connector.connectToService();
-        if (syncing) sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_STARTED));
+        sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_STARTED));
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(HistoryBroadcast.ACTION_START_SYNC)) {
-                if (syncing) sendBroadcast(new Intent(HistoryBroadcast.ACTION_STILL_SYNCING));
-                else startSync();
+                if (connector.isUseable()) {
+                    if (syncing) sendBroadcast(new Intent(HistoryBroadcast.ACTION_STILL_SYNCING));
+                    else startSync();
+                } else {
+                    sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+                    sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
+                }
             } else if (intent.getAction().equals(HistoryBroadcast.ACTION_START_RESYNC)) {
                 if (historyResync == null)
                     historyResync = new HistoryResync(getApplicationContext(), getDatabaseHelper());

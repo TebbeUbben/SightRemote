@@ -8,7 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -62,6 +66,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private LinearLayout progress;
     private RecyclerView progressList;
     private LinearLayout setupComplete;
+    private LinearLayout dozeMode;
     private Button closeWizard;
     private CheckBox agree;
 
@@ -94,6 +99,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         progressList.setLayoutManager(new LinearLayoutManager(this));
         progressList.setAdapter(pairingProgressAdapter);
 
+        dozeMode = findViewById(R.id.doze_mode);
+
         serviceConnector.addStatusCallback(statusCallback);
         serviceConnector.setConnectionCallback(connectionCallback);
     }
@@ -119,15 +126,37 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onResume() {
         super.onResume();
-        if (viewPager.getCurrentItem() == 1) startBluetoothScan();
+        if (viewPager.getCurrentItem() == 2) startBluetoothScan();
+        else if (viewPager.getCurrentItem() == 1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+            if (powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+                viewPager.setCurrentItem(2);
+                startBluetoothScan();
+            } else {
+                finish();
+            }
+        }
     }
 
     @Override
     public void onClick(View v) {
         if (v == proceed) {
             if (agree.isChecked()) {
-                viewPager.setCurrentItem(1);
-                startBluetoothScan();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    viewPager.setCurrentItem(1);
+                    PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+                    if (!powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(intent);
+                    } else {
+                        viewPager.setCurrentItem(2);
+                        startBluetoothScan();
+                    }
+                } else {
+                    viewPager.setCurrentItem(2);
+                    startBluetoothScan();
+                }
             } else Toast.makeText(this, R.string.accept_terms, Toast.LENGTH_SHORT).show();
         } else if (v == closeWizard) {
             startActivity(new Intent(this, StatusActivity.class));
@@ -180,7 +209,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private PagerAdapter setupPagerAdapter = new PagerAdapter() {
         @Override
         public int getCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -191,9 +220,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             if (position == 0) return licenseAgreement;
-            else if (position == 1) return pairing;
-            else if (position == 2) return progress;
-            else if (position == 3) return setupComplete;
+            else if (position == 1) return dozeMode;
+            else if (position == 2) return pairing;
+            else if (position == 3) return progress;
+            else if (position == 4) return setupComplete;
             return null;
         }
 
@@ -209,7 +239,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (!bluetoothDevices.contains(bluetoothDevice)) {
-                    bluetoothDevices.add((BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
+                    bluetoothDevices.add(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
                     bluetoothDeviceAdapter.notifyDataSetChanged();
                 }
             } else if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) bluetoothAdapter.startDiscovery();
@@ -220,7 +250,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onItemClick(View view, int position) {
             stopBluetoothScan();
-            viewPager.setCurrentItem(2);
+            viewPager.setCurrentItem(3);
             serviceConnector.pair(bluetoothDevices.get(position).getAddress());
         }
 
@@ -233,7 +263,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
         public void onStatusChange(final Status status) {
-            if (viewPager.getCurrentItem() != 2) return;
+            if (viewPager.getCurrentItem() != 3) return;
             runOnUiThread(() -> {
                 if (status == Status.CONNECTING)
                     pairingProgressAdapter.setProgress(1);
@@ -245,15 +275,15 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                     pairingProgressAdapter.setProgress(4);
                 else if (status == Status.CONNECTED) {
                     Answers.getInstance().logCustom(new CustomEvent("Setup Completed"));
-                    viewPager.setCurrentItem(3);
+                    viewPager.setCurrentItem(4);
                 }
                 else if (status == Status.CODE_REJECTED) {
                     Toast.makeText(SetupActivity.this, R.string.connection_declined, Toast.LENGTH_SHORT).show();
-                    viewPager.setCurrentItem(1);
+                    viewPager.setCurrentItem(2);
                     startBluetoothScan();
                 } else if (status == Status.DISCONNECTED) {
                     Toast.makeText(SetupActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
-                    viewPager.setCurrentItem(1);
+                    viewPager.setCurrentItem(2);
                     startBluetoothScan();
                 }
             });

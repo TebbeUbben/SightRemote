@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/progress"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,11 +20,18 @@
         android:textColor="#FFFFFF"
         android:textSize="24sp" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/progress_list"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:background="#FFFFFF" />
+        app:cardCornerRadius="0dp"
+        app:cardElevation="4dp"
+        android:layout_weight="1">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/progress_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF" />
+    </android.support.v7.widget.CardView>
 </LinearLayout>
