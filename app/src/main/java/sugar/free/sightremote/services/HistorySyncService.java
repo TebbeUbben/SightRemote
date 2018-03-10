@@ -375,13 +375,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(HistoryBroadcast.ACTION_START_SYNC)) {
-                if (connector.isUseable()) {
-                    if (syncing) sendBroadcast(new Intent(HistoryBroadcast.ACTION_STILL_SYNCING));
-                    else startSync();
-                } else {
-                    sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
-                    sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
-                }
+                if (syncing) sendBroadcast(new Intent(HistoryBroadcast.ACTION_STILL_SYNCING));
+                else startSync();
             } else if (intent.getAction().equals(HistoryBroadcast.ACTION_START_RESYNC)) {
                 if (historyResync == null)
                     historyResync = new HistoryResync(getApplicationContext(), getDatabaseHelper());

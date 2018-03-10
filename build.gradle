@@ -6,7 +6,7 @@ ext {
 
     versionMajor = 1
     versionMinor = 4
-    versionRevision = 0
+    versionRevision = 1
     versionCompatiblity = 'asclepius'
 
     versionCode = 1
