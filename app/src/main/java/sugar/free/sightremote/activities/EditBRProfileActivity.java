@@ -53,8 +53,8 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
     private RecyclerView blockList;
     private BRProfileBlockAdapter adapter;
 
-    private float maxBRAmount = -1;
-    private float minBRAmount = -1;
+    private double maxBRAmount = -1;
+    private double minBRAmount = -1;
     private int brNumber;
 
     @Override
@@ -70,8 +70,8 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
         } else {
             nameBlock = (NameBlock) SerializationUtils.deserialize(savedInstanceState.getByteArray("nameBlock"));
             profileBlock = (BRProfileBlock) SerializationUtils.deserialize(savedInstanceState.getByteArray("profileBlock"));
-            minBRAmount = savedInstanceState.getFloat("minBRAmount");
-            maxBRAmount = savedInstanceState.getFloat("maxBRAmount");
+            minBRAmount = savedInstanceState.getDouble("minBRAmount");
+            maxBRAmount = savedInstanceState.getDouble("maxBRAmount");
         }
 
         adjustTitle();
@@ -128,8 +128,8 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
         outState.putByteArray("nameBlock", SerializationUtils.serialize(nameBlock));
         profileBlock.setProfileBlocks(FixedSizeProfileBlock.convertToRelative(profileBlocks));
         outState.putByteArray("profileBlock", SerializationUtils.serialize(profileBlock));
-        outState.putFloat("minBRAmount", minBRAmount);
-        outState.putFloat("maxBRAmount", maxBRAmount);
+        outState.putDouble("minBRAmount", minBRAmount);
+        outState.putDouble("maxBRAmount", maxBRAmount);
     }
 
     @Override
@@ -211,7 +211,7 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
     }
 
     @Override
-    public void onBlockChange(FixedSizeProfileBlock changedBlock, int endTime, float amount) {
+    public void onBlockChange(FixedSizeProfileBlock changedBlock, int endTime, double amount) {
         changedBlock.setAmount(amount);
         changedBlock.setEndTime(endTime);
         for (FixedSizeProfileBlock block : new ArrayList<>(profileBlocks)) {

@@ -9,10 +9,10 @@ public class Warning31CartridgeLow extends Alert {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private float cartridgeAmount;
+    private double cartridgeAmount;
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        cartridgeAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        cartridgeAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
     }
 }

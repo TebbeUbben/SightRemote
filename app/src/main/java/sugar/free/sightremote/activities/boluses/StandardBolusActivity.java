@@ -131,7 +131,7 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
     }
 
     @Override
-    public void onAmountChange(BolusAmountPicker bolusAmountPicker, float newValue) {
+    public void onAmountChange(BolusAmountPicker bolusAmountPicker, double newValue) {
         deliver.setEnabled(newValue >= preperationResult.getMinBolusAmount());
     }
 }

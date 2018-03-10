@@ -27,6 +27,6 @@ public class CannulaFilled {
     private Date dateTime;
 
     @DatabaseField
-    private float amount;
+    private double amount;
 
 }

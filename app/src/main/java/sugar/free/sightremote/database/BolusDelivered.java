@@ -35,10 +35,10 @@ public class BolusDelivered {
     private Date startTime;
 
     @DatabaseField
-    private float immediateAmount;
+    private double immediateAmount;
 
     @DatabaseField
-    private float extendedAmount;
+    private double extendedAmount;
 
     @DatabaseField
     private int duration;

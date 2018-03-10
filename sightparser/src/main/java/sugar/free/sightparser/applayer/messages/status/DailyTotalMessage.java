@@ -13,9 +13,9 @@ public class DailyTotalMessage extends AppLayerMessage {
 
     private static final long serialVersionUID = 1L;
 
-    private float bolusTotal;
-    private float basalTotal;
-    private float total;
+    private double bolusTotal;
+    private double basalTotal;
+    private double total;
 
     @Override
     public Service getService() {
@@ -29,9 +29,9 @@ public class DailyTotalMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        bolusTotal = RoundingUtil.roundFloat(((double) byteBuf.readUInt32LE()) / 100D, 3);
-        basalTotal = RoundingUtil.roundFloat(((double) byteBuf.readUInt32LE()) / 100D, 3);
-        total = RoundingUtil.roundFloat(((double) byteBuf.readUInt32LE()) / 100D, 3);
+        bolusTotal = RoundingUtil.roundDouble(((double) byteBuf.readUInt32LE()) / 100D, 2);
+        basalTotal = RoundingUtil.roundDouble(((double) byteBuf.readUInt32LE()) / 100D, 2);
+        total = RoundingUtil.roundDouble(((double) byteBuf.readUInt32LE()) / 100D, 2);
     }
 
     @Override

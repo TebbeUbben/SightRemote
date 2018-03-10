@@ -218,7 +218,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
             int tbrAmount = statusResult.getCurrentTBRMessage().getPercentage();
             int tbrDuration = statusResult.getCurrentTBRMessage().getLeftoverTime();
             int tbrInitialDuration = statusResult.getCurrentTBRMessage().getInitialTime();
-            float basalAmount = statusResult.getCurrentBasalMessage().getCurrentBasalAmount();
+            double basalAmount = statusResult.getCurrentBasalMessage().getCurrentBasalAmount();
             String basalName = statusResult.getCurrentBasalMessage().getCurrentBasalName();
             if (tbrAmount == 100) {
                 tbrContainer.setVisibility(View.GONE);
@@ -226,7 +226,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 activeBasalRate.setTypeface(activeBasalRate.getTypeface(), Typeface.NORMAL);
             } else {
                 tbrContainer.setVisibility(View.VISIBLE);
-                activeBasalRate.setText(HTMLUtil.getHTML(R.string.basal_amount_formatter, basalName, UnitFormatter.formatBR(basalAmount / 100F * ((float) tbrAmount))));
+                activeBasalRate.setText(HTMLUtil.getHTML(R.string.basal_amount_formatter, basalName, UnitFormatter.formatBR(basalAmount / 100D * ((double) tbrAmount))));
                 activeBasalRate.setTypeface(activeBasalRate.getTypeface(), Typeface.ITALIC);
                 tbrProgress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, R.color.colorTBR), PorterDuff.Mode.SRC_IN);
                 tbrProgress.setMax(tbrInitialDuration);

@@ -32,10 +32,10 @@ public class BolusProgrammed {
     private HistoryBolusType bolusType;
 
     @DatabaseField
-    private float immediateAmount;
+    private double immediateAmount;
 
     @DatabaseField
-    private float extendedAmount;
+    private double extendedAmount;
 
     @DatabaseField
     private int duration;

@@ -159,8 +159,8 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
     }
 
     @Override
-    public void onAmountChange(BolusAmountPicker bolusAmountPicker, float newValue) {
-        float total = immediateBolusAmountPicker.getPickerValue() + delayedBolusAmountPicker.getPickerValue();
+    public void onAmountChange(BolusAmountPicker bolusAmountPicker, double newValue) {
+        double total = immediateBolusAmountPicker.getPickerValue() + delayedBolusAmountPicker.getPickerValue();
         if (total > preperationResult.getMaxBolusAmount()) {
             if (bolusAmountPicker == immediateBolusAmountPicker)
                 delayedBolusAmountPicker.setValue(delayedBolusAmountPicker.getPickerValue() - (total - preperationResult.getMaxBolusAmount()));

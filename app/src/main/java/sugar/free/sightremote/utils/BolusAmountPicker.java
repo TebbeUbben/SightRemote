@@ -6,7 +6,7 @@ import lombok.Setter;
 
 public class BolusAmountPicker implements NumberPicker.OnValueChangeListener {
 
-    private float maxValue;
+    private double maxValue;
     private int digit1Max;
     private int digit2Max;
 
@@ -39,14 +39,14 @@ public class BolusAmountPicker implements NumberPicker.OnValueChangeListener {
             }
         } else if (picker == digit2) {
             if (getPickerValue() > maxValue) {
-                if (getPickerValue() - ((float) digit3.getValue()) / 10F - ((float) digit4.getValue()) / 100F <= maxValue) {
+                if (getPickerValue() - ((double) digit3.getValue()) / 10D - ((double) digit4.getValue()) / 100D <= maxValue) {
                     digit3.setValue(0);
                     digit4.setValue(0);
                 } else digit1.setValue(digit1.getValue() - 1);
             }
         } else if (picker == digit3) {
             if (getPickerValue() > maxValue) {
-                if (getPickerValue() - ((float) digit4.getValue()) / 100F <= maxValue) {
+                if (getPickerValue() - ((double) digit4.getValue()) / 100D <= maxValue) {
                     digit4.setValue(0);
                 } else {
                     if (digit2.getValue() != 0) digit2.setValue(digit2.getValue() - 1);
@@ -63,29 +63,29 @@ public class BolusAmountPicker implements NumberPicker.OnValueChangeListener {
         if (onAmountChangeListener != null) onAmountChangeListener.onAmountChange(this, getPickerValue());
     }
 
-    public void setValue(float value) {
-        int digit1Value = (int) (value / 10F);
-        value -= (float) digit1Value * 10F;
+    public void setValue(double value) {
+        int digit1Value = (int) (value / 10D);
+        value -= (double) digit1Value * 10D;
         int digit2Value = (int) value;
-        value -= (float) digit2Value;
-        int digit3Value = (int) (value * 10F);
-        int digit4Value = (int) (value * 100F - ((float) digit3Value) * 10F);
+        value -= (double) digit2Value;
+        int digit3Value = (int) (value * 10D);
+        int digit4Value = (int) (value * 100D - ((double) digit3Value) * 10D);
         digit1.setValue(digit1Value);
         digit2.setValue(digit2Value);
         digit3.setValue(digit3Value);
         digit4.setValue(digit4Value);
     }
 
-    public float getPickerValue() {
-        float value = 0;
+    public double getPickerValue() {
+        double value = 0;
         value += digit1.getValue() * 10;
         value += digit2.getValue();
-        value += ((float) digit3.getValue()) / 10F;
-        value += ((float) digit4.getValue()) / 100F;
+        value += ((double) digit3.getValue()) / 10D;
+        value += ((double) digit4.getValue()) / 100D;
         return value;
     }
 
-    public void adjustNumberPickers(float max) {
+    public void adjustNumberPickers(double max) {
         this.maxValue = max;
         digit1Max = ((int) max) / 10;
         digit2Max = ((int) max) - digit1Max * 10;
@@ -100,6 +100,6 @@ public class BolusAmountPicker implements NumberPicker.OnValueChangeListener {
     }
 
     public interface OnAmountChangeListener {
-        void onAmountChange(BolusAmountPicker bolusAmountPicker, float newValue);
+        void onAmountChange(BolusAmountPicker bolusAmountPicker, double newValue);
     }
 }

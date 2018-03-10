@@ -11,7 +11,7 @@ public class MaxBolusAmountBlock extends ConfigurationBlock {
     public static final short ID = 0x1F00;
 
     @Getter
-    private float maximumAmount;
+    private double maximumAmount;
 
     @Override
     public short getID() {
@@ -20,7 +20,7 @@ public class MaxBolusAmountBlock extends ConfigurationBlock {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        maximumAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        maximumAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
     }
 
     @Override

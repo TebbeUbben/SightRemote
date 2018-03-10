@@ -9,10 +9,10 @@ public class CannulaFilledFrame extends HistoryFrame {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private float amount;
+    private double amount;
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        amount = RoundingUtil.roundFloat(byteBuf.readUInt16LE() / 100F, 2);
+        amount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
     }
 }

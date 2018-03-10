@@ -11,7 +11,7 @@ public class CartridgeAmountMessage extends AppLayerMessage {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private float cartridgeAmount = 0;
+    private double cartridgeAmount = 0;
 
     @Override
     public Service getService() {
@@ -25,6 +25,6 @@ public class CartridgeAmountMessage extends AppLayerMessage {
 
     @Override
     protected void parse(ByteBuf byteBuf) throws Exception {
-        cartridgeAmount = RoundingUtil.roundFloat(((float) byteBuf.getUInt16LE(6)) / 100F, 2);
+        cartridgeAmount = RoundingUtil.roundDouble(((double) byteBuf.getUInt16LE(6)) / 100D, 2);
     }
 }

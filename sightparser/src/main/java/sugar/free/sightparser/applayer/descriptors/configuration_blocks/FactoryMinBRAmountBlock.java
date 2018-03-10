@@ -13,7 +13,7 @@ public class FactoryMinBRAmountBlock extends ConfigurationBlock {
 
     @Getter
     @Setter
-    private float minimumAmount;
+    private double minimumAmount;
 
     @Override
     public short getID() {
@@ -22,7 +22,7 @@ public class FactoryMinBRAmountBlock extends ConfigurationBlock {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        minimumAmount = RoundingUtil.roundFloat(byteBuf.readUInt16LE() / 100F, 2);
+        minimumAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
     }
 
     @Override

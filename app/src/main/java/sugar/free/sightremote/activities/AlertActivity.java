@@ -9,14 +9,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import lombok.Setter;
@@ -55,7 +53,8 @@ import sugar.free.sightremote.services.AlertService;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
-import static sugar.free.sightremote.utils.Preferences.*;
+import static sugar.free.sightremote.utils.Preferences.PREF_STRING_ALERT_ALARM_TONE;
+import static sugar.free.sightremote.utils.Preferences.getStringPref;
 
 public class AlertActivity extends AppCompatActivity implements View.OnClickListener {
 

@@ -10,9 +10,9 @@ public class Warning38BolusCancelled extends Alert {
     @Getter
     private HistoryBolusType bolusType;
     @Getter
-    private float programmedAmount;
+    private double programmedAmount;
     @Getter
-    private float deliveredAmount;
+    private double deliveredAmount;
 
     private static final long serialVersionUID = 1L;
 
@@ -20,7 +20,7 @@ public class Warning38BolusCancelled extends Alert {
     public void parse(ByteBuf byteBuf) {
         bolusType = HistoryBolusType.getBolusType(byteBuf.readShort());
         byteBuf.shift(2);
-        programmedAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
-        deliveredAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        programmedAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
+        deliveredAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
     }
 }

@@ -11,7 +11,7 @@ public class FactoryMinBolusAmountBlock extends ConfigurationBlock {
     public static final short ID = 0x17EB;
 
     @Getter
-    private float minimumAmount;
+    private double minimumAmount;
 
     @Override
     public short getID() {
@@ -20,7 +20,7 @@ public class FactoryMinBolusAmountBlock extends ConfigurationBlock {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        minimumAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        minimumAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
     }
 
     @Override

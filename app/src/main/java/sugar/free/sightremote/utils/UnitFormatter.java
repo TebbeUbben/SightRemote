@@ -7,14 +7,14 @@ import sugar.free.sightremote.SightRemote;
 
 public class UnitFormatter {
 
-    public static String formatUnits(float units) {
+    public static String formatUnits(double units) {
         DecimalFormat decimalFormat = new DecimalFormat("0");
         decimalFormat.setMinimumFractionDigits(1);
         decimalFormat.setMaximumFractionDigits(2);
         return SightRemote.getInstance().getString(R.string.unit_formatter, decimalFormat.format(units));
     }
 
-    public static String formatBR(float units) {
+    public static String formatBR(double units) {
         DecimalFormat decimalFormat = new DecimalFormat("0");
         decimalFormat.setMinimumFractionDigits(1);
         decimalFormat.setMaximumFractionDigits(2);

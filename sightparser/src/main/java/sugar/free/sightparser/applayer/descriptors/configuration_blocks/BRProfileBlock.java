@@ -25,7 +25,7 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
             if ((duration = byteBuf.readUInt16LE()) > 0)
                 profileBlocks.add(new ProfileBlock(duration, 0));
         for (ProfileBlock profileBlock : profileBlocks)
-            profileBlock.setAmount(((float) byteBuf.readUInt16LE()) / 100F);
+            profileBlock.setAmount(((double) byteBuf.readUInt16LE()) / 100D);
     }
 
     @Override
@@ -38,7 +38,7 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
         }
         for (int i = 0; i < 24; i++) {
             if (i < profileBlocks.size())
-                byteBuf.putUInt16LE((short) (profileBlocks.get(i).getAmount() * 100F));
+                byteBuf.putUInt16LE((int) (profileBlocks.get(i).getAmount() * 100D));
             else byteBuf.putShort((short) 0x0000);
         }
         return byteBuf.getBytes();
@@ -48,18 +48,18 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
     @Getter
     public static class ProfileBlock implements Serializable {
         private int duration;
-        private float amount;
+        private double amount;
 
-        public ProfileBlock(int duration, float amount) {
+        public ProfileBlock(int duration, double amount) {
             this.duration = duration;
             this.amount = amount;
         }
     }
 
-    public float getTotalAmount() {
-        float total = 0;
+    public double getTotalAmount() {
+        double total = 0;
         for (ProfileBlock profileBlock : profileBlocks)
-            total += RoundingUtil.roundFloat(profileBlock.getAmount() / 60 * profileBlock.getDuration(), 2);
+            total += RoundingUtil.roundDouble(profileBlock.getAmount() / 60D * ((double) profileBlock.getDuration()), 2);
         return total;
     }
 }

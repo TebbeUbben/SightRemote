@@ -13,9 +13,9 @@ public class FixedSizeProfileBlock {
 
     private int startTime;
     private int endTime;
-    private float amount;
+    private double amount;
 
-    public FixedSizeProfileBlock(int startTime, int endTime, float amount) {
+    public FixedSizeProfileBlock(int startTime, int endTime, double amount) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.amount = amount;

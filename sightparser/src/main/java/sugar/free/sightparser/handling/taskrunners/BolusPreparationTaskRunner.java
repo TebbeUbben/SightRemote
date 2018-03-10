@@ -55,8 +55,8 @@ public class BolusPreparationTaskRunner extends TaskRunner {
     @Getter
     public static final class PreperationResult implements Serializable {
         private boolean pumpStarted;
-        private float minBolusAmount;
-        private float maxBolusAmount;
+        private double minBolusAmount;
+        private double maxBolusAmount;
         private AvailableBolusesMessage availableBoluses;
     }
 }

@@ -13,7 +13,7 @@ public class CurrentBasalMessage extends AppLayerMessage {
     @Getter
     private String currentBasalName;
     @Getter
-    private float currentBasalAmount = 0;
+    private double currentBasalAmount = 0;
 
     @Override
     public Service getService() {
@@ -34,6 +34,6 @@ public class CurrentBasalMessage extends AppLayerMessage {
     protected void parse(ByteBuf byteBuf) throws Exception {
         byteBuf.shift(2);
         currentBasalName = byteBuf.readUTF16LE(62);
-        currentBasalAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) /  100F, 2);
+        currentBasalAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
     }
 }

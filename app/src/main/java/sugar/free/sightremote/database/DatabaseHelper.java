@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "sightremote.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -44,7 +44,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-
+        if (oldVersion < 2) {
+            try {
+                TableUtils.dropTable(connectionSource, BolusDelivered.class, false);
+                TableUtils.dropTable(connectionSource, BolusProgrammed.class, false);
+                TableUtils.dropTable(connectionSource, CannulaFilled.class, false);
+                TableUtils.createTable(connectionSource, BolusDelivered.class);
+                TableUtils.createTable(connectionSource, BolusProgrammed.class);
+                TableUtils.createTable(connectionSource, CannulaFilled.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Dao<BolusDelivered, Integer> getBolusDeliveredDao() {

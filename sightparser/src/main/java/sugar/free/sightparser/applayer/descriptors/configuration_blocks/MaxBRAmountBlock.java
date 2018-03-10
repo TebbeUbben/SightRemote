@@ -13,7 +13,7 @@ public class MaxBRAmountBlock extends ConfigurationBlock {
 
     @Getter
     @Setter
-    private float maximumAmount;
+    private double maximumAmount;
 
     @Override
     public short getID() {
@@ -22,7 +22,7 @@ public class MaxBRAmountBlock extends ConfigurationBlock {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        maximumAmount = RoundingUtil.roundFloat(byteBuf.readUInt16LE() / 100F, 2);
+        maximumAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
     }
 
     @Override

@@ -20,7 +20,7 @@ import sugar.free.sightremote.R;
 public class EditBRBlockDialog {
 
     public static void showDialog(Context context, BlockChangedListener listener,
-                                  FixedSizeProfileBlock profileBlock, boolean disableEnd, int minEndTime, float min, float max) {
+                                  FixedSizeProfileBlock profileBlock, boolean disableEnd, int minEndTime, double min, double max) {
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_edit_br_block, null);
         EditText amount = view.findViewById(R.id.br_amount);
         amount.setText(profileBlock.getAmount() + "");
@@ -34,7 +34,7 @@ public class EditBRBlockDialog {
                 .setPositiveButton(R.string.okay, ((dialog, which) -> {
                     listener.onBlockChange(profileBlock,
                             endTime.getSelectedItemPosition() * 15 + minEndTime,
-                            Float.parseFloat(amount.getText().toString()));
+                            Double.parseDouble(amount.getText().toString()));
                 })).setNegativeButton(R.string.cancel, null)
                 .create();
         alertDialog.show();
@@ -58,7 +58,7 @@ public class EditBRBlockDialog {
                     okayButton.setEnabled(false);
                     return;
                 }
-                float value = Float.parseFloat(text);
+                double value = Double.parseDouble(text);
                 String[] split = text.split("\\.");
                 if (split.length == 2 && split[1].length() > 2) {
                     amount.setError(context.getString(R.string.maximum_of_two_decimal_places));
@@ -85,7 +85,7 @@ public class EditBRBlockDialog {
     }
 
     public interface BlockChangedListener {
-        void onBlockChange(FixedSizeProfileBlock profileBlock, int endTime, float amount);
+        void onBlockChange(FixedSizeProfileBlock profileBlock, int endTime, double amount);
     }
 
 }

@@ -15,9 +15,9 @@ public class ActiveBolus implements Serializable {
     @Getter
     private ActiveBolusType bolusType;
     @Getter
-    private float initialAmount;
+    private double initialAmount;
     @Getter
-    private float leftoverAmount;
+    private double leftoverAmount;
     @Getter
     private int duration;
 
@@ -27,8 +27,8 @@ public class ActiveBolus implements Serializable {
         activeBolus.bolusType = ActiveBolusType.getBolusType(byteBuf.readShort());
         byteBuf.shift(2);
         byteBuf.shift(2);
-        activeBolus.initialAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
-        activeBolus.leftoverAmount = RoundingUtil.roundFloat(((float) byteBuf.readUInt16LE()) / 100F, 2);
+        activeBolus.initialAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
+        activeBolus.leftoverAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
         activeBolus.duration = byteBuf.readUInt16LE();
         return activeBolus;
     }
