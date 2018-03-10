@@ -11,6 +11,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 @Getter
 public abstract class HistoryFrame implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     public static final Map<Short, Class<? extends HistoryFrame>> HISTORY_FRAMES = new HashMap<>();
 
     static {

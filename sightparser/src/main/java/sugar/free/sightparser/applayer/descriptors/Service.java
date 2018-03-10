@@ -12,6 +12,8 @@ public enum  Service {
     CONFIGURATION((byte) 0x55, (short) 0x0200, "u+5Fhz6Gw4j1Kkas"),
     REMOTE_CONTROL((byte) 0x66, (short) 0x0100, "");
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private byte serviceID;
     @Getter

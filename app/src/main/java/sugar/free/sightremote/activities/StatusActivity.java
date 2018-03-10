@@ -208,8 +208,13 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
             startPump.setVisible(true);
             stopPump.setVisible(false);
         } else {
-            startPump.setVisible(false);
-            stopPump.setVisible(true);
+            if (pumpStatus == PumpStatus.PAUSED) {
+                startPump.setVisible(true);
+                stopPump.setVisible(false);
+            } else {
+                startPump.setVisible(false);
+                stopPump.setVisible(true);
+            }
             int tbrAmount = statusResult.getCurrentTBRMessage().getPercentage();
             int tbrDuration = statusResult.getCurrentTBRMessage().getLeftoverTime();
             int tbrInitialDuration = statusResult.getCurrentTBRMessage().getInitialTime();

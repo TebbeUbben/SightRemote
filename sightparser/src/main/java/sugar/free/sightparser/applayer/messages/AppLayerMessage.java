@@ -55,6 +55,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public abstract class AppLayerMessage extends Message implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private static final byte VERSION = 0x20;
     @SuppressLint("UseSparseArrays")
     private static Map<Byte, Map<Short, Class<? extends AppLayerMessage>>> MESSAGES = new HashMap<>();

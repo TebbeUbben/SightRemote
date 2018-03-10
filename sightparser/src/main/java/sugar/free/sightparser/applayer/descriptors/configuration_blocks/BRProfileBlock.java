@@ -11,6 +11,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public abstract class BRProfileBlock extends ConfigurationBlock {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     @Setter
     private List<ProfileBlock> profileBlocks;

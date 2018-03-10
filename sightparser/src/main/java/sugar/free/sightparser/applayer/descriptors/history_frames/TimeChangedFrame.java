@@ -7,6 +7,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 @Getter
 public class TimeChangedFrame extends HistoryFrame {
 
+    private static final long serialVersionUID = 1L;
+
     private int beforeYear;
     private int beforeMonth;
     private int beforeDay;

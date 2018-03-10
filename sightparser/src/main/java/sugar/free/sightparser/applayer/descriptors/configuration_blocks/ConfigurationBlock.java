@@ -8,6 +8,7 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public abstract class ConfigurationBlock implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
     public static final Map<Short, Class<? extends ConfigurationBlock>> CONFIGURATIONBLOCKS = new HashMap<>();
 

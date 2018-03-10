@@ -8,6 +8,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public abstract class Alert implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     public static final Map<Short, Class<? extends Alert>> ALERTS = new HashMap<>();
 
     static {

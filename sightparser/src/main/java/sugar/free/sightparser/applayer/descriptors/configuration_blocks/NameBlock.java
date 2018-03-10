@@ -6,6 +6,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public abstract class NameBlock extends ConfigurationBlock {
 
+    private static final long serialVersionUID = 1L;
+
     @Setter
     @Getter
     private String name;

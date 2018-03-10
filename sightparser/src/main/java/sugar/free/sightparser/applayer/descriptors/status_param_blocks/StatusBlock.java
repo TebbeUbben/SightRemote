@@ -8,6 +8,7 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public abstract class StatusBlock implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
     public static final Map<Short, Class<? extends StatusBlock>> STATUSBLOCKS = new HashMap<>();
 

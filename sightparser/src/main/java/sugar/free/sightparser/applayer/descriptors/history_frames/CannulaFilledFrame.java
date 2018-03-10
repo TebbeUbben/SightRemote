@@ -6,6 +6,8 @@ import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class CannulaFilledFrame extends HistoryFrame {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     private float amount;
 
