@@ -1,9 +1,9 @@
 package sugar.free.sightparser.applayer.messages.status;
 
 import lombok.Getter;
-import sugar.free.sightparser.RoundingUtil;
-import sugar.free.sightparser.applayer.messages.AppLayerMessage;
+import sugar.free.sightparser.Helpers;
 import sugar.free.sightparser.applayer.descriptors.Service;
+import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class CurrentBasalMessage extends AppLayerMessage {
@@ -34,6 +34,6 @@ public class CurrentBasalMessage extends AppLayerMessage {
     protected void parse(ByteBuf byteBuf) throws Exception {
         byteBuf.shift(2);
         currentBasalName = byteBuf.readUTF16LE(62);
-        currentBasalAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
+        currentBasalAmount = Helpers.roundDouble(((double) byteBuf.readUInt16LE()) / 100D);
     }
 }

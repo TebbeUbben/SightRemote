@@ -63,7 +63,7 @@ public class EditBRBlockDialog {
                 if (split.length == 2 && split[1].length() > 2) {
                     amount.setError(context.getString(R.string.maximum_of_two_decimal_places));
                     okayButton.setEnabled(false);
-                } else if (value < min) {
+                } else if (value < min && value != 0) {
                     amount.setError(context.getString(R.string.minimum_of, UnitFormatter.formatBR(min)));
                     okayButton.setEnabled(false);
                 } else if (value > max) {

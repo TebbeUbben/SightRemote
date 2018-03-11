@@ -1,7 +1,6 @@
 package sugar.free.sightparser.applayer.descriptors.alerts;
 
 import lombok.Getter;
-import sugar.free.sightparser.RoundingUtil;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class Warning36TBRCancelled extends Alert {

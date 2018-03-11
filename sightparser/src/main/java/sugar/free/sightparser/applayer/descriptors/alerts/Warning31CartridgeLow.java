@@ -1,7 +1,7 @@
 package sugar.free.sightparser.applayer.descriptors.alerts;
 
 import lombok.Getter;
-import sugar.free.sightparser.RoundingUtil;
+import sugar.free.sightparser.Helpers;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class Warning31CartridgeLow extends Alert {
@@ -13,6 +13,6 @@ public class Warning31CartridgeLow extends Alert {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        cartridgeAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
+        cartridgeAmount = Helpers.roundDouble(((double) byteBuf.readUInt16LE()) / 100D);
     }
 }

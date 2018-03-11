@@ -1,6 +1,7 @@
 package sugar.free.sightparser.applayer.messages.remote_control;
 
 import lombok.Setter;
+import sugar.free.sightparser.Helpers;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class MultiwaveBolusMessage extends BolusMessage {
@@ -21,12 +22,12 @@ public class MultiwaveBolusMessage extends BolusMessage {
         data.putShort((short) 0xFC00);
         data.putShort((short) 0x1F00);
         data.putShort((short) 0x0000);
-        data.putUInt16LE((int) (amount * 100D));
-        data.putUInt16LE((int) (delayedAmount * 100D));
+        data.putUInt16LE(Helpers.roundDoubleToInt(amount * 100D));
+        data.putUInt16LE(Helpers.roundDoubleToInt(delayedAmount * 100D));
         data.putUInt16LE(duration);
         data.putShort((short) 0x0000);
-        data.putUInt16LE((int) (amount * 100D));
-        data.putUInt16LE((int) (delayedAmount * 100D));
+        data.putUInt16LE(Helpers.roundDoubleToInt(amount * 100D));
+        data.putUInt16LE(Helpers.roundDoubleToInt(delayedAmount * 100D));
         data.putUInt16LE(duration);
         return data.getBytes();
     }

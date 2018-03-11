@@ -6,7 +6,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
-import sugar.free.sightparser.RoundingUtil;
+import sugar.free.sightparser.Helpers;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public abstract class BRProfileBlock extends ConfigurationBlock {
@@ -25,7 +25,7 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
             if ((duration = byteBuf.readUInt16LE()) > 0)
                 profileBlocks.add(new ProfileBlock(duration, 0));
         for (ProfileBlock profileBlock : profileBlocks)
-            profileBlock.setAmount(((double) byteBuf.readUInt16LE()) / 100D);
+            profileBlock.setAmount(Helpers.roundDouble(((double) byteBuf.readUInt16LE()) / 100D));
     }
 
     @Override
@@ -37,8 +37,9 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
             else byteBuf.putShort((short) 0x0000);
         }
         for (int i = 0; i < 24; i++) {
-            if (i < profileBlocks.size())
-                byteBuf.putUInt16LE((int) (profileBlocks.get(i).getAmount() * 100D));
+            if (i < profileBlocks.size()) {
+                byteBuf.putUInt16LE(Helpers.roundDoubleToInt(profileBlocks.get(i).getAmount() * 100D));
+            }
             else byteBuf.putShort((short) 0x0000);
         }
         return byteBuf.getBytes();
@@ -59,7 +60,7 @@ public abstract class BRProfileBlock extends ConfigurationBlock {
     public double getTotalAmount() {
         double total = 0;
         for (ProfileBlock profileBlock : profileBlocks)
-            total += RoundingUtil.roundDouble(profileBlock.getAmount() / 60D * ((double) profileBlock.getDuration()), 2);
+            total += Helpers.roundDouble(profileBlock.getAmount() / 60D * ((double) profileBlock.getDuration()));
         return total;
     }
 }

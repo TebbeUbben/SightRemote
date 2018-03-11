@@ -1,7 +1,7 @@
 package sugar.free.sightparser.applayer.descriptors.history_frames;
 
 import lombok.Getter;
-import sugar.free.sightparser.RoundingUtil;
+import sugar.free.sightparser.Helpers;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class CannulaFilledFrame extends HistoryFrame {
@@ -13,6 +13,6 @@ public class CannulaFilledFrame extends HistoryFrame {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        amount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
+        amount = Helpers.roundDouble(((double) byteBuf.readUInt16LE()) / 100D);
     }
 }

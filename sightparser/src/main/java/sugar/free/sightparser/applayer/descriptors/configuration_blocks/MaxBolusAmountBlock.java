@@ -1,7 +1,7 @@
 package sugar.free.sightparser.applayer.descriptors.configuration_blocks;
 
 import lombok.Getter;
-import sugar.free.sightparser.RoundingUtil;
+import sugar.free.sightparser.Helpers;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public class MaxBolusAmountBlock extends ConfigurationBlock {
@@ -20,13 +20,13 @@ public class MaxBolusAmountBlock extends ConfigurationBlock {
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        maximumAmount = RoundingUtil.roundDouble(((double) byteBuf.readUInt16LE()) / 100D, 2);
+        maximumAmount = Helpers.roundDouble(((double) byteBuf.readUInt16LE()) / 100D);
     }
 
     @Override
     public byte[] getData() {
         ByteBuf byteBuf = new ByteBuf(2);
-        byteBuf.putUInt16LE((short) (maximumAmount * 100F));
+        byteBuf.putUInt16LE(Helpers.roundDoubleToInt(maximumAmount * 100D));
         return byteBuf.getBytes();
     }
 }
