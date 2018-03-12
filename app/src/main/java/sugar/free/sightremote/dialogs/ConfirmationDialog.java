@@ -3,6 +3,7 @@ package sugar.free.sightremote.dialogs;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.hardware.fingerprint.FingerprintManager;
@@ -43,6 +44,8 @@ public class ConfirmationDialog implements TextWatcher, View.OnClickListener {
     private Handler handler;
     private Vibrator vibrator;
 
+
+    private DialogCloseListener closeListener;
     private ConfirmationCallback callback;
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
@@ -64,8 +67,9 @@ public class ConfirmationDialog implements TextWatcher, View.OnClickListener {
 
     private CancellationSignal cancellationSignal;
 
-    private ConfirmationDialog(Context context, ConfirmationCallback callback) {
+    private ConfirmationDialog(Context context, ConfirmationCallback callback, DialogCloseListener closeListener) {
         this.callback = callback;
+        this.closeListener = closeListener;
         builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.confirmation);
         builder.setNegativeButton(R.string.cancel, null);
@@ -73,13 +77,23 @@ public class ConfirmationDialog implements TextWatcher, View.OnClickListener {
         handler = new Handler(Looper.getMainLooper());
     }
 
+    public ConfirmationDialog(Context context, String message, ConfirmationCallback callback, DialogCloseListener closeListener) {
+        this(context, callback, closeListener);
+        builder.setMessage(message);
+    }
+
+    public ConfirmationDialog(Context context, Spanned message, ConfirmationCallback callback, DialogCloseListener closeListener) {
+        this(context, callback, closeListener);
+        builder.setMessage(message);
+    }
+
     public ConfirmationDialog(Context context, String message, ConfirmationCallback callback) {
-        this(context, callback);
+        this(context, callback, null);
         builder.setMessage(message);
     }
 
     public ConfirmationDialog(Context context, Spanned message, ConfirmationCallback callback) {
-        this(context, callback);
+        this(context, callback, null);
         builder.setMessage(message);
     }
 
@@ -88,6 +102,7 @@ public class ConfirmationDialog implements TextWatcher, View.OnClickListener {
         prepareViews();
         dialog = builder.show();
         dialog.setOnDismissListener((dialogInterface -> onClose()));
+        dialog.setOnCancelListener((dialog -> onClose()));
         if (useFingerprint()) getFingerprintManager().authenticate(null,
                 cancellationSignal = new CancellationSignal(), 0, new FingerprintManager.AuthenticationCallback() {
                     @Override
@@ -108,6 +123,7 @@ public class ConfirmationDialog implements TextWatcher, View.OnClickListener {
     private void onClose() {
         if (cancellationSignal != null) cancellationSignal.cancel();
         handler.removeCallbacks(cancelRunnable);
+        if (closeListener != null) closeListener.onDialogClosed();
     }
 
     private void onConfirm() {
@@ -255,6 +271,10 @@ public class ConfirmationDialog implements TextWatcher, View.OnClickListener {
 
     public interface ConfirmationCallback {
         void onDialogConfirmed();
+    }
+
+    public interface DialogCloseListener {
+        void onDialogClosed();
     }
 
     @Override

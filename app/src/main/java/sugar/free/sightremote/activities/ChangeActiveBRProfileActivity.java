@@ -1,5 +1,6 @@
 package sugar.free.sightremote.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -147,7 +148,7 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
             taskRunner.fetch(this);
             adapter.setActiveProfile(profile);
             adapter.notifyDataSetChanged();
-        })).show();
+        }, () -> adapter.notifyDataSetChanged())).show();
     }
 
     @Override
