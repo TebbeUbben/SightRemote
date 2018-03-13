@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,7 +35,6 @@ import sugar.free.sightremote.database.DatabaseHelper;
 public abstract class SightActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DatabaseHelper databaseHelper;
-    private SharedPreferences sharedPreferences;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -55,21 +55,22 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
         int id = item.getItemId();
 
         if (id == getSelectedNavItemID()) return false;
-        else if (id == R.id.nav_status) {
-            Intent intent = new Intent(this, StatusActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        } else if (id == R.id.nav_standard_bolus) startActivity(StandardBolusActivity.class);
-        else if (id == R.id.nav_extended_bolus) startActivity(ExtendedBolusActivity.class);
-        else if (id == R.id.nav_multiwave_bolus) startActivity(MultiwaveBolusActivity.class);
-        else if (id == R.id.nav_tbr) startActivity(TemporaryBasalRateActivity.class);
-        else if (id == R.id.nav_br_profiles) startActivity(ChangeActiveBRProfileActivity.class);
-        else if (id == R.id.nav_bolus_data) startActivity(BolusHistoryActivity.class);
-        else if (id == R.id.nav_tbr_data) startActivity(TBRHistoryActivity.class);
-        else if (id == R.id.nav_settings) startActivity(SettingsActivity.class);
-
-        if (finishAfterNavigationClick()) finish();
         drawerLayout.closeDrawers();
+        new Handler().postDelayed(() -> {
+            if (id == R.id.nav_status) {
+                Intent intent = new Intent(this, StatusActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            } else if (id == R.id.nav_standard_bolus) startActivity(StandardBolusActivity.class);
+            else if (id == R.id.nav_extended_bolus) startActivity(ExtendedBolusActivity.class);
+            else if (id == R.id.nav_multiwave_bolus) startActivity(MultiwaveBolusActivity.class);
+            else if (id == R.id.nav_tbr) startActivity(TemporaryBasalRateActivity.class);
+            else if (id == R.id.nav_br_profiles) startActivity(ChangeActiveBRProfileActivity.class);
+            else if (id == R.id.nav_bolus_data) startActivity(BolusHistoryActivity.class);
+            else if (id == R.id.nav_tbr_data) startActivity(TBRHistoryActivity.class);
+            else if (id == R.id.nav_settings) startActivity(SettingsActivity.class);
+            if (finishAfterNavigationClick()) finish();
+        }, 300L);
         return true;
     }
 
