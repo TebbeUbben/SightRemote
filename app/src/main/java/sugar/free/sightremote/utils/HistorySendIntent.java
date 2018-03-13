@@ -7,6 +7,7 @@ import sugar.free.sightparser.handling.HistoryBroadcast;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.database.BolusProgrammed;
 import sugar.free.sightremote.database.CannulaFilled;
+import sugar.free.sightremote.database.DailyTotal;
 import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
@@ -91,6 +92,19 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, cannulaFilled.getEventNumber());
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, cannulaFilled.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, cannulaFilled.getDateTime());
+        intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
+        context.sendBroadcast(intent);
+    }
+
+    public static void sendDailyTotal(Context context, DailyTotal dailyTotal, boolean resync) {
+        Intent intent = new Intent();
+        intent.setAction(HistoryBroadcast.ACTION_DAILY_TOTAL);
+        intent.putExtra(HistoryBroadcast.EXTRA_BASAL_TOTAL, dailyTotal.getBasalTotal());
+        intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_TOTAL, dailyTotal.getBolusTotal());
+        intent.putExtra(HistoryBroadcast.EXTRA_TOTAL_DATE, dailyTotal.getTotalDate());
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, dailyTotal.getEventNumber());
+        intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, dailyTotal.getPump());
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, dailyTotal.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
         context.sendBroadcast(intent);
     }

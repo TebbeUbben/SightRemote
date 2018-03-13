@@ -22,6 +22,7 @@ public abstract class HistoryFrame implements Serializable {
         HISTORY_FRAMES.put((short) 0xC300, PumpStatusChangedFrame.class);
         HISTORY_FRAMES.put((short) 0xA500, TimeChangedFrame.class);
         HISTORY_FRAMES.put((short) 0xCF0C, CannulaFilledFrame.class);
+        HISTORY_FRAMES.put((short) 0xC003, DailyTotalFrame.class);
     }
 
     private int eventYear;

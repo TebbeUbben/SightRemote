@@ -28,6 +28,7 @@ import java.util.TimeZone;
 
 import sugar.free.sightparser.applayer.descriptors.HistoryReadingDirection;
 import sugar.free.sightparser.applayer.descriptors.HistoryType;
+import sugar.free.sightparser.applayer.descriptors.history_frames.DailyTotalFrame;
 import sugar.free.sightparser.applayer.descriptors.history_frames.HistoryFrame;
 import sugar.free.sightparser.applayer.messages.history.OpenHistoryReadingSessionMessage;
 import sugar.free.sightparser.applayer.descriptors.history_frames.BolusDeliveredFrame;
@@ -50,6 +51,7 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.database.BolusProgrammed;
 import sugar.free.sightremote.database.CannulaFilled;
+import sugar.free.sightremote.database.DailyTotal;
 import sugar.free.sightremote.database.DatabaseHelper;
 import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.Offset;
@@ -163,6 +165,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         List<PumpStatusChanged> pumpStatusChangedEntries = new ArrayList<>();
         List<CannulaFilled> cannulaFilledEntries = new ArrayList<>();
         List<TimeChanged> timeChangedEntries = new ArrayList<>();
+        List<DailyTotal> dailyTotalEntries = new ArrayList<>();
         for (HistoryFrame historyFrame : historyFrames) {
             Log.d("HistorySyncService", "Received " + historyFrame.getClass().getSimpleName());
             if (historyFrame instanceof BolusDeliveredFrame)
@@ -177,6 +180,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 timeChangedEntries.add(processTimeChangedFrame((TimeChangedFrame) historyFrame));
             else if (historyFrame instanceof CannulaFilledFrame)
                 cannulaFilledEntries.add(processCannulaFilledFrame((CannulaFilledFrame) historyFrame));
+            else if (historyFrame instanceof DailyTotalFrame)
+                dailyTotalEntries.add(processDailyTotalFrame((DailyTotalFrame) historyFrame));
         }
         try {
             for (BolusDelivered bolusDelivered : bolusDeliveredEntries) {
@@ -213,7 +218,13 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 if (getDatabaseHelper().getCannulaFilledDao().queryBuilder().where()
                         .eq("eventNumber", cannulaFilled.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getCannulaFilledDao().create(cannulaFilled);
-                HistorySendIntent.sendCannulaFilled(getApplicationContext(),cannulaFilled, false);
+                HistorySendIntent.sendCannulaFilled(getApplicationContext(), cannulaFilled, false);
+            }
+            for (DailyTotal dailyTotal : dailyTotalEntries) {
+                if (getDatabaseHelper().getCannulaFilledDao().queryBuilder().where()
+                        .eq("eventNumber", dailyTotal.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
+                getDatabaseHelper().getDailyTotalDao().create(dailyTotal);
+                HistorySendIntent.sendDailyTotal(getApplicationContext(), dailyTotal, false);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -319,6 +330,23 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         cannulaFilled.setDateTime(eventTime);
 
         return cannulaFilled;
+    }
+
+    private DailyTotal processDailyTotalFrame(DailyTotalFrame frame) {
+        DailyTotal dailyTotal = new DailyTotal();
+        dailyTotal.setEventNumber(frame.getEventNumber());
+        dailyTotal.setBasalTotal(frame.getBasalTotal());
+        dailyTotal.setBolusTotal(frame.getBolusTotal());
+
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        dailyTotal.setDateTime(eventTime);
+
+        Date totalDate = parseDateTimeAddOffset(frame.getTotalYear(), frame.getTotalMonth(),
+                frame.getTotalDay(), 0, 0, 0);
+        dailyTotal.setTotalDate(totalDate);
+
+        return dailyTotal;
     }
 
     private OpenHistoryReadingSessionMessage createOpenMessage(HistoryType historyType) {

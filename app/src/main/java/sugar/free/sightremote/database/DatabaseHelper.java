@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "sightremote.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -26,6 +26,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<PumpStatusChanged, Integer> pumpStatusChangedDao;
     private Dao<TimeChanged, Integer> timeChangedDao;
     private Dao<CannulaFilled, Integer> cannulaFilledDao;
+    private Dao<DailyTotal, Integer> dailyTotalDao;
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
@@ -52,6 +53,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 TableUtils.createTable(connectionSource, BolusDelivered.class);
                 TableUtils.createTable(connectionSource, BolusProgrammed.class);
                 TableUtils.createTable(connectionSource, CannulaFilled.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (oldVersion < 3) {
+            try {
+                TableUtils.createTable(connectionSource, DailyTotal.class);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -119,5 +127,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             e.printStackTrace();
         }
         return cannulaFilledDao;
+    }
+
+    public Dao<DailyTotal, Integer> getDailyTotalDao() {
+        try {
+            if (dailyTotalDao == null) dailyTotalDao = getDao(DailyTotal.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dailyTotalDao;
     }
 }

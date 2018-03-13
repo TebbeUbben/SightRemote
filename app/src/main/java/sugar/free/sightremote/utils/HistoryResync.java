@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import sugar.free.sightremote.database.BolusDelivered;
+import sugar.free.sightremote.database.DailyTotal;
 import sugar.free.sightremote.database.DatabaseHelper;
 import sugar.free.sightremote.database.EndOfTBR;
 
@@ -61,5 +62,19 @@ public class HistoryResync {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
         }
 
+
+
+        try {
+            final List<DailyTotal> records = databaseHelper.getDailyTotalDao().queryBuilder()
+                    .orderBy("dateTime", true)
+                    .where().ge("dateTime", yesterday).query();
+
+            android.util.Log.d("HistoryResync", "Resending Bolus list " + records.size());
+            for (DailyTotal dailyTotal : records) {
+                HistorySendIntent.sendDailyTotal(context, dailyTotal, true);
+            }
+        } catch (SQLException e) {
+            android.util.Log.e(TAG, "SQL ERROR: " + e);
+        }
     }
 }
