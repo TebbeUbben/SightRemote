@@ -19,8 +19,8 @@ import com.crashlytics.android.answers.CustomEvent;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,7 +30,6 @@ import sugar.free.sightparser.DataStorage;
 import sugar.free.sightparser.Pref;
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
-import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
 import sugar.free.sightparser.error.DisconnectedError;
 import sugar.free.sightparser.error.NotAuthorizedError;
 import sugar.free.sightparser.pipeline.Pipeline;
@@ -263,12 +262,14 @@ public class SightService extends Service {
                     reconnect = true;
                 }
             }
-            for (IStatusCallback sc : new ArrayList<>(statusCallbackIds.values()))
+            Iterator<IStatusCallback> sc = statusCallbackIds.values().iterator();
+            while (sc.hasNext()) {
                 try {
-                    sc.onStatusChange(status.name());
+                    sc.next().onStatusChange(status.name());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
             Answers.getInstance().logCustom(new CustomEvent("Connection Status Changed")
                     .putCustomAttribute("Status", status.toString()));
         }
