@@ -50,6 +50,16 @@ public abstract class ConfigurationBlock implements Serializable {
         CONFIGURATIONBLOCKS.put(CustomBolus8NameBlock.ID, CustomBolus8NameBlock.class);
         CONFIGURATIONBLOCKS.put(CustomBolus9NameBlock.ID, CustomBolus9NameBlock.class);
         CONFIGURATIONBLOCKS.put(CustomBolus10NameBlock.ID, CustomBolus10NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR1Block.ID, CustomTBR1Block.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR2Block.ID, CustomTBR2Block.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR3Block.ID, CustomTBR3Block.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR4Block.ID, CustomTBR4Block.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR5Block.ID, CustomTBR5Block.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR1NameBlock.ID, CustomTBR1NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR2NameBlock.ID, CustomTBR2NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR3NameBlock.ID, CustomTBR3NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR4NameBlock.ID, CustomTBR4NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomTBR5NameBlock.ID, CustomTBR5NameBlock.class);
     }
 
     public abstract short getID();
