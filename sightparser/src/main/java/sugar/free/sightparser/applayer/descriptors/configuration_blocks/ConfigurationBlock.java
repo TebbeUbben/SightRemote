@@ -30,6 +30,26 @@ public abstract class ConfigurationBlock implements Serializable {
         CONFIGURATIONBLOCKS.put(FactoryMaxBRAmountBlock.ID, FactoryMaxBRAmountBlock.class);
         CONFIGURATIONBLOCKS.put(FactoryMinBRAmountBlock.ID, FactoryMinBRAmountBlock.class);
         CONFIGURATIONBLOCKS.put(MaxBRAmountBlock.ID, MaxBRAmountBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus1Block.ID, CustomBolus1Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus2Block.ID, CustomBolus2Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus3Block.ID, CustomBolus3Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus4Block.ID, CustomBolus4Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus5Block.ID, CustomBolus5Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus6Block.ID, CustomBolus6Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus7Block.ID, CustomBolus7Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus8Block.ID, CustomBolus8Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus9Block.ID, CustomBolus9Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus10Block.ID, CustomBolus10Block.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus1NameBlock.ID, CustomBolus1NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus2NameBlock.ID, CustomBolus2NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus3NameBlock.ID, CustomBolus3NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus4NameBlock.ID, CustomBolus4NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus5NameBlock.ID, CustomBolus5NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus6NameBlock.ID, CustomBolus6NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus7NameBlock.ID, CustomBolus7NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus8NameBlock.ID, CustomBolus8NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus9NameBlock.ID, CustomBolus9NameBlock.class);
+        CONFIGURATIONBLOCKS.put(CustomBolus10NameBlock.ID, CustomBolus10NameBlock.class);
     }
 
     public abstract short getID();
