@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="104dp"
+    android:layout_height="72dp"
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:orientation="vertical">
 
         <TextView
@@ -20,22 +21,33 @@
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/bolus_amount"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bolus: 20U" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/basal_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Basal: 20U" />
+            <TextView
+                android:id="@+id/bolus_amount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Bolus: 20U" />
 
-        <TextView
-            android:id="@+id/total_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total: 40U" />
+            <TextView
+                android:id="@+id/basal_amount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Basal: 20U"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/total_amount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total: 40U"
+                android:textAlignment="textEnd" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

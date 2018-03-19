@@ -5,5 +5,6 @@
     <string name="duration_formatter">%1$02d:%2$02d</string>
     <string name="time_formatter">HH:mm</string>
     <string name="history_date_time_formatter">EE, dd. MMMM yyyy HH:mm</string>
+    <string name="history_date_formatter">EE, dd. MMMM yyyy</string>
     <string name="battery_formatter">%1$d%%</string>
 </resources>

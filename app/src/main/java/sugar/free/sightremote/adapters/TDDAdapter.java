@@ -25,7 +25,7 @@ public class TDDAdapter extends RecyclerView.Adapter<TDDAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_tbr, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_tdd, parent, false);
         return new TDDAdapter.ViewHolder(itemView);
     }
 
@@ -35,7 +35,7 @@ public class TDDAdapter extends RecyclerView.Adapter<TDDAdapter.ViewHolder> {
         holder.bolus.setText(HTMLUtil.getHTML(R.string.history_bolus, UnitFormatter.formatUnits(dailyTotal.getBolusTotal())));
         holder.basal.setText(HTMLUtil.getHTML(R.string.history_basal, UnitFormatter.formatUnits(dailyTotal.getBasalTotal())));
         holder.total.setText(HTMLUtil.getHTML(R.string.history_total, UnitFormatter.formatUnits(dailyTotal.getBolusTotal() + dailyTotal.getBasalTotal())));
-        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter)).format(dailyTotal.getDateTime()));
+        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_formatter)).format(dailyTotal.getDateTime()));
     }
 
     @Override
