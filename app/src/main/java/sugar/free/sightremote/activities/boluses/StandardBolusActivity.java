@@ -65,14 +65,16 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
             runOnUiThread(() -> bolusAmountPicker.adjustNumberPickers(preperationResult.getMaxBolusAmount()));
             if (preperationResult.isPumpStarted()) {
                 if (preperationResult.getAvailableBoluses().isStandardAvailable()) {
-                    hideManualOverlay();
+                    hideLoadingIndicator();
                     dismissSnackbar();
                 } else {
                     showManualOverlay();
+                    hideLoadingIndicator();
                     showSnackbar(Snackbar.make(getRootView(), R.string.bolus_type_not_available, Snackbar.LENGTH_INDEFINITE));
                 }
             } else {
                 showManualOverlay();
+                hideLoadingIndicator();
                 showSnackbar(Snackbar.make(getRootView(), R.string.pump_not_started, Snackbar.LENGTH_INDEFINITE));
             }
         } else {
@@ -99,11 +101,14 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
     @Override
     protected void statusChanged(Status status) {
         if (status == Status.CONNECTED) {
+            showLoadingIndicator();
+            hideManualOverlay();
             BolusPreparationTaskRunner taskRunner = new BolusPreparationTaskRunner(getServiceConnector());
             taskRunner.fetch(this);
         } else {
             if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
+            hideLoadingIndicator();
         }
     }
 
@@ -120,9 +125,9 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
         final SingleMessageTaskRunner taskRunner = new SingleMessageTaskRunner(getServiceConnector(), message);
         (confirmationDialog = new ConfirmationDialog(this,
                 HTMLUtil.getHTML(R.string.standard_bolus_confirmation, UnitFormatter.formatUnits(bolusAmountPicker.getPickerValue())), () -> {
-                    showManualOverlay();
-                    taskRunner.fetch(StandardBolusActivity.this);
-            })).show();
+            showLoadingIndicator();
+            taskRunner.fetch(StandardBolusActivity.this);
+        })).show();
     }
 
     @Override

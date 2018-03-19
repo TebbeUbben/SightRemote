@@ -72,6 +72,8 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
     @Override
     protected void statusChanged(Status status) {
         if (status == Status.CONNECTED) {
+            showLoadingIndicator();
+            hideManualOverlay();
             List<Short> blockIDs = new ArrayList<>();
             blockIDs.add(BRProfile1Block.ID);
             blockIDs.add(BRProfile2Block.ID);
@@ -86,8 +88,9 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
             blockIDs.add(ActiveProfileBlock.ID);
             new ReadConfigurationTaskRunner(getServiceConnector(), blockIDs).fetch(this);
         } else {
-            if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
+            hideLoadingIndicator();
+            if (confirmationDialog != null) confirmationDialog.hide();
         }
     }
 
@@ -113,6 +116,7 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
                 adapter.setProfileBlocks(brProfileBlocks);
                 adapter.setActiveProfile(activeProfile);
                 adapter.notifyDataSetChanged();
+                hideLoadingIndicator();
                 hideManualOverlay();
             });
         } else if (result == null) {
@@ -128,6 +132,7 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
 
     @Override
     public void onError(Exception e) {
+        hideLoadingIndicator();
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
         CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }

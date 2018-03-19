@@ -17,8 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.stmt.query.In;
 
 import sugar.free.sightparser.handling.ServiceConnectionCallback;
 import sugar.free.sightparser.handling.SightServiceConnector;
@@ -46,6 +48,7 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
     private Snackbar snackbar;
     private boolean autoOverlay = false;
     private boolean manualOverlay = false;
+    private boolean loadingIndicator = false;
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -205,7 +208,7 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
 
     private void hideOverlay() {
         runOnUiThread(() -> {
-            if (manualOverlay || autoOverlay) return;
+            if (manualOverlay || autoOverlay || loadingIndicator) return;
             View overlay = getOverlay();
             if (overlay != null) overlay.setVisibility(View.GONE);
         });
@@ -231,6 +234,10 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
 
     protected View getOverlay() {
         return findViewById(R.id.overlay);
+    }
+
+    private View getLoadingIndicator() {
+        return findViewById(R.id.loading_indicator);
     }
 
     protected boolean useOverlay() {
@@ -277,6 +284,26 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
     protected void hideManualOverlay() {
         manualOverlay = false;
         hideOverlay();
+    }
+
+    protected void showLoadingIndicator() {
+        View view = getLoadingIndicator();
+        if (view != null) {
+            loadingIndicator = true;
+            view.setVisibility(View.VISIBLE);
+            showOverlay();
+        }
+
+    }
+
+    protected void hideLoadingIndicator() {
+        View view = getLoadingIndicator();
+        if (view != null) {
+            loadingIndicator = false;
+            view.setVisibility(View.INVISIBLE);
+            hideOverlay();
+        }
+
     }
 
     protected DatabaseHelper getDatabaseHelper() {

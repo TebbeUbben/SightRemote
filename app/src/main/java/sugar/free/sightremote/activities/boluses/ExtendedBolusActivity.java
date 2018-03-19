@@ -75,14 +75,16 @@ public class ExtendedBolusActivity extends SightActivity implements TaskRunner.R
             runOnUiThread(() -> bolusAmountPicker.adjustNumberPickers(preperationResult.getMaxBolusAmount()));
             if (preperationResult.isPumpStarted()) {
                 if (preperationResult.getAvailableBoluses().isExtendedAvailable()) {
-                    hideManualOverlay();
+                    hideLoadingIndicator();
                     dismissSnackbar();
                 } else {
                     showManualOverlay();
+                    hideLoadingIndicator();
                     showSnackbar(Snackbar.make(getRootView(), R.string.bolus_type_not_available, Snackbar.LENGTH_INDEFINITE));
                 }
             } else {
                 showManualOverlay();
+                hideLoadingIndicator();
                 showSnackbar(Snackbar.make(getRootView(), R.string.pump_not_started, Snackbar.LENGTH_INDEFINITE));
             }
         } else {
@@ -109,11 +111,14 @@ public class ExtendedBolusActivity extends SightActivity implements TaskRunner.R
     @Override
     protected void statusChanged(Status status) {
         if (status == Status.CONNECTED) {
+            showLoadingIndicator();
+            hideManualOverlay();
             BolusPreparationTaskRunner taskRunner = new BolusPreparationTaskRunner(getServiceConnector());
             taskRunner.fetch(this);
         } else {
             if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
+            hideLoadingIndicator();
         }
     }
 
@@ -132,7 +137,7 @@ public class ExtendedBolusActivity extends SightActivity implements TaskRunner.R
         (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.extended_bolus_confirmation,
                 UnitFormatter.formatUnits(bolusAmountPicker.getPickerValue()),
                 UnitFormatter.formatDuration(durationPicker.getPickerValue())), () -> {
-            showManualOverlay();
+            showLoadingIndicator();
             taskRunner.fetch(ExtendedBolusActivity.this);
         })).show();
     }

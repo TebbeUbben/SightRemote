@@ -90,14 +90,16 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
             });
             if (preperationResult.isPumpStarted()) {
                 if (preperationResult.getAvailableBoluses().isMultiwaveAvailable()) {
-                    hideManualOverlay();
+                    hideLoadingIndicator();
                     dismissSnackbar();
                 } else {
                     showManualOverlay();
+                    hideLoadingIndicator();
                     showSnackbar(Snackbar.make(getRootView(), R.string.bolus_type_not_available, Snackbar.LENGTH_INDEFINITE));
                 }
             } else {
                 showManualOverlay();
+                hideLoadingIndicator();
                 showSnackbar(Snackbar.make(getRootView(), R.string.pump_not_started, Snackbar.LENGTH_INDEFINITE));
             }
         } else {
@@ -129,11 +131,14 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
     @Override
     protected void statusChanged(Status status) {
         if (status == Status.CONNECTED) {
+            showLoadingIndicator();
+            hideManualOverlay();
             BolusPreparationTaskRunner taskRunner = new BolusPreparationTaskRunner(getServiceConnector());
             taskRunner.fetch(this);
         } else {
             if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
+            hideLoadingIndicator();
         }
     }
 
@@ -148,7 +153,7 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
                 UnitFormatter.formatUnits(immediateBolusAmountPicker.getPickerValue()),
                 UnitFormatter.formatUnits(delayedBolusAmountPicker.getPickerValue()),
                 UnitFormatter.formatDuration(durationPicker.getPickerValue())), () -> {
-            showManualOverlay();
+            showLoadingIndicator();
             taskRunner.fetch(MultiwaveBolusActivity.this);
         })).show();
     }

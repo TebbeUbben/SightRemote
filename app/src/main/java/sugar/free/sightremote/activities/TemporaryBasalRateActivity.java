@@ -72,9 +72,12 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
     protected void statusChanged(Status status) {
         if (status == Status.CONNECTED) {
             new SingleMessageTaskRunner(getServiceConnector(), new PumpStatusMessage()).fetch(this);
+            showLoadingIndicator();
+            hideManualOverlay();
         } else {
             if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
+            hideLoadingIndicator();
         }
     }
 
@@ -92,6 +95,7 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
         (confirmationDialog = new ConfirmationDialog(this, HTMLUtil.getHTML(R.string.tbr_confirmation, amount, UnitFormatter.formatDuration(duration)),
                 () -> {
                     showManualOverlay();
+                    showLoadingIndicator();
                     taskRunner.fetch(TemporaryBasalRateActivity.this);
                 })).show();
     }
@@ -102,9 +106,10 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
             PumpStatusMessage pumpStatusMessage = (PumpStatusMessage) result;
             if (pumpStatusMessage.getPumpStatus() != PumpStatus.STARTED) {
                 showManualOverlay();
+                hideLoadingIndicator();
                 showSnackbar(Snackbar.make(getRootView(), R.string.pump_not_started, Snackbar.LENGTH_INDEFINITE));
             } else {
-                hideManualOverlay();
+                hideLoadingIndicator();
                 dismissSnackbar();
             }
         } else {

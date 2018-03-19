@@ -152,4 +152,5 @@
     <string name="connection">Connection</string>
     <string name="confirm_pin">Confirm PIN</string>
     <string name="daily_totals">Daily totals</string>
+    <string name="loading">Loading</string>
 </resources>

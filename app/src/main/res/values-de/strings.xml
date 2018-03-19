@@ -151,4 +151,5 @@
     <string name="history_basal"><![CDATA[Basal: <b>%1$s</b>]]></string>
     <string name="history_total"><![CDATA[Gesamt: <b>%1$s</b>]]></string>
     <string name="daily_totals">Tagesgesamtmengen</string>
+    <string name="loading">Lade</string>
 </resources>

@@ -117,8 +117,12 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
             ids.add(FactoryMinBRAmountBlock.ID);
             ReadConfigurationTaskRunner taskRunner = new ReadConfigurationTaskRunner(getServiceConnector(), ids);
             taskRunner.fetch(this);
+            hideManualOverlay();
+            showLoadingIndicator();
         } else {
             if (confirmationDialog != null) confirmationDialog.hide();
+            showManualOverlay();
+            hideLoadingIndicator();
         }
     }
 
@@ -151,6 +155,7 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
                 profileBlock.setProfileBlocks(FixedSizeProfileBlock.convertToRelative(profileBlocks));
                 blocks.add(profileBlock);
                 WriteConfigurationTaskRunner taskRunner = new WriteConfigurationTaskRunner(getServiceConnector(), blocks);
+                showLoadingIndicator();
                 taskRunner.fetch(this);
             })).show();
         } else if (item.getItemId() == R.id.edit_br_nav_edit_name) {
@@ -189,7 +194,7 @@ public class EditBRProfileActivity extends SightActivity implements TaskRunner.R
             List<ConfigurationBlock> blocks = (List<ConfigurationBlock>) result;
             maxBRAmount = ((MaxBRAmountBlock) blocks.get(0)).getMaximumAmount();
             minBRAmount = ((FactoryMinBRAmountBlock) blocks.get(1)).getMinimumAmount();
-            hideManualOverlay();
+            hideLoadingIndicator();
         } else if (result == null) {
             Answers.getInstance().logCustom(new CustomEvent("BR Profile Edited"));
             finish();
