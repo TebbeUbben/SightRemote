@@ -28,8 +28,11 @@ import java.util.TimeZone;
 
 import sugar.free.sightparser.applayer.descriptors.HistoryReadingDirection;
 import sugar.free.sightparser.applayer.descriptors.HistoryType;
+import sugar.free.sightparser.applayer.descriptors.history_frames.BatteryInsertedFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.CartridgeInsertedFrame;
 import sugar.free.sightparser.applayer.descriptors.history_frames.DailyTotalFrame;
 import sugar.free.sightparser.applayer.descriptors.history_frames.HistoryFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.TubeFilledFrame;
 import sugar.free.sightparser.applayer.messages.history.OpenHistoryReadingSessionMessage;
 import sugar.free.sightparser.applayer.descriptors.history_frames.BolusDeliveredFrame;
 import sugar.free.sightparser.applayer.descriptors.history_frames.BolusProgrammedFrame;
@@ -48,15 +51,18 @@ import sugar.free.sightparser.handling.StatusCallback;
 import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.handling.taskrunners.ReadHistoryTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
+import sugar.free.sightremote.database.BatteryInserted;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.database.BolusProgrammed;
 import sugar.free.sightremote.database.CannulaFilled;
+import sugar.free.sightremote.database.CartridgeInserted;
 import sugar.free.sightremote.database.DailyTotal;
 import sugar.free.sightremote.database.DatabaseHelper;
 import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.Offset;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
+import sugar.free.sightremote.database.TubeFilled;
 import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HistoryResync;
 import sugar.free.sightremote.utils.HistorySendIntent;
@@ -166,6 +172,9 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         List<CannulaFilled> cannulaFilledEntries = new ArrayList<>();
         List<TimeChanged> timeChangedEntries = new ArrayList<>();
         List<DailyTotal> dailyTotalEntries = new ArrayList<>();
+        List<TubeFilled> tubeFilledEntries = new ArrayList<>();
+        List<CartridgeInserted> cartridgeInsertedEntries = new ArrayList<>();
+        List<BatteryInserted> batteryInsertedEntries = new ArrayList<>();
         for (HistoryFrame historyFrame : historyFrames) {
             Log.d("HistorySyncService", "Received " + historyFrame.getClass().getSimpleName());
             if (historyFrame instanceof BolusDeliveredFrame)
@@ -182,6 +191,12 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 cannulaFilledEntries.add(processCannulaFilledFrame((CannulaFilledFrame) historyFrame));
             else if (historyFrame instanceof DailyTotalFrame)
                 dailyTotalEntries.add(processDailyTotalFrame((DailyTotalFrame) historyFrame));
+            else if (historyFrame instanceof TubeFilledFrame)
+                tubeFilledEntries.add(processTubeFilledFrame((TubeFilledFrame) historyFrame));
+            else if (historyFrame instanceof CartridgeInsertedFrame)
+                cartridgeInsertedEntries.add(processCartridgeInsertedFrame((CartridgeInsertedFrame) historyFrame));
+            else if (historyFrame instanceof BatteryInsertedFrame)
+                batteryInsertedEntries.add(processBatteryInsertedFrame((BatteryInsertedFrame) historyFrame));
         }
         try {
             for (BolusDelivered bolusDelivered : bolusDeliveredEntries) {
@@ -221,10 +236,28 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 HistorySendIntent.sendCannulaFilled(getApplicationContext(), cannulaFilled, false);
             }
             for (DailyTotal dailyTotal : dailyTotalEntries) {
-                if (getDatabaseHelper().getCannulaFilledDao().queryBuilder().where()
+                if (getDatabaseHelper().getDailyTotalDao().queryBuilder().where()
                         .eq("eventNumber", dailyTotal.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getDailyTotalDao().create(dailyTotal);
                 HistorySendIntent.sendDailyTotal(getApplicationContext(), dailyTotal, false);
+            }
+            for (TubeFilled tubeFilled : tubeFilledEntries) {
+                if (getDatabaseHelper().getTubeFilledDao().queryBuilder().where()
+                        .eq("eventNumber", tubeFilled.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
+                getDatabaseHelper().getTubeFilledDao().create(tubeFilled);
+                HistorySendIntent.sendTubeFilled(getApplicationContext(), tubeFilled, false);
+            }
+            for (CartridgeInserted cartridgeInserted : cartridgeInsertedEntries) {
+                if (getDatabaseHelper().getCartridgeInsertedDao().queryBuilder().where()
+                        .eq("eventNumber", cartridgeInserted.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
+                getDatabaseHelper().getCartridgeInsertedDao().create(cartridgeInserted);
+                HistorySendIntent.sendCartridgeInserted(getApplicationContext(), cartridgeInserted, false);
+            }
+            for (BatteryInserted batteryInserted : batteryInsertedEntries) {
+                if (getDatabaseHelper().getBatteryInsertedDao().queryBuilder().where()
+                        .eq("eventNumber", batteryInserted.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
+                getDatabaseHelper().getBatteryInsertedDao().create(batteryInserted);
+                HistorySendIntent.sendBatteryInserted(getApplicationContext(), batteryInserted, false);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -330,6 +363,44 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         cannulaFilled.setDateTime(eventTime);
 
         return cannulaFilled;
+    }
+
+    private TubeFilled processTubeFilledFrame(TubeFilledFrame frame) {
+        TubeFilled tubeFilled = new TubeFilled();
+        tubeFilled.setEventNumber(frame.getEventNumber());
+        tubeFilled.setPump(pumpSerialNumber);
+        tubeFilled.setAmount(frame.getAmount());
+
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        tubeFilled.setDateTime(eventTime);
+
+        return tubeFilled;
+    }
+
+    private CartridgeInserted processCartridgeInsertedFrame(CartridgeInsertedFrame frame) {
+        CartridgeInserted cartridgeInserted = new CartridgeInserted();
+        cartridgeInserted.setEventNumber(frame.getEventNumber());
+        cartridgeInserted.setPump(pumpSerialNumber);
+        cartridgeInserted.setAmount(frame.getAmount());
+
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        cartridgeInserted.setDateTime(eventTime);
+
+        return cartridgeInserted;
+    }
+
+    private BatteryInserted processBatteryInsertedFrame(BatteryInsertedFrame frame) {
+        BatteryInserted batteryInserted = new BatteryInserted();
+        batteryInserted.setEventNumber(frame.getEventNumber());
+        batteryInserted.setPump(pumpSerialNumber);
+
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        batteryInserted.setDateTime(eventTime);
+
+        return batteryInserted;
     }
 
     private DailyTotal processDailyTotalFrame(DailyTotalFrame frame) {

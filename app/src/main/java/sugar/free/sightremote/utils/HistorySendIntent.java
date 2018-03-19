@@ -4,13 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 
 import sugar.free.sightparser.handling.HistoryBroadcast;
+import sugar.free.sightremote.database.BatteryInserted;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.database.BolusProgrammed;
 import sugar.free.sightremote.database.CannulaFilled;
+import sugar.free.sightremote.database.CartridgeInserted;
 import sugar.free.sightremote.database.DailyTotal;
 import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
+import sugar.free.sightremote.database.TubeFilled;
 
 /**
  * Created by jamorham on 28/01/2018.
@@ -105,6 +108,38 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, dailyTotal.getEventNumber());
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, dailyTotal.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, dailyTotal.getDateTime());
+        intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
+        context.sendBroadcast(intent);
+    }
+
+    public static void sendTubeFilled(Context context, TubeFilled tubeFilled, boolean resync) {
+        Intent intent = new Intent();
+        intent.setAction(HistoryBroadcast.ACTION_TUBE_FILLED);
+        intent.putExtra(HistoryBroadcast.EXTRA_FILL_AMOUNT, tubeFilled.getAmount());
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, tubeFilled.getEventNumber());
+        intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, tubeFilled.getPump());
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, tubeFilled.getDateTime());
+        intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
+        context.sendBroadcast(intent);
+    }
+
+    public static void sendCartridgeInserted(Context context, CartridgeInserted cartridgeInserted, boolean resync) {
+        Intent intent = new Intent();
+        intent.setAction(HistoryBroadcast.ACTION_CARTRIDGE_INSERTED);
+        intent.putExtra(HistoryBroadcast.EXTRA_CARTRIDGE_AMOUNT, cartridgeInserted.getAmount());
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, cartridgeInserted.getEventNumber());
+        intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, cartridgeInserted.getPump());
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, cartridgeInserted.getDateTime());
+        intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
+        context.sendBroadcast(intent);
+    }
+
+    public static void sendBatteryInserted(Context context, BatteryInserted batteryInserted, boolean resync) {
+        Intent intent = new Intent();
+        intent.setAction(HistoryBroadcast.ACTION_BATTERY_INSERTED);
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, batteryInserted.getEventNumber());
+        intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, batteryInserted.getPump());
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, batteryInserted.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
         context.sendBroadcast(intent);
     }

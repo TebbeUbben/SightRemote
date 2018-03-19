@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "sightremote.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,17 +27,20 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<TimeChanged, Integer> timeChangedDao;
     private Dao<CannulaFilled, Integer> cannulaFilledDao;
     private Dao<DailyTotal, Integer> dailyTotalDao;
+    private Dao<BatteryInserted, Integer> batteryInsertedDao;
+    private Dao<CartridgeInserted, Integer> cartridgeInsertedDao;
+    private Dao<TubeFilled, Integer> tubeFilledDao;
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
-            TableUtils.createTable(connectionSource, BolusDelivered.class);
-            TableUtils.createTable(connectionSource, BolusProgrammed.class);
-            TableUtils.createTable(connectionSource, EndOfTBR.class);
-            TableUtils.createTable(connectionSource, Offset.class);
-            TableUtils.createTable(connectionSource, PumpStatusChanged.class);
-            TableUtils.createTable(connectionSource, TimeChanged.class);
-            TableUtils.createTable(connectionSource, CannulaFilled.class);
+            TableUtils.createTableIfNotExists(connectionSource, BolusDelivered.class);
+            TableUtils.createTableIfNotExists(connectionSource, BolusProgrammed.class);
+            TableUtils.createTableIfNotExists(connectionSource, EndOfTBR.class);
+            TableUtils.createTableIfNotExists(connectionSource, Offset.class);
+            TableUtils.createTableIfNotExists(connectionSource, PumpStatusChanged.class);
+            TableUtils.createTableIfNotExists(connectionSource, TimeChanged.class);
+            TableUtils.createTableIfNotExists(connectionSource, CannulaFilled.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -60,6 +63,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         if (oldVersion < 3) {
             try {
                 TableUtils.createTable(connectionSource, DailyTotal.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (oldVersion < 4) {
+            try {
+                TableUtils.createTableIfNotExists(connectionSource, CartridgeInserted.class);
+                TableUtils.createTableIfNotExists(connectionSource, BatteryInserted.class);
+                TableUtils.createTableIfNotExists(connectionSource, TubeFilled.class);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -136,5 +148,32 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             e.printStackTrace();
         }
         return dailyTotalDao;
+    }
+
+    public Dao<BatteryInserted, Integer> getBatteryInsertedDao() {
+        try {
+            if (batteryInsertedDao == null) batteryInsertedDao = getDao(BatteryInserted.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return batteryInsertedDao;
+    }
+
+    public Dao<TubeFilled, Integer> getTubeFilledDao() {
+        try {
+            if (tubeFilledDao == null) tubeFilledDao = getDao(TubeFilled.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tubeFilledDao;
+    }
+
+    public Dao<CartridgeInserted, Integer> getCartridgeInsertedDao() {
+        try {
+            if (cartridgeInsertedDao == null) cartridgeInsertedDao = getDao(CartridgeInserted.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cartridgeInsertedDao;
     }
 }
