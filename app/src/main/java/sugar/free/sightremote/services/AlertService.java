@@ -17,6 +17,7 @@ import java.util.TimerTask;
 
 import lombok.Setter;
 import sugar.free.sightparser.SerializationUtils;
+import sugar.free.sightparser.applayer.descriptors.AlertStatus;
 import sugar.free.sightparser.applayer.descriptors.alerts.Alert;
 import sugar.free.sightparser.applayer.descriptors.alerts.Error7ElectronicError;
 import sugar.free.sightparser.applayer.messages.remote_control.DismissAlertMessage;
@@ -111,6 +112,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
             } else serviceConnector.connect();
             if (latestId != activeAlertMessage.getAlertID()) {
                 if (alertActivity != null) alertActivity.finish();
+                if (activeAlertMessage.getAlertStatus() == AlertStatus.MUTED) return;
                 latestId = activeAlertMessage.getAlertID();
                 Intent intent = new Intent(this, AlertActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
