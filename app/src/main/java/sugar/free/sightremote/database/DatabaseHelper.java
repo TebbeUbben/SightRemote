@@ -41,6 +41,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTableIfNotExists(connectionSource, PumpStatusChanged.class);
             TableUtils.createTableIfNotExists(connectionSource, TimeChanged.class);
             TableUtils.createTableIfNotExists(connectionSource, CannulaFilled.class);
+            TableUtils.createTableIfNotExists(connectionSource, DailyTotal.class);
+            TableUtils.createTableIfNotExists(connectionSource, CartridgeInserted.class);
+            TableUtils.createTableIfNotExists(connectionSource, BatteryInserted.class);
+            TableUtils.createTableIfNotExists(connectionSource, TubeFilled.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -62,7 +66,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
         if (oldVersion < 3) {
             try {
-                TableUtils.createTable(connectionSource, DailyTotal.class);
+                TableUtils.createTableIfNotExists(connectionSource, DailyTotal.class);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

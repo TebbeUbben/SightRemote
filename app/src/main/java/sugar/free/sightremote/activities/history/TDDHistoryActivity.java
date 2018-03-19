@@ -8,19 +8,20 @@ import java.sql.SQLException;
 import java.util.List;
 
 import sugar.free.sightremote.R;
-import sugar.free.sightremote.adapters.TBRAdapter;
-import sugar.free.sightremote.database.EndOfTBR;
+import sugar.free.sightremote.adapters.TDDAdapter;
+import sugar.free.sightremote.database.BolusDelivered;
+import sugar.free.sightremote.database.DailyTotal;
 
-public class TBRHistoryActivity extends HistoryActivity {
+public class TDDHistoryActivity extends HistoryActivity {
 
-    private TBRAdapter adapter;
+    private TDDAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getList().setLayoutManager(new LinearLayoutManager(this));
-        getList().setAdapter(adapter = new TBRAdapter());
+        getList().setAdapter(adapter = new TDDAdapter());
 
         showData();
     }
@@ -29,9 +30,9 @@ public class TBRHistoryActivity extends HistoryActivity {
     @Override
     protected void showData() {
         try {
-            List<EndOfTBR> endOfTBRs = getDatabaseHelper().getEndOfTBRDao()
+            List<DailyTotal> dailyTotals = getDatabaseHelper().getDailyTotalDao()
                     .queryBuilder().orderBy("dateTime", false).query();
-            adapter.setEndOfTBRs(endOfTBRs);
+            adapter.setDailyTotals(dailyTotals);
             adapter.notifyDataSetChanged();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -40,6 +41,6 @@ public class TBRHistoryActivity extends HistoryActivity {
 
     @Override
     protected int getSelectedNavItemID() {
-        return R.id.nav_tbr_data;
+        return R.id.nav_bolus_data;
     }
 }

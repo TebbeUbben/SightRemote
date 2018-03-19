@@ -71,6 +71,9 @@
     <string name="edit_br_profile_confirmation"><![CDATA[Are you sure you want to <b>edit this basal profile</b>?]]></string>
     <string name="history_immediate_amount"><![CDATA[Immediate: <b>%1$s</b>]]></string>
     <string name="history_extended_amount"><![CDATA[Extended: <b>%1$s in %2$s hours</b>]]></string>
+    <string name="history_bolus"><![CDATA[Bolus: <b>%1$s</b>]]></string>
+    <string name="history_basal"><![CDATA[Basal: <b>%1$s</b>]]></string>
+    <string name="history_total"><![CDATA[Total: <b>%1$s</b>]]></string>
     <string name="history">History</string>
     <string name="bolus_data">Bolus data</string>
     <string name="history_tbr_amount">%1$d%% for %2$s hours</string>
@@ -148,4 +151,5 @@
     <string name="_4">4</string>
     <string name="connection">Connection</string>
     <string name="confirm_pin">Confirm PIN</string>
+    <string name="daily_totals">Daily totals</string>
 </resources>

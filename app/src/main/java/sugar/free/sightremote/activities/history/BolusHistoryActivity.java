@@ -3,7 +3,6 @@ package sugar.free.sightremote.activities.history;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -20,8 +19,8 @@ public class BolusHistoryActivity extends HistoryActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getBolusList().setLayoutManager(new LinearLayoutManager(this));
-        getBolusList().setAdapter(adapter = new BolusAdapter());
+        getList().setLayoutManager(new LinearLayoutManager(this));
+        getList().setAdapter(adapter = new BolusAdapter());
 
         showData();
     }

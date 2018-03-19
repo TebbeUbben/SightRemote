@@ -19,7 +19,7 @@ import sugar.free.sightremote.activities.SightActivity;
 public abstract class HistoryActivity extends SightActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     @Getter(value = AccessLevel.PROTECTED)
-    private RecyclerView bolusList;
+    private RecyclerView list;
     private SwipeRefreshLayout refreshLayout;
 
     @Override
@@ -27,7 +27,7 @@ public abstract class HistoryActivity extends SightActivity implements SwipeRefr
         super.onCreate(savedInstanceState);
         setContent(R.layout.activity_history);
 
-        bolusList = findViewById(R.id.bolus_list);
+        list = findViewById(R.id.list);
         refreshLayout = findViewById(R.id.refresh_layout);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));

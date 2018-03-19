@@ -49,6 +49,9 @@
                     android:id="@+id/nav_tbr_data"
                     android:icon="@drawable/ic_tbr"
                     android:title="@string/tbr_data" />
+                <item
+                    android:id="@+id/nav_tdd_data"
+                    android:title="@string/daily_totals" />
             </group>
         </menu>
     </item>

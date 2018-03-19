@@ -30,6 +30,7 @@ import sugar.free.sightremote.activities.boluses.MultiwaveBolusActivity;
 import sugar.free.sightremote.activities.boluses.StandardBolusActivity;
 import sugar.free.sightremote.activities.history.BolusHistoryActivity;
 import sugar.free.sightremote.activities.history.TBRHistoryActivity;
+import sugar.free.sightremote.activities.history.TDDHistoryActivity;
 import sugar.free.sightremote.database.DatabaseHelper;
 
 public abstract class SightActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -69,6 +70,7 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
             else if (id == R.id.nav_bolus_data) startActivity(BolusHistoryActivity.class);
             else if (id == R.id.nav_tbr_data) startActivity(TBRHistoryActivity.class);
             else if (id == R.id.nav_settings) startActivity(SettingsActivity.class);
+            else if (id == R.id.nav_tdd_data) startActivity(TDDHistoryActivity.class);
             if (finishAfterNavigationClick()) finish();
         }, 300L);
         return true;

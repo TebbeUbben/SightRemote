@@ -81,6 +81,9 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/settings" />
+        <activity
+            android:name=".activities.history.TDDHistoryActivity"
+            android:label="@string/daily_totals" />
 
         <service
             android:name=".services.HistorySyncService"

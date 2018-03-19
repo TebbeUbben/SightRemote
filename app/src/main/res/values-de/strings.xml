@@ -147,4 +147,8 @@
     <string name="edit_br_profile_confirmation"><![CDATA[Bist du dir sicher, dass du dieses <b>BR-Profil ändern</b> möchtest?]]></string>
     <string name="connection">Verbindung</string>
     <string name="confirm_pin">PIN bestätigen</string>
+    <string name="history_bolus"><![CDATA[Bolus: <b>%1$s</b>]]></string>
+    <string name="history_basal"><![CDATA[Basal: <b>%1$s</b>]]></string>
+    <string name="history_total"><![CDATA[Gesamt: <b>%1$s</b>]]></string>
+    <string name="daily_totals">Tagesgesamtmengen</string>
 </resources>
