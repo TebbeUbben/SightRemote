@@ -14,6 +14,9 @@ public class HistoryBroadcast {
     public static final String ACTION_TIME_CHANGED = "sugar.free.sightremote.services.HistorySyncService.TIME_CHANGED";
     public static final String ACTION_CANNULA_FILLED = "sugar.free.sightremote.services.HistorySyncService.CANNULA_FILLED";
     public static final String ACTION_DAILY_TOTAL = "sugar.free.sightremote.services.HistorySyncService.DAILY_TOTAL";
+    public static final String ACTION_TUBE_FILLED = "sugar.free.sightremote.services.HistorySyncService.TUBE_FILLED";
+    public static final String ACTION_CARTRIDGE_INSERTED = "sugar.free.sightremote.services.HistorySyncService.CARTRIDGE_INSERTED";
+    public static final String ACTION_BATTERY_INSERTED = "sugar.free.sightremote.services.HistorySyncService.BATTERY_INSERTED";
     public static final String ACTION_SYNC_STARTED = "sugar.free.sightremote.services.HistorySyncService.SYNC_STARTED";
     public static final String ACTION_STILL_SYNCING = "sugar.free.sightremote.services.HistorySyncService.STILL_SYNCING";
     public static final String ACTION_SYNC_FINISHED = "sugar.free.sightremote.services.HistorySyncService.SYNC_SYNC_FINISHED";
@@ -36,5 +39,6 @@ public class HistoryBroadcast {
     public static final String EXTRA_BOLUS_TOTAL = "BOLUS_TOTAL";
     public static final String EXTRA_TOTAL_DATE = "TOTAL_DATE";
     public static final String EXTRA_RESYNC = "RESYNC";
+    public static final String EXTRA_CARTRIDGE_AMOUNT = "CARTRIDGE_AMOUNT";
 
 }

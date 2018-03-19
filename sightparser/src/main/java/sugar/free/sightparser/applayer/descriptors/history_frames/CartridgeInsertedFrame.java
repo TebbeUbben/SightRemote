@@ -9,10 +9,10 @@ public class CartridgeInsertedFrame extends HistoryFrame  {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private double cartridgeAmount;
+    private double amount;
 
     @Override
     public void parse(ByteBuf byteBuf) {
-        cartridgeAmount = Helpers.roundDouble(((double) byteBuf.readUInt16LE()) / 100D);
+        amount = Helpers.roundDouble(((double) byteBuf.readUInt16LE()) / 100D);
     }
 }
