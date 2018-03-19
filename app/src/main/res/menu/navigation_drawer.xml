@@ -11,7 +11,7 @@
             <group>
                 <item
                     android:id="@+id/nav_standard_bolus"
-                    android:icon="@drawable/ic_immediate_bolus"
+                    android:icon="@drawable/ic_standard_bolus"
                     android:title="@string/standard_bolus" />
                 <item
                     android:id="@+id/nav_extended_bolus"
@@ -33,7 +33,7 @@
                     android:title="@string/temporary_basalrate" />
                 <item
                     android:id="@+id/nav_br_profiles"
-                    android:icon="@drawable/ic_basal_profile"
+                    android:icon="@drawable/ic_basal_rate"
                     android:title="@string/profiles" />
             </group>
         </menu>
@@ -43,7 +43,7 @@
             <group>
                 <item
                     android:id="@+id/nav_bolus_data"
-                    android:icon="@drawable/ic_immediate_bolus"
+                    android:icon="@drawable/ic_standard_bolus"
                     android:title="@string/bolus_data" />
                 <item
                     android:id="@+id/nav_tbr_data"
@@ -51,6 +51,7 @@
                     android:title="@string/tbr_data" />
                 <item
                     android:id="@+id/nav_tdd_data"
+                    android:icon="@drawable/ic_tdd"
                     android:title="@string/daily_totals" />
             </group>
         </menu>
