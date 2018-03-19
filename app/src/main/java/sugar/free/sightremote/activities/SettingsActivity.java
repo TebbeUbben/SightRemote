@@ -81,7 +81,6 @@ public class SettingsActivity extends SightActivity {
                             Intent intent = new Intent(getSettingsActivity(), SetupActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-                            getSettingsActivity().finish();
                         })
                         .setNegativeButton(R.string.cancel, null)
                         .show();
