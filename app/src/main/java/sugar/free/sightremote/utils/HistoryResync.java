@@ -14,6 +14,7 @@ import sugar.free.sightremote.database.CartridgeInserted;
 import sugar.free.sightremote.database.DailyTotal;
 import sugar.free.sightremote.database.DatabaseHelper;
 import sugar.free.sightremote.database.EndOfTBR;
+import sugar.free.sightremote.database.OccurenceOfAlert;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
 import sugar.free.sightremote.database.TubeFilled;
@@ -50,7 +51,7 @@ public class HistoryResync {
 
             android.util.Log.d(TAG, "Resending EndOfTBR list " + records.size());
             for (EndOfTBR endOfTBR : records) {
-                HistorySendIntent.sendEndOfTBR(context, endOfTBR, true);
+                HistorySendIntent.send(context, endOfTBR, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -63,7 +64,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending BolusDelivered list " + records.size());
             for (BolusDelivered bolusDelivered : records) {
-                HistorySendIntent.sendBolusDelivered(context, bolusDelivered, true);
+                HistorySendIntent.send(context, bolusDelivered, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -76,7 +77,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending BolusProgrammed list " + records.size());
             for (BolusProgrammed bolusProgrammed : records) {
-                HistorySendIntent.sendBolusProgrammed(context, bolusProgrammed, true);
+                HistorySendIntent.send(context, bolusProgrammed, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -89,7 +90,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending PumpStatusChanged list " + records.size());
             for (PumpStatusChanged pumpStatusChanged : records) {
-                HistorySendIntent.sendPumpStatusChanged(context, pumpStatusChanged, true);
+                HistorySendIntent.send(context, pumpStatusChanged, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -102,7 +103,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending TimeChanged list " + records.size());
             for (TimeChanged timeChanged : records) {
-                HistorySendIntent.sendTimeChanged(context, timeChanged, true);
+                HistorySendIntent.send(context, timeChanged, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -115,7 +116,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending CannulaFilled list " + records.size());
             for (CannulaFilled cannulaFilled : records) {
-                HistorySendIntent.sendCannulaFilled(context, cannulaFilled, true);
+                HistorySendIntent.send(context, cannulaFilled, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -128,7 +129,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending DailyTotal list " + records.size());
             for (DailyTotal dailyTotal : records) {
-                HistorySendIntent.sendDailyTotal(context, dailyTotal, true);
+                HistorySendIntent.send(context, dailyTotal, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -141,7 +142,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending TubeFilled list " + records.size());
             for (TubeFilled tubeFilled : records) {
-                HistorySendIntent.sendTubeFilled(context, tubeFilled, true);
+                HistorySendIntent.send(context, tubeFilled, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -154,7 +155,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending CartridgeInserted list " + records.size());
             for (CartridgeInserted cartridgeInserted : records) {
-                HistorySendIntent.sendCartridgeInserted(context, cartridgeInserted, true);
+                HistorySendIntent.send(context, cartridgeInserted, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -167,7 +168,20 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending BatteryInserted list " + records.size());
             for (BatteryInserted batteryInserted : records) {
-                HistorySendIntent.sendBatteryInserted(context, batteryInserted, true);
+                HistorySendIntent.send(context, batteryInserted, true);
+            }
+        } catch (SQLException e) {
+            android.util.Log.e(TAG, "SQL ERROR: " + e);
+        }
+
+        try {
+            final List<OccurenceOfAlert> records = databaseHelper.getOccurenceOfAlertDao().queryBuilder()
+                    .orderBy("dateTime", true)
+                    .where().ge("dateTime", yesterday).query();
+
+            android.util.Log.d("HistoryResync", "Resending OccurenceOfAlert list " + records.size());
+            for (OccurenceOfAlert occurenceOfAlert : records) {
+                HistorySendIntent.send(context, occurenceOfAlert, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
