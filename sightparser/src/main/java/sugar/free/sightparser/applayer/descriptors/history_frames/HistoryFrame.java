@@ -26,6 +26,9 @@ public abstract class HistoryFrame implements Serializable {
         HISTORY_FRAMES.put((short) 0x6900, TubeFilledFrame.class);
         HISTORY_FRAMES.put((short) 0x6600, CartridgeInsertedFrame.class);
         HISTORY_FRAMES.put((short) 0x0F00, BatteryInsertedFrame.class);
+        HISTORY_FRAMES.put((short) 0xF300, OccurenceOfErrorFrame.class);
+        HISTORY_FRAMES.put((short) 0x0A05, OccurenceOfMaintenanceFrame.class);
+        HISTORY_FRAMES.put((short) 0x5005, OccurenceOfWarningFrame.class);
     }
 
     private int eventYear;

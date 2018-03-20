@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "sightremote.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -30,6 +30,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<BatteryInserted, Integer> batteryInsertedDao;
     private Dao<CartridgeInserted, Integer> cartridgeInsertedDao;
     private Dao<TubeFilled, Integer> tubeFilledDao;
+    private Dao<OccurenceOfAlert, Integer> occurenceOfAlertDao;
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
@@ -45,6 +46,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTableIfNotExists(connectionSource, CartridgeInserted.class);
             TableUtils.createTableIfNotExists(connectionSource, BatteryInserted.class);
             TableUtils.createTableIfNotExists(connectionSource, TubeFilled.class);
+            TableUtils.createTableIfNotExists(connectionSource, OccurenceOfAlert.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -76,6 +78,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 TableUtils.createTableIfNotExists(connectionSource, CartridgeInserted.class);
                 TableUtils.createTableIfNotExists(connectionSource, BatteryInserted.class);
                 TableUtils.createTableIfNotExists(connectionSource, TubeFilled.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (oldVersion < 5) {
+            try {
+                TableUtils.createTableIfNotExists(connectionSource, OccurenceOfAlert.class);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -179,5 +188,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             e.printStackTrace();
         }
         return cartridgeInsertedDao;
+    }
+
+    public Dao<OccurenceOfAlert, Integer> getOccurenceOfAlertDao() {
+        try {
+            if (occurenceOfAlertDao == null) occurenceOfAlertDao = getDao(OccurenceOfAlert.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return occurenceOfAlertDao;
     }
 }

@@ -12,9 +12,6 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
@@ -32,6 +29,9 @@ import sugar.free.sightparser.applayer.descriptors.history_frames.BatteryInserte
 import sugar.free.sightparser.applayer.descriptors.history_frames.CartridgeInsertedFrame;
 import sugar.free.sightparser.applayer.descriptors.history_frames.DailyTotalFrame;
 import sugar.free.sightparser.applayer.descriptors.history_frames.HistoryFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.OccurenceOfErrorFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.OccurenceOfMaintenanceFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.OccurenceOfWarningFrame;
 import sugar.free.sightparser.applayer.descriptors.history_frames.TubeFilledFrame;
 import sugar.free.sightparser.applayer.messages.history.OpenHistoryReadingSessionMessage;
 import sugar.free.sightparser.applayer.descriptors.history_frames.BolusDeliveredFrame;
@@ -59,6 +59,7 @@ import sugar.free.sightremote.database.CartridgeInserted;
 import sugar.free.sightremote.database.DailyTotal;
 import sugar.free.sightremote.database.DatabaseHelper;
 import sugar.free.sightremote.database.EndOfTBR;
+import sugar.free.sightremote.database.OccurenceOfAlert;
 import sugar.free.sightremote.database.Offset;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
@@ -175,96 +176,109 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         List<TubeFilled> tubeFilledEntries = new ArrayList<>();
         List<CartridgeInserted> cartridgeInsertedEntries = new ArrayList<>();
         List<BatteryInserted> batteryInsertedEntries = new ArrayList<>();
+        List<OccurenceOfAlert> occurenceOfAlertEntries = new ArrayList<>();
         for (HistoryFrame historyFrame : historyFrames) {
             Log.d("HistorySyncService", "Received " + historyFrame.getClass().getSimpleName());
             if (historyFrame instanceof BolusDeliveredFrame)
-                bolusDeliveredEntries.add(processBolusDeliveredFrame((BolusDeliveredFrame) historyFrame));
+                bolusDeliveredEntries.add(processFrame((BolusDeliveredFrame) historyFrame));
             else if (historyFrame instanceof BolusProgrammedFrame)
-                bolusProgrammedEntries.add(processBolusProgrammedFrame((BolusProgrammedFrame) historyFrame));
+                bolusProgrammedEntries.add(processFrame((BolusProgrammedFrame) historyFrame));
             else if (historyFrame instanceof EndOfTBRFrame)
-                endOfTBREntries.add(processEndOfTBRFrame((EndOfTBRFrame) historyFrame));
+                endOfTBREntries.add(processFrame((EndOfTBRFrame) historyFrame));
             else if (historyFrame instanceof PumpStatusChangedFrame)
-                pumpStatusChangedEntries.add(processPumpStatusChangedFrame((PumpStatusChangedFrame) historyFrame));
+                pumpStatusChangedEntries.add(processFrame((PumpStatusChangedFrame) historyFrame));
             else if (historyFrame instanceof TimeChangedFrame)
-                timeChangedEntries.add(processTimeChangedFrame((TimeChangedFrame) historyFrame));
+                timeChangedEntries.add(processFrame((TimeChangedFrame) historyFrame));
             else if (historyFrame instanceof CannulaFilledFrame)
                 cannulaFilledEntries.add(processCannulaFilledFrame((CannulaFilledFrame) historyFrame));
             else if (historyFrame instanceof DailyTotalFrame)
-                dailyTotalEntries.add(processDailyTotalFrame((DailyTotalFrame) historyFrame));
+                dailyTotalEntries.add(processFrame((DailyTotalFrame) historyFrame));
             else if (historyFrame instanceof TubeFilledFrame)
-                tubeFilledEntries.add(processTubeFilledFrame((TubeFilledFrame) historyFrame));
+                tubeFilledEntries.add(processFrame((TubeFilledFrame) historyFrame));
             else if (historyFrame instanceof CartridgeInsertedFrame)
-                cartridgeInsertedEntries.add(processCartridgeInsertedFrame((CartridgeInsertedFrame) historyFrame));
+                cartridgeInsertedEntries.add(processFrame((CartridgeInsertedFrame) historyFrame));
             else if (historyFrame instanceof BatteryInsertedFrame)
-                batteryInsertedEntries.add(processBatteryInsertedFrame((BatteryInsertedFrame) historyFrame));
+                batteryInsertedEntries.add(processFrame((BatteryInsertedFrame) historyFrame));
+            else if (historyFrame instanceof OccurenceOfErrorFrame)
+                occurenceOfAlertEntries.add(processFrame((OccurenceOfErrorFrame) historyFrame));
+            else if (historyFrame instanceof OccurenceOfMaintenanceFrame)
+                occurenceOfAlertEntries.add(processFrame((OccurenceOfMaintenanceFrame) historyFrame));
+            else if (historyFrame instanceof OccurenceOfWarningFrame)
+                occurenceOfAlertEntries.add(processFrame((OccurenceOfWarningFrame) historyFrame));
         }
         try {
             for (BolusDelivered bolusDelivered : bolusDeliveredEntries) {
                 if (getDatabaseHelper().getBolusDeliveredDao().queryBuilder().where()
                         .eq("eventNumber", bolusDelivered.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusDeliveredDao().create(bolusDelivered);
-                HistorySendIntent.sendBolusDelivered(getApplicationContext(), bolusDelivered, false);
+                HistorySendIntent.send(getApplicationContext(), bolusDelivered, false);
             }
             for (BolusProgrammed bolusProgrammed : bolusProgrammedEntries) {
                 if (getDatabaseHelper().getBolusProgrammedDao().queryBuilder().where()
                         .eq("eventNumber", bolusProgrammed.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBolusProgrammedDao().create(bolusProgrammed);
-                HistorySendIntent.sendBolusProgrammed(getApplicationContext(),bolusProgrammed, false);
+                HistorySendIntent.send(getApplicationContext(),bolusProgrammed, false);
             }
             for (EndOfTBR endOfTBR : endOfTBREntries) {
                 if (getDatabaseHelper().getEndOfTBRDao().queryBuilder().where()
                         .eq("eventNumber", endOfTBR.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getEndOfTBRDao().create(endOfTBR);
-                HistorySendIntent.sendEndOfTBR(getApplicationContext(), endOfTBR, false);
+                HistorySendIntent.send(getApplicationContext(), endOfTBR, false);
             }
             for (PumpStatusChanged pumpStatusChanged : pumpStatusChangedEntries) {
                 if (getDatabaseHelper().getPumpStatusChangedDao().queryBuilder().where()
                         .eq("eventNumber", pumpStatusChanged.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getPumpStatusChangedDao().create(pumpStatusChanged);
-                HistorySendIntent.sendPumpStatusChanged(getApplicationContext(), pumpStatusChanged, false);
+                HistorySendIntent.send(getApplicationContext(), pumpStatusChanged, false);
             }
             for (TimeChanged timeChanged : timeChangedEntries) {
                 if (getDatabaseHelper().getTimeChangedDao().queryBuilder().where()
                         .eq("eventNumber", timeChanged.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getTimeChangedDao().create(timeChanged);
-                HistorySendIntent.sendTimeChanged(getApplicationContext(), timeChanged, false);
+                HistorySendIntent.send(getApplicationContext(), timeChanged, false);
             }
             for (CannulaFilled cannulaFilled : cannulaFilledEntries) {
                 if (getDatabaseHelper().getCannulaFilledDao().queryBuilder().where()
                         .eq("eventNumber", cannulaFilled.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getCannulaFilledDao().create(cannulaFilled);
-                HistorySendIntent.sendCannulaFilled(getApplicationContext(), cannulaFilled, false);
+                HistorySendIntent.send(getApplicationContext(), cannulaFilled, false);
             }
             for (DailyTotal dailyTotal : dailyTotalEntries) {
                 if (getDatabaseHelper().getDailyTotalDao().queryBuilder().where()
                         .eq("eventNumber", dailyTotal.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getDailyTotalDao().create(dailyTotal);
-                HistorySendIntent.sendDailyTotal(getApplicationContext(), dailyTotal, false);
+                HistorySendIntent.send(getApplicationContext(), dailyTotal, false);
             }
             for (TubeFilled tubeFilled : tubeFilledEntries) {
                 if (getDatabaseHelper().getTubeFilledDao().queryBuilder().where()
                         .eq("eventNumber", tubeFilled.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getTubeFilledDao().create(tubeFilled);
-                HistorySendIntent.sendTubeFilled(getApplicationContext(), tubeFilled, false);
+                HistorySendIntent.send(getApplicationContext(), tubeFilled, false);
             }
             for (CartridgeInserted cartridgeInserted : cartridgeInsertedEntries) {
                 if (getDatabaseHelper().getCartridgeInsertedDao().queryBuilder().where()
                         .eq("eventNumber", cartridgeInserted.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getCartridgeInsertedDao().create(cartridgeInserted);
-                HistorySendIntent.sendCartridgeInserted(getApplicationContext(), cartridgeInserted, false);
+                HistorySendIntent.send(getApplicationContext(), cartridgeInserted, false);
             }
             for (BatteryInserted batteryInserted : batteryInsertedEntries) {
                 if (getDatabaseHelper().getBatteryInsertedDao().queryBuilder().where()
                         .eq("eventNumber", batteryInserted.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getBatteryInsertedDao().create(batteryInserted);
-                HistorySendIntent.sendBatteryInserted(getApplicationContext(), batteryInserted, false);
+                HistorySendIntent.send(getApplicationContext(), batteryInserted, false);
+            }
+            for (OccurenceOfAlert occurenceOfAlert : occurenceOfAlertEntries) {
+                if (getDatabaseHelper().getOccurenceOfAlertDao().queryBuilder().where()
+                        .eq("eventNumber", occurenceOfAlert.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
+                getDatabaseHelper().getOccurenceOfAlertDao().create(occurenceOfAlert);
+                HistorySendIntent.send(getApplicationContext(), occurenceOfAlert, false);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private EndOfTBR processEndOfTBRFrame(EndOfTBRFrame frame) {
+    private EndOfTBR processFrame(EndOfTBRFrame frame) {
         EndOfTBR endOfTBR = new EndOfTBR();
         endOfTBR.setDuration(frame.getDuration());
         endOfTBR.setAmount(frame.getAmount());
@@ -284,7 +298,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         return endOfTBR;
     }
 
-    private PumpStatusChanged processPumpStatusChangedFrame(PumpStatusChangedFrame frame) {
+    private PumpStatusChanged processFrame(PumpStatusChangedFrame frame) {
         PumpStatusChanged pumpStatusChanged = new PumpStatusChanged();
         pumpStatusChanged.setOldValue(frame.getOldValue());
         pumpStatusChanged.setNewValue(frame.getNewValue());
@@ -297,7 +311,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         return pumpStatusChanged;
     }
 
-    private BolusDelivered processBolusDeliveredFrame(BolusDeliveredFrame frame) {
+    private BolusDelivered processFrame(BolusDeliveredFrame frame) {
         BolusDelivered bolusDelivered = new BolusDelivered();
         bolusDelivered.setBolusId(frame.getBolusId());
         bolusDelivered.setBolusType(frame.getBolusType());
@@ -320,7 +334,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         return bolusDelivered;
     }
 
-    private BolusProgrammed processBolusProgrammedFrame(BolusProgrammedFrame frame) {
+    private BolusProgrammed processFrame(BolusProgrammedFrame frame) {
         BolusProgrammed bolusProgrammed = new BolusProgrammed();
         bolusProgrammed.setBolusId(frame.getBolusId());
         bolusProgrammed.setBolusType(frame.getBolusType());
@@ -336,7 +350,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         return bolusProgrammed;
     }
 
-    private TimeChanged processTimeChangedFrame(TimeChangedFrame frame) {
+    private TimeChanged processFrame(TimeChangedFrame frame) {
         TimeChanged timeChanged = new TimeChanged();
         timeChanged.setEventNumber(frame.getEventNumber());
         timeChanged.setPump(pumpSerialNumber);
@@ -365,7 +379,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         return cannulaFilled;
     }
 
-    private TubeFilled processTubeFilledFrame(TubeFilledFrame frame) {
+    private TubeFilled processFrame(TubeFilledFrame frame) {
         TubeFilled tubeFilled = new TubeFilled();
         tubeFilled.setEventNumber(frame.getEventNumber());
         tubeFilled.setPump(pumpSerialNumber);
@@ -378,7 +392,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         return tubeFilled;
     }
 
-    private CartridgeInserted processCartridgeInsertedFrame(CartridgeInsertedFrame frame) {
+    private CartridgeInserted processFrame(CartridgeInsertedFrame frame) {
         CartridgeInserted cartridgeInserted = new CartridgeInserted();
         cartridgeInserted.setEventNumber(frame.getEventNumber());
         cartridgeInserted.setPump(pumpSerialNumber);
@@ -391,7 +405,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         return cartridgeInserted;
     }
 
-    private BatteryInserted processBatteryInsertedFrame(BatteryInsertedFrame frame) {
+    private BatteryInserted processFrame(BatteryInsertedFrame frame) {
         BatteryInserted batteryInserted = new BatteryInserted();
         batteryInserted.setEventNumber(frame.getEventNumber());
         batteryInserted.setPump(pumpSerialNumber);
@@ -403,7 +417,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         return batteryInserted;
     }
 
-    private DailyTotal processDailyTotalFrame(DailyTotalFrame frame) {
+    private DailyTotal processFrame(DailyTotalFrame frame) {
         DailyTotal dailyTotal = new DailyTotal();
         dailyTotal.setEventNumber(frame.getEventNumber());
         dailyTotal.setBasalTotal(frame.getBasalTotal());
@@ -418,6 +432,45 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         dailyTotal.setTotalDate(totalDate);
 
         return dailyTotal;
+    }
+
+    private OccurenceOfAlert processFrame(OccurenceOfErrorFrame frame) {
+        OccurenceOfAlert occurenceOfAlert = new OccurenceOfAlert();
+        occurenceOfAlert.setEventNumber(frame.getEventNumber());
+        occurenceOfAlert.setAlertType(frame.getAlertType().getSimpleName());
+        occurenceOfAlert.setAlertId(frame.getAlertId());
+
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        occurenceOfAlert.setDateTime(eventTime);
+
+        return occurenceOfAlert;
+    }
+
+    private OccurenceOfAlert processFrame(OccurenceOfMaintenanceFrame frame) {
+        OccurenceOfAlert occurenceOfAlert = new OccurenceOfAlert();
+        occurenceOfAlert.setEventNumber(frame.getEventNumber());
+        occurenceOfAlert.setAlertType(frame.getAlertType().getSimpleName());
+        occurenceOfAlert.setAlertId(frame.getAlertId());
+
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        occurenceOfAlert.setDateTime(eventTime);
+
+        return occurenceOfAlert;
+    }
+
+    private OccurenceOfAlert processFrame(OccurenceOfWarningFrame frame) {
+        OccurenceOfAlert occurenceOfAlert = new OccurenceOfAlert();
+        occurenceOfAlert.setEventNumber(frame.getEventNumber());
+        occurenceOfAlert.setAlertType(frame.getAlertType().getSimpleName());
+        occurenceOfAlert.setAlertId(frame.getAlertId());
+
+        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
+                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
+        occurenceOfAlert.setDateTime(eventTime);
+
+        return occurenceOfAlert;
     }
 
     private OpenHistoryReadingSessionMessage createOpenMessage(HistoryType historyType) {
