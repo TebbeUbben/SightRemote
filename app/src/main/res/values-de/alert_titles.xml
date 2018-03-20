@@ -27,6 +27,7 @@
     <string name="alert_m30_title">Ampullentyp nicht eingestellt</string>
 
     <string name="alert_e6_title">Mechanikfehler</string>
+    <string name="alert_e7_title">Elektronikfehler</string>
     <string name="alert_e10_title">Fehler beim Zurückfahren</string>
     <string name="alert_e13_title">Fehler in der Sprachanzeige</string>
 </resources>

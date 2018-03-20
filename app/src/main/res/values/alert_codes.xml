@@ -27,6 +27,7 @@
     <string name="alert_m30_code">Maintenance M30</string>
 
     <string name="alert_e6_code">Error E6</string>
+    <string name="alert_e7_code">Error E7</string>
     <string name="alert_e10_code">Error E10</string>
     <string name="alert_e13_code">Error E13</string>
 </resources>

@@ -160,4 +160,5 @@
     <string name="tube_filled"><![CDATA[Schlauch gefüllt: <b>%1$s</b>]]></string>
     <string name="cannula_filled"><![CDATA[Kanüle gefüllt: <b>%1$s</b>]]></string>
     <string name="system_data">Systemdaten</string>
+    <string name="event_data">Ereignisdaten</string>
 </resources>

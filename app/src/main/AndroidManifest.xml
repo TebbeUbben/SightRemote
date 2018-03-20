@@ -87,6 +87,9 @@
         <activity
             android:name=".activities.history.SystemHistoryActivity"
             android:label="@string/system_data" />
+        <activity
+            android:name=".activities.history.EventHistoryActivity"
+            android:label="@string/event_data" />
 
         <service
             android:name=".services.HistorySyncService"

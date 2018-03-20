@@ -27,6 +27,7 @@
     <string name="alert_m30_code">Wartung M30</string>
 
     <string name="alert_e6_code">Fehler E6</string>
+    <string name="alert_e7_code">Fehler E7</string>
     <string name="alert_e10_code">Fehler E10</string>
     <string name="alert_e13_code">Fehler E13</string>
 </resources>
