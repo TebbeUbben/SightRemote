@@ -41,6 +41,6 @@ public class TDDHistoryActivity extends HistoryActivity {
 
     @Override
     protected int getSelectedNavItemID() {
-        return R.id.nav_bolus_data;
+        return R.id.nav_tdd_data;
     }
 }

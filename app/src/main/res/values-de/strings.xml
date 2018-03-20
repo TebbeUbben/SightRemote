@@ -152,4 +152,12 @@
     <string name="history_total"><![CDATA[Gesamt: <b>%1$s</b>]]></string>
     <string name="daily_totals">Tagesgesamtmengen</string>
     <string name="loading">Lädt</string>
+    <string name="pump_started">Pumpe gestartet</string>
+    <string name="pump_stopped">Pumpe gestoppt</string>
+    <string name="pump_paused">Pumpe pausiert</string>
+    <string name="battery_inserted">Batterie eingesetzt</string>
+    <string name="cartridge_inserted"><![CDATA[Ampulle eingesetzt: <b>%1$s</b>]]></string>
+    <string name="tube_filled"><![CDATA[Schlauch gefüllt: <b>%1$s</b>]]></string>
+    <string name="cannula_filled"><![CDATA[Kanüle gefüllt: <b>%1$s</b>]]></string>
+    <string name="system_data">Systemdaten</string>
 </resources>

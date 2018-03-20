@@ -31,6 +31,7 @@ import sugar.free.sightremote.activities.boluses.ExtendedBolusActivity;
 import sugar.free.sightremote.activities.boluses.MultiwaveBolusActivity;
 import sugar.free.sightremote.activities.boluses.StandardBolusActivity;
 import sugar.free.sightremote.activities.history.BolusHistoryActivity;
+import sugar.free.sightremote.activities.history.SystemHistoryActivity;
 import sugar.free.sightremote.activities.history.TBRHistoryActivity;
 import sugar.free.sightremote.activities.history.TDDHistoryActivity;
 import sugar.free.sightremote.database.DatabaseHelper;
@@ -74,6 +75,7 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
             else if (id == R.id.nav_tbr_data) startActivity(TBRHistoryActivity.class);
             else if (id == R.id.nav_settings) startActivity(SettingsActivity.class);
             else if (id == R.id.nav_tdd_data) startActivity(TDDHistoryActivity.class);
+            else if (id == R.id.nav_system_data) startActivity(SystemHistoryActivity.class);
             if (finishAfterNavigationClick()) finish();
         }, 300L);
         return true;

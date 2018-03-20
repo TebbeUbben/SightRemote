@@ -153,4 +153,12 @@
     <string name="confirm_pin">Confirm PIN</string>
     <string name="daily_totals">Daily totals</string>
     <string name="loading">Loading</string>
+    <string name="pump_started">Pump started</string>
+    <string name="pump_stopped">Pump stopped</string>
+    <string name="pump_paused">Pump paused</string>
+    <string name="battery_inserted">Battery inserted</string>
+    <string name="cartridge_inserted"><![CDATA[Cartridge inserted: <b>%1$s</b>]]></string>
+    <string name="tube_filled"><![CDATA[Tube filled: <b>%1$s</b>]]></string>
+    <string name="cannula_filled"><![CDATA[Cannula filled: <b>%1$s</b>]]></string>
+    <string name="system_data">System data</string>
 </resources>
