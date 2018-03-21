@@ -8,19 +8,25 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import lombok.AccessLevel;
 import lombok.Getter;
 import sugar.free.sightparser.handling.HistoryBroadcast;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.activities.SightActivity;
+import sugar.free.sightremote.adapters.history.HistoryAdapter;
+
+import java.sql.SQLException;
+import java.util.List;
 
 public abstract class HistoryActivity extends SightActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    @Getter(value = AccessLevel.PROTECTED)
     private RecyclerView list;
     private SwipeRefreshLayout refreshLayout;
+    private HistoryAdapter adapter = getAdapter();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,9 +34,13 @@ public abstract class HistoryActivity extends SightActivity implements SwipeRefr
         setContent(R.layout.activity_history);
 
         list = findViewById(R.id.list);
+        list.setLayoutManager(new LinearLayoutManager(this));
+        list.setAdapter(adapter);
         refreshLayout = findViewById(R.id.refresh_layout);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
+
+        new LoadDataTask().execute();
     }
 
     @Override
@@ -55,13 +65,15 @@ public abstract class HistoryActivity extends SightActivity implements SwipeRefr
         @Override
         public void onReceive(Context context, Intent intent) {
             runOnUiThread(() -> {
-                showData();
+                new LoadDataTask().doInBackground();
                 refreshLayout.setRefreshing(false);
             });
         }
     };
 
-    protected abstract void showData();
+    protected abstract HistoryAdapter getAdapter();
+
+    protected abstract List loadData() throws SQLException;
 
     @Override
     protected boolean useOverlay() {
@@ -76,5 +88,29 @@ public abstract class HistoryActivity extends SightActivity implements SwipeRefr
     @Override
     public void onRefresh() {
         sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+    }
+
+    private class LoadDataTask extends AsyncTask<Void, Void, List> {
+        @Override
+        protected void onPreExecute() {
+            showLoadingIndicator();
+        }
+
+        @Override
+        protected List doInBackground(Void... voids) {
+            try {
+                return loadData();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List result) {
+            adapter.setHistoryEntries(result);
+            adapter.notifyDataSetChanged();
+            hideLoadingIndicator();
+        }
     }
 }

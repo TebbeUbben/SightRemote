@@ -1,4 +1,4 @@
-package sugar.free.sightremote.adapters;
+package sugar.free.sightremote.adapters.history;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,17 +16,12 @@ import sugar.free.sightremote.R;
 import sugar.free.sightremote.database.BatteryInserted;
 import sugar.free.sightremote.database.CannulaFilled;
 import sugar.free.sightremote.database.CartridgeInserted;
-import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TubeFilled;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
-public class SystemAdapter extends RecyclerView.Adapter<SystemAdapter.ViewHolder> {
-
-    @Getter
-    @Setter
-    private List<Object> objects;
+public class SystemAdapter extends HistoryAdapter<SystemAdapter.ViewHolder, Object> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -59,49 +54,42 @@ public class SystemAdapter extends RecyclerView.Adapter<SystemAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Object object = objects.get(position);
+    public void onBindViewHolder(ViewHolder holder, Object entry, int position) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter));
-        if (object instanceof PumpStatusChanged) {
-            PumpStatusChanged pumpStatusChanged = (PumpStatusChanged) object;
+        if (entry instanceof PumpStatusChanged) {
+            PumpStatusChanged pumpStatusChanged = (PumpStatusChanged) entry;
             holder.dateTime.setText(simpleDateFormat.format(pumpStatusChanged.getDateTime()));
-        } else if (object instanceof CartridgeInserted) {
-            CartridgeInserted cartridgeInserted = (CartridgeInserted) object;
+        } else if (entry instanceof CartridgeInserted) {
+            CartridgeInserted cartridgeInserted = (CartridgeInserted) entry;
             holder.dateTime.setText(simpleDateFormat.format(cartridgeInserted.getDateTime()));
             holder.amount.setText(HTMLUtil.getHTML(R.string.cartridge_inserted, UnitFormatter.formatUnits(cartridgeInserted.getAmount())));
-        } else if (object instanceof TubeFilled) {
-            TubeFilled tubeFilled = (TubeFilled) object;
+        } else if (entry instanceof TubeFilled) {
+            TubeFilled tubeFilled = (TubeFilled) entry;
             holder.dateTime.setText(simpleDateFormat.format(tubeFilled.getDateTime()));
             holder.amount.setText(HTMLUtil.getHTML(R.string.tube_filled, UnitFormatter.formatUnits(tubeFilled.getAmount())));
-        } else if (object instanceof CannulaFilled) {
-            CannulaFilled cannulaFilled = (CannulaFilled) object;
+        } else if (entry instanceof CannulaFilled) {
+            CannulaFilled cannulaFilled = (CannulaFilled) entry;
             holder.dateTime.setText(simpleDateFormat.format(cannulaFilled.getDateTime()));
             holder.amount.setText(HTMLUtil.getHTML(R.string.cannula_filled, UnitFormatter.formatUnits(cannulaFilled.getAmount())));
-        } else if (object instanceof BatteryInserted) {
-            BatteryInserted batteryInserted = (BatteryInserted) object;
+        } else if (entry instanceof BatteryInserted) {
+            BatteryInserted batteryInserted = (BatteryInserted) entry;
             holder.dateTime.setText(simpleDateFormat.format(batteryInserted.getDateTime()));
         }
     }
 
     @Override
-    public int getItemCount() {
-        return objects == null ? 0 : objects.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        Object object = objects.get(position);
-        if (object instanceof PumpStatusChanged) {
-            PumpStatus pumpStatus = ((PumpStatusChanged) object).getNewValue();
+    public int getItemViewType(Object entry, int position) {
+        if (entry instanceof PumpStatusChanged) {
+            PumpStatus pumpStatus = ((PumpStatusChanged) entry).getNewValue();
             switch (pumpStatus) {
                 case STARTED: return 0;
                 case PAUSED: return 1;
                 case STOPPED: return 2;
             }
-        } else if (object instanceof CartridgeInserted) return 3;
-        else if (object instanceof TubeFilled) return 4;
-        else if (object instanceof CannulaFilled) return 5;
-        else if (object instanceof BatteryInserted) return 6;
+        } else if (entry instanceof CartridgeInserted) return 3;
+        else if (entry instanceof TubeFilled) return 4;
+        else if (entry instanceof CannulaFilled) return 5;
+        else if (entry instanceof BatteryInserted) return 6;
         return super.getItemViewType(position);
     }
 

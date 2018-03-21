@@ -8,36 +8,20 @@ import java.sql.SQLException;
 import java.util.List;
 
 import sugar.free.sightremote.R;
-import sugar.free.sightremote.adapters.AlertAdapter;
-import sugar.free.sightremote.adapters.BolusAdapter;
-import sugar.free.sightremote.database.BolusDelivered;
+import sugar.free.sightremote.adapters.history.AlertAdapter;
 import sugar.free.sightremote.database.OccurenceOfAlert;
 
 public class EventHistoryActivity extends HistoryActivity {
 
-    private AlertAdapter adapter;
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        getList().setLayoutManager(new LinearLayoutManager(this));
-        getList().setAdapter(adapter = new AlertAdapter());
-
-        showData();
+    protected List loadData() throws SQLException {
+        return getDatabaseHelper().getOccurenceOfAlertDao()
+                .queryBuilder().orderBy("dateTime", false).query();
     }
 
-
     @Override
-    protected void showData() {
-        try {
-            List<OccurenceOfAlert> occurencesOfAlerts = getDatabaseHelper().getOccurenceOfAlertDao()
-                    .queryBuilder().orderBy("dateTime", false).query();
-            adapter.setOccurencesOfAlerts(occurencesOfAlerts);
-            adapter.notifyDataSetChanged();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public AlertAdapter getAdapter() {
+        return new AlertAdapter();
     }
 
     @Override

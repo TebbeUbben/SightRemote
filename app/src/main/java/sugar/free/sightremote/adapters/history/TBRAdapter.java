@@ -1,4 +1,4 @@
-package sugar.free.sightremote.adapters;
+package sugar.free.sightremote.adapters.history;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,11 +16,7 @@ import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
-public class TBRAdapter extends RecyclerView.Adapter<TBRAdapter.ViewHolder> {
-
-    @Getter
-    @Setter
-    private List<EndOfTBR> endOfTBRs;
+public class TBRAdapter extends HistoryAdapter<TBRAdapter.ViewHolder, EndOfTBR> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -29,16 +25,10 @@ public class TBRAdapter extends RecyclerView.Adapter<TBRAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        EndOfTBR endOfTBR = endOfTBRs.get(position);
+    public void onBindViewHolder(ViewHolder holder, EndOfTBR entry, int position) {
         holder.amount.setText(HTMLUtil.getHTML(R.string.history_tbr_amount,
-                endOfTBR.getAmount(), UnitFormatter.formatDuration(endOfTBR.getDuration())));
-        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter)).format(endOfTBR.getDateTime()));
-    }
-
-    @Override
-    public int getItemCount() {
-        return endOfTBRs == null ? 0 : endOfTBRs.size();
+                entry.getAmount(), UnitFormatter.formatDuration(entry.getDuration())));
+        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter)).format(entry.getDateTime()));
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -2,40 +2,26 @@ package sugar.free.sightremote.activities.history;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 
 import java.sql.SQLException;
 import java.util.List;
 
 import sugar.free.sightremote.R;
-import sugar.free.sightremote.adapters.TBRAdapter;
+import sugar.free.sightremote.adapters.history.HistoryAdapter;
+import sugar.free.sightremote.adapters.history.TBRAdapter;
 import sugar.free.sightremote.database.EndOfTBR;
 
 public class TBRHistoryActivity extends HistoryActivity {
 
-    private TBRAdapter adapter;
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        getList().setLayoutManager(new LinearLayoutManager(this));
-        getList().setAdapter(adapter = new TBRAdapter());
-
-        showData();
+    protected List loadData() throws SQLException {
+        return getDatabaseHelper().getEndOfTBRDao()
+                .queryBuilder().orderBy("dateTime", false).query();
     }
 
-
     @Override
-    protected void showData() {
-        try {
-            List<EndOfTBR> endOfTBRs = getDatabaseHelper().getEndOfTBRDao()
-                    .queryBuilder().orderBy("dateTime", false).query();
-            adapter.setEndOfTBRs(endOfTBRs);
-            adapter.notifyDataSetChanged();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public HistoryAdapter getAdapter() {
+        return new TBRAdapter();
     }
 
     @Override

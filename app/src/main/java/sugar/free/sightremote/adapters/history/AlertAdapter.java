@@ -1,5 +1,6 @@
-package sugar.free.sightremote.adapters;
+package sugar.free.sightremote.adapters.history;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -35,16 +36,10 @@ import sugar.free.sightparser.applayer.descriptors.alerts.Warning38BolusCancelle
 import sugar.free.sightparser.applayer.descriptors.alerts.Warning39LoantimeWarning;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.SightRemote;
-import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.database.OccurenceOfAlert;
 import sugar.free.sightremote.utils.HTMLUtil;
-import sugar.free.sightremote.utils.UnitFormatter;
 
-public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.ViewHolder> {
-
-    @Getter
-    @Setter
-    private List<OccurenceOfAlert> occurencesOfAlerts;
+public class AlertAdapter extends HistoryAdapter<AlertAdapter.ViewHolder, OccurenceOfAlert> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -65,10 +60,9 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        OccurenceOfAlert occurenceOfAlert = occurencesOfAlerts.get(position);
-        holder.alert.setText(getAlertDescription(occurenceOfAlert));
-        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter)).format(occurenceOfAlert.getDateTime()));
+    public void onBindViewHolder(@NonNull ViewHolder holder, OccurenceOfAlert entry, int position) {
+        holder.alert.setText(getAlertDescription(entry));
+        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter)).format(entry.getDateTime()));
     }
 
     private Spanned getAlertDescription(OccurenceOfAlert occurenceOfAlert) {
@@ -123,16 +117,10 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.ViewHolder> 
     }
 
     @Override
-    public int getItemCount() {
-        return occurencesOfAlerts == null ? 0 : occurencesOfAlerts.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        OccurenceOfAlert occurenceOfAlert = occurencesOfAlerts.get(position);
-        if (occurenceOfAlert.getAlertType().startsWith("Error")) return 0;
-        else if (occurenceOfAlert.getAlertType().startsWith("Maintenance")) return 1;
-        else if (occurenceOfAlert.getAlertType().startsWith("Warning")) return 2;
+    public int getItemViewType(OccurenceOfAlert entry, int position) {
+        if (entry.getAlertType().startsWith("Error")) return 0;
+        else if (entry.getAlertType().startsWith("Maintenance")) return 1;
+        else if (entry.getAlertType().startsWith("Warning")) return 2;
         return super.getItemViewType(position);
     }
 

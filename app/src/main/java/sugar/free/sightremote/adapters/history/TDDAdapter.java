@@ -1,27 +1,18 @@
-package sugar.free.sightremote.adapters;
+package sugar.free.sightremote.adapters.history;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.database.DailyTotal;
-import sugar.free.sightremote.database.EndOfTBR;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
-public class TDDAdapter extends RecyclerView.Adapter<TDDAdapter.ViewHolder> {
+import java.text.SimpleDateFormat;
 
-    @Getter
-    @Setter
-    private List<DailyTotal> dailyTotals;
+public class TDDAdapter extends HistoryAdapter<TDDAdapter.ViewHolder, DailyTotal> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -30,17 +21,11 @@ public class TDDAdapter extends RecyclerView.Adapter<TDDAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        DailyTotal dailyTotal = dailyTotals.get(position);
-        holder.bolus.setText(HTMLUtil.getHTML(R.string.history_bolus, UnitFormatter.formatUnits(dailyTotal.getBolusTotal())));
-        holder.basal.setText(HTMLUtil.getHTML(R.string.history_basal, UnitFormatter.formatUnits(dailyTotal.getBasalTotal())));
-        holder.total.setText(HTMLUtil.getHTML(R.string.history_total, UnitFormatter.formatUnits(dailyTotal.getBolusTotal() + dailyTotal.getBasalTotal())));
-        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_formatter)).format(dailyTotal.getDateTime()));
-    }
-
-    @Override
-    public int getItemCount() {
-        return dailyTotals == null ? 0 : dailyTotals.size();
+    public void onBindViewHolder(ViewHolder holder, DailyTotal entry, int position) {
+        holder.bolus.setText(HTMLUtil.getHTML(R.string.history_bolus, UnitFormatter.formatUnits(entry.getBolusTotal())));
+        holder.basal.setText(HTMLUtil.getHTML(R.string.history_basal, UnitFormatter.formatUnits(entry.getBasalTotal())));
+        holder.total.setText(HTMLUtil.getHTML(R.string.history_total, UnitFormatter.formatUnits(entry.getBolusTotal() + entry.getBasalTotal())));
+        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_formatter)).format(entry.getDateTime()));
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
