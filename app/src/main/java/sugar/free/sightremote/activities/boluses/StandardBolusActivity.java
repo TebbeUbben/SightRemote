@@ -66,6 +66,7 @@ public class StandardBolusActivity extends SightActivity implements TaskRunner.R
             if (preperationResult.isPumpStarted()) {
                 if (preperationResult.getAvailableBoluses().isStandardAvailable()) {
                     hideLoadingIndicator();
+                    hideManualOverlay();
                     dismissSnackbar();
                 } else {
                     showManualOverlay();

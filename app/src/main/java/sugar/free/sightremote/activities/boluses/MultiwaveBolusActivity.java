@@ -51,7 +51,6 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContent(R.layout.activity_multiwave_bolus);
-        disconnectedFromService();
 
         showManualOverlay();
 
@@ -91,6 +90,7 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
             if (preperationResult.isPumpStarted()) {
                 if (preperationResult.getAvailableBoluses().isMultiwaveAvailable()) {
                     hideLoadingIndicator();
+                    hideManualOverlay();
                     dismissSnackbar();
                 } else {
                     showManualOverlay();

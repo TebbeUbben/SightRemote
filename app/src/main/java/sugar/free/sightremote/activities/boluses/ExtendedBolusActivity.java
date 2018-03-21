@@ -46,7 +46,6 @@ public class ExtendedBolusActivity extends SightActivity implements TaskRunner.R
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContent(R.layout.activity_extended_bolus);
-        disconnectedFromService();
 
         showManualOverlay();
 
@@ -76,6 +75,7 @@ public class ExtendedBolusActivity extends SightActivity implements TaskRunner.R
             if (preperationResult.isPumpStarted()) {
                 if (preperationResult.getAvailableBoluses().isExtendedAvailable()) {
                     hideLoadingIndicator();
+                    hideManualOverlay();
                     dismissSnackbar();
                 } else {
                     showManualOverlay();

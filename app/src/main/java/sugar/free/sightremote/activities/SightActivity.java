@@ -291,22 +291,26 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
     }
 
     protected void showLoadingIndicator() {
-        View view = getLoadingIndicator();
-        if (view != null) {
-            loadingIndicator = true;
-            view.setVisibility(View.VISIBLE);
-            showOverlay();
-        }
+        runOnUiThread(() -> {
+            View view = getLoadingIndicator();
+            if (view != null) {
+                loadingIndicator = true;
+                view.setVisibility(View.VISIBLE);
+            }
+        });
+        showOverlay();
 
     }
 
     protected void hideLoadingIndicator() {
-        View view = getLoadingIndicator();
-        if (view != null) {
-            loadingIndicator = false;
-            view.setVisibility(View.INVISIBLE);
-            hideOverlay();
-        }
+        runOnUiThread(() -> {
+            View view = getLoadingIndicator();
+            if (view != null) {
+                loadingIndicator = false;
+                view.setVisibility(View.INVISIBLE);
+            }
+        });
+        hideOverlay();
 
     }
 

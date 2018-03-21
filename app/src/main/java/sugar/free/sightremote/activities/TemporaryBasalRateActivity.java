@@ -110,6 +110,7 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
                 showSnackbar(Snackbar.make(getRootView(), R.string.pump_not_started, Snackbar.LENGTH_INDEFINITE));
             } else {
                 hideLoadingIndicator();
+                hideManualOverlay();
                 dismissSnackbar();
             }
         } else {
