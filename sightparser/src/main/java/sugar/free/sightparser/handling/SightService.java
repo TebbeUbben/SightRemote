@@ -134,27 +134,30 @@ public class SightService extends Service {
         @Override
         public long registerStatusCallback(final IStatusCallback callback) throws RemoteException {
             final long id = ++statusIdCounter;
-            DeathRecipient deathRecipient = new DeathRecipient() {
-                @Override
-                public void binderDied() {
-                    Log.d("SightService", "CLIENT DIED - STATUS");
-                    callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
-                    statusCallbackDeathRecipients.remove(callback);
+            DeathRecipient deathRecipient = () -> {
+                Log.d("SightService", "CLIENT DIED - STATUS");
+                callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
+                statusCallbackDeathRecipients.remove(callback);
+                synchronized (statusCallbackIds) {
                     statusCallbackIds.remove(id);
                 }
             };
-            statusCallbackDeathRecipients.put(callback, deathRecipient);
-            statusCallbackIds.put(id, callback);
-            callback.asBinder().linkToDeath(deathRecipient, 0);
+            synchronized (statusCallbackIds) {
+                statusCallbackDeathRecipients.put(callback, deathRecipient);
+                statusCallbackIds.put(id, callback);
+                callback.asBinder().linkToDeath(deathRecipient, 0);
+            }
             return id;
         }
 
         @Override
         public void unregisterStatusCallback(long id) throws RemoteException {
-            IStatusCallback callback = statusCallbackIds.get(id);
-            callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
-            statusCallbackDeathRecipients.remove(callback);
-            statusCallbackIds.remove(id);
+            synchronized (statusCallbackIds) {
+                IStatusCallback callback = statusCallbackIds.get(id);
+                callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
+                statusCallbackDeathRecipients.remove(callback);
+                statusCallbackIds.remove(id);
+            }
         }
 
         @Override
@@ -248,6 +251,24 @@ public class SightService extends Service {
                 throw new RemoteException("Not authorized");
             }
         }
+
+        @Override
+        public void aclDisconnect(String mac) throws RemoteException {
+            if (verifyAdminCaller("aclDisconnect")) {
+                if (getDataStorage().get("DEVICEMAC").equalsIgnoreCase(mac)) {
+                    try {
+                        if (bluetoothSocket.isConnected()) {
+                            Log.d("SightService", "Received ACL disconnect, closing socket...");
+                            bluetoothSocket.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                throw new RemoteException("Not authorized");
+            }
+        }
     };
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
@@ -262,12 +283,13 @@ public class SightService extends Service {
                     reconnect = true;
                 }
             }
-            Iterator<IStatusCallback> sc = statusCallbackIds.values().iterator();
-            while (sc.hasNext()) {
-                try {
-                    sc.next().onStatusChange(status.name());
-                } catch (Exception e) {
-                    e.printStackTrace();
+            synchronized (statusCallbackIds) {
+                for (IStatusCallback sc : statusCallbackIds.values()) {
+                    try {
+                        sc.onStatusChange(status.name());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             Answers.getInstance().logCustom(new CustomEvent("Connection Status Changed")

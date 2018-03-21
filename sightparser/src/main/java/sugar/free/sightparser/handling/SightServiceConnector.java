@@ -219,4 +219,12 @@ public class SightServiceConnector {
             e.printStackTrace();
         }
     }
+
+    public void aclDisconnect(String mac) {
+        try {
+            boundService.aclDisconnect(mac);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 }

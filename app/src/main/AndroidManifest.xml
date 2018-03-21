@@ -101,6 +101,12 @@
             android:name="sugar.free.sightparser.handling.SightService"
             android:exported="true"
             android:process="sugar.free.sightparser.handling.SightService" />
+
+        <receiver android:name=".receivers.ACLReceiver">
+            <intent-filter>
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

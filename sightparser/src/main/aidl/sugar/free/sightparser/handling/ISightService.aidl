@@ -17,4 +17,5 @@ interface ISightService {
     void setPassword(String password);
     void setAuthorized(String packageName, boolean allowed);
     void reset();
+    void aclDisconnect(String mac);
 }
