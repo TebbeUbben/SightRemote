@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
@@ -9,7 +10,6 @@ android {
         versionName project.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildToolsVersion project.buildToolsVersion
     buildTypes {
         release {
             minifyEnabled false
@@ -28,16 +28,13 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.madgag.spongycastle:core:1.58.0.0'
-
     //Lombok
     compileOnly 'org.projectlombok:lombok:1.16.20'
     compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
     annotationProcessor "org.projectlombok:lombok:1.16.20"
-
     //Crashlytics
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
         transitive = true;
     }
-
     implementation 'com.android.support:appcompat-v7:27.1.0'
 }
