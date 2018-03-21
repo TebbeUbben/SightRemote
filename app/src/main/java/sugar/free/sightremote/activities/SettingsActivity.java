@@ -79,7 +79,7 @@ public class SettingsActivity extends SightActivity {
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
                             getSettingsActivity().getServiceConnector().reset();
                             Intent intent = new Intent(getSettingsActivity(), SetupActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                         })
                         .setNegativeButton(R.string.cancel, null)
