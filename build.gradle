@@ -5,8 +5,8 @@ ext {
     buildToolsVersion = '27.0.3'
 
     versionMajor = 1
-    versionMinor = 4
-    versionRevision = 3
+    versionMinor = 5
+    versionRevision = 0
     versionCompatiblity = 'asclepius'
 
     versionCode = 1
