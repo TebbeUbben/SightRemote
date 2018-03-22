@@ -161,5 +161,4 @@
     <string name="cannula_filled"><![CDATA[Kanüle gefüllt: <b>%1$s</b>]]></string>
     <string name="system_data">Systemdaten</string>
     <string name="event_data">Ereignisdaten</string>
-    <string name="long_press_to_edit">Lange drücken zum Bearbeiten</string>
 </resources>

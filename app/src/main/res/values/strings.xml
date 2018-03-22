@@ -163,5 +163,4 @@
     <string name="system_data">System data</string>
     <string name="alert"><![CDATA[%1$s: <b>%2$s</b>]]></string>
     <string name="event_data">Event data</string>
-    <string name="long_press_to_edit">Long press to edit</string>
 </resources>
