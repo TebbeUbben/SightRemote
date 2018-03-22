@@ -44,6 +44,15 @@ captures/
 .idea/workspace.xml
 .idea/dictionaries
 .idea/libraries
+.idea/libraries/
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/scopes/scope_settings.xml
 
 # Keystore files
 # Uncomment the following line if you do not want to check your keystore files in.
