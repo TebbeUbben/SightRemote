@@ -133,7 +133,7 @@
     <string name="enter_your_pin">Gib deine PIN ein:</string>
     <string name="press_the_buttons_in_the_following_order"><![CDATA[Drücke die Knöpfe in der folgenden Reihenfolge: <b>%1$d-%2$d-%3$d-%4$d</b>]]></string>
     <string name="wrong_pin">Falsche PIN</string>
-    <string name="couldnt_recognize_fingerprint">Fingerabdruck konnte nicht erkannt werden</string>
+    <string name="couldnt_recognize_fingerprint">Fingerabdruck nicht erkannt</string>
     <string name="use_your_fingerprint_for_confirmation">Fingerabdruck zum Bestätigen benutzen</string>
     <string name="_1">1</string>
     <string name="_2">2</string>

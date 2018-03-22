@@ -9,14 +9,19 @@
         <item name="actionBarPopupTheme">@style/AppTheme.PopupMenu</item>
         <item name="android:alertDialogTheme">@style/AppTheme.Dialog</item>
         <item name="alertDialogTheme">@style/AppTheme.Dialog</item>
+        <item name="spinnerStyle">@style/AppTheme.Spinner</item>
+    </style>
+    
+    <style name="AppTheme.Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:popupBackground">@color/colorBackgroundDark</item>
     </style>
 
     <style name="AppTheme.PopupMenu" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:colorBackground">@color/colorBackgroundDark</item>
     </style>
 
     <style name="AppTheme.Dialog" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="android:background">@color/colorBackground</item>
+        <item name="android:background">@color/colorBackgroundDark</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
@@ -26,5 +31,4 @@
     </style>
 
     <style name="AppTheme.NoActionBar.NoStatusBackground"></style>
-
 </resources>
