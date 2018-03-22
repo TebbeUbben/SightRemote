@@ -255,9 +255,10 @@ public class SightService extends Service {
         @Override
         public void aclDisconnect(String mac) throws RemoteException {
             if (verifyAdminCaller("aclDisconnect")) {
+                if (bluetoothSocket == null) return;
                 if (getDataStorage().get("DEVICEMAC").equalsIgnoreCase(mac)) {
                     try {
-                        if (bluetoothSocket != null && bluetoothSocket.isConnected()) {
+                        if (bluetoothSocket.isConnected()) {
                             Log.d("SightService", "Received ACL disconnect, closing socket...");
                             bluetoothSocket.close();
                         }
