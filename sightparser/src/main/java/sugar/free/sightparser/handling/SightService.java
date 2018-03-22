@@ -257,7 +257,7 @@ public class SightService extends Service {
             if (verifyAdminCaller("aclDisconnect")) {
                 if (getDataStorage().get("DEVICEMAC").equalsIgnoreCase(mac)) {
                     try {
-                        if (bluetoothSocket.isConnected()) {
+                        if (bluetoothSocket != null && bluetoothSocket.isConnected()) {
                             Log.d("SightService", "Received ACL disconnect, closing socket...");
                             bluetoothSocket.close();
                         }
