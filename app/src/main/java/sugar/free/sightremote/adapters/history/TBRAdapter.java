@@ -28,7 +28,7 @@ public class TBRAdapter extends HistoryAdapter<TBRAdapter.ViewHolder, EndOfTBR> 
     public void onBindViewHolder(ViewHolder holder, EndOfTBR entry, int position) {
         holder.amount.setText(HTMLUtil.getHTML(R.string.history_tbr_amount,
                 entry.getAmount(), UnitFormatter.formatDuration(entry.getDuration())));
-        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter)).format(entry.getDateTime()));
+        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_time_formatter)).format(entry.getStartTime()));
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
