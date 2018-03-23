@@ -36,23 +36,25 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/status"
-                        android:textAlignment="center"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/status"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textAlignment="center"
+                            android:gravity="center"/>
 
                     <TextView
-                        android:id="@+id/status"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/loading_points"
-                        android:textAlignment="center"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp"
-                        tools:text="Started" />
+                            android:id="@+id/status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/loading_points"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            tools:text="Started"
+                            android:textAlignment="center"
+                            android:gravity="center"/>
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
@@ -82,23 +84,25 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/battery"
-                            android:textAlignment="center"
-                            android:textColor="#FFFFFF"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/battery"
+                                android:textColor="#FFFFFF"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textAlignment="center"
+                                android:gravity="center"/>
 
                         <TextView
-                            android:id="@+id/battery"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/loading_points"
-                            android:textAlignment="center"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"
-                            tools:text="90%" />
+                                android:id="@+id/battery"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/loading_points"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"
+                                tools:text="90%"
+                                android:textAlignment="center"
+                                android:gravity="center"/>
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
@@ -123,23 +127,25 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/cartridge"
-                            android:textAlignment="center"
-                            android:textColor="#FFFFFF"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/cartridge"
+                                android:textColor="#FFFFFF"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textAlignment="center"
+                                android:gravity="center"/>
 
                         <TextView
-                            android:id="@+id/cartridge"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/loading_points"
-                            android:textAlignment="center"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"
-                            tools:text="142U" />
+                                android:id="@+id/cartridge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/loading_points"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"
+                                tools:text="142U"
+                                android:textAlignment="center"
+                                android:gravity="center"/>
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
@@ -172,23 +178,25 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/active_basal_rate"
-                            android:textAlignment="center"
-                            android:textColor="#FFFFFF"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/active_basal_rate"
+                                android:textColor="#FFFFFF"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textAlignment="center"
+                                android:gravity="center"/>
 
                         <TextView
-                            android:id="@+id/active_basal_rate"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/loading_points"
-                            android:textAlignment="center"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"
-                            tools:text="Basal Profile 1: 1,2U/h" />
+                                android:id="@+id/active_basal_rate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/loading_points"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"
+                                tools:text="Basal Profile 1: 1,2U/h"
+                                android:textAlignment="center"
+                                android:gravity="center"/>
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
@@ -213,23 +221,25 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/latest_bolus"
-                            android:textAlignment="center"
-                            android:textColor="#FFFFFF"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/latest_bolus"
+                                android:textColor="#FFFFFF"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textAlignment="center"
+                                android:gravity="center"/>
 
                         <TextView
-                            android:id="@+id/latest_bolus"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/loading_points"
-                            android:textAlignment="center"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"
-                            tools:text="15:00: 2.5U" />
+                                android:id="@+id/latest_bolus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/loading_points"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"
+                                tools:text="15:00: 2.5U"
+                                android:textAlignment="center"
+                                android:gravity="center"/>
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
@@ -255,13 +265,14 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="8dp"
-                        android:text="@string/daily_total"
-                        android:textAlignment="center"
-                        android:textColor="#FFFFFF"
-                        android:textSize="20sp" />
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="8dp"
+                            android:text="@string/daily_total"
+                            android:textColor="#FFFFFF"
+                            android:textSize="20sp"
+                            android:textAlignment="center"
+                            android:gravity="center"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -277,23 +288,25 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/bolus"
-                                android:textAlignment="center"
-                                android:textColor="#FFFFFF"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/bolus"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textAlignment="center"
+                                    android:gravity="center"/>
 
                             <TextView
-                                android:id="@+id/daily_bolus"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/loading_points"
-                                android:textAlignment="center"
-                                android:textColor="#FFFFFF"
-                                android:textSize="14sp"
-                                tools:text="21.7U" />
+                                    android:id="@+id/daily_bolus"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/loading_points"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="14sp"
+                                    tools:text="21.7U"
+                                    android:textAlignment="center"
+                                    android:gravity="center"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -305,23 +318,25 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/basal_rate"
-                                android:textAlignment="center"
-                                android:textColor="#FFFFFF"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/basal_rate"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textAlignment="center"
+                                    android:gravity="center"/>
 
                             <TextView
-                                android:id="@+id/daily_basal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/loading_points"
-                                android:textAlignment="center"
-                                android:textColor="#FFFFFF"
-                                android:textSize="14sp"
-                                tools:text="28.7U" />
+                                    android:id="@+id/daily_basal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/loading_points"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="14sp"
+                                    tools:text="28.7U"
+                                    android:textAlignment="center"
+                                    android:gravity="center"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -332,23 +347,25 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/total"
-                                android:textAlignment="center"
-                                android:textColor="#FFFFFF"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/total"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textAlignment="center"
+                                    android:gravity="center"/>
 
                             <TextView
-                                android:id="@+id/daily_total"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/loading_points"
-                                android:textAlignment="center"
-                                android:textColor="#FFFFFF"
-                                android:textSize="14sp"
-                                tools:text="50.4U" />
+                                    android:id="@+id/daily_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/loading_points"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="14sp"
+                                    tools:text="50.4U"
+                                    android:textAlignment="center"
+                                    android:gravity="center"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
