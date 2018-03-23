@@ -12,25 +12,26 @@
         android:background="@drawable/ic_cannula" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="16dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/date_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="27th January 2018, 10:55 PM"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
+            android:layout_gravity="center"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical"
+            android:layout_marginRight="16dp">
 
         <TextView
-            android:id="@+id/amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cannula filled: 0,7U" />
+                android:id="@+id/date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="27th January 2018, 10:55 PM"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"/>
+
+        <TextView
+                android:id="@+id/amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cannula filled: 0,7U"/>
     </LinearLayout>
 </LinearLayout>

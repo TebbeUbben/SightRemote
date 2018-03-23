@@ -34,20 +34,22 @@
                 android:text="Bolus: 20U" />
 
             <TextView
-                android:id="@+id/basal_amount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Basal: 20U"
-                android:textAlignment="center" />
+                    android:id="@+id/basal_amount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Basal: 20U"
+                    android:textAlignment="center"
+                    android:gravity="center"/>
 
             <TextView
-                android:id="@+id/total_amount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Total: 40U"
-                android:textAlignment="textEnd" />
+                    android:id="@+id/total_amount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Total: 40U"
+                    android:textAlignment="textEnd"
+                    android:gravity="right"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
