@@ -13,19 +13,8 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.widget.Toast;
-
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
-
 import sugar.free.sightparser.DataStorage;
 import sugar.free.sightparser.Pref;
 import sugar.free.sightparser.SerializationUtils;
@@ -34,6 +23,14 @@ import sugar.free.sightparser.error.DisconnectedError;
 import sugar.free.sightparser.error.NotAuthorizedError;
 import sugar.free.sightparser.pipeline.Pipeline;
 import sugar.free.sightparser.pipeline.Status;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SightService extends Service {
 
@@ -46,13 +43,13 @@ public class SightService extends Service {
     private final SparseBooleanArray allowedUid = new SparseBooleanArray();
     private long statusIdCounter = 0;
     private String tempMac;
-    private Map<IBinder, IBinder.DeathRecipient> connectedClients = new HashMap<>();
+    private Map<IBinder, IBinder.DeathRecipient> connectedClients = new ConcurrentHashMap<>();
     private ConnectionThread connectionThread;
     private Pipeline pipeline;
     private DataStorage dataStorage;
     private FirewallConstraint firewall;
-    private Map<IStatusCallback, IBinder.DeathRecipient> statusCallbackDeathRecipients = new HashMap<>();
-    private Map<Long, IStatusCallback> statusCallbackIds = new HashMap<>();
+    private Map<IStatusCallback, IBinder.DeathRecipient> statusCallbackDeathRecipients = new ConcurrentHashMap<>();
+    private Map<Long, IStatusCallback> statusCallbackIds = new ConcurrentHashMap<>();
     private Status status = Status.DISCONNECTED;
     private Timer disconnectTimer;
     private Timer timeoutTimer;
@@ -74,15 +71,12 @@ public class SightService extends Service {
                     Log.d("SightService", "CLIENT CONNECTS TO PUMP");
                     if (disconnectTimer != null) disconnectTimer.cancel();
                     disconnectTimer = new Timer();
-                    DeathRecipient deathRecipient = new DeathRecipient() {
-                        @Override
-                        public void binderDied() {
-                            Log.d("SightService", "CLIENT DIED - CONNECT");
-                            try {
-                                disconnect(binder);
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
+                    DeathRecipient deathRecipient = () -> {
+                        Log.d("SightService", "CLIENT DIED - CONNECT");
+                        try {
+                            disconnect(binder);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
                         }
                     };
                     connectedClients.put(binder, deathRecipient);
@@ -138,26 +132,20 @@ public class SightService extends Service {
                 Log.d("SightService", "CLIENT DIED - STATUS");
                 callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
                 statusCallbackDeathRecipients.remove(callback);
-                synchronized (statusCallbackIds) {
-                    statusCallbackIds.remove(id);
-                }
+                statusCallbackIds.remove(id);
             };
-            synchronized (statusCallbackIds) {
-                statusCallbackDeathRecipients.put(callback, deathRecipient);
-                statusCallbackIds.put(id, callback);
-                callback.asBinder().linkToDeath(deathRecipient, 0);
-            }
+            statusCallbackDeathRecipients.put(callback, deathRecipient);
+            statusCallbackIds.put(id, callback);
+            callback.asBinder().linkToDeath(deathRecipient, 0);
             return id;
         }
 
         @Override
         public void unregisterStatusCallback(long id) throws RemoteException {
-            synchronized (statusCallbackIds) {
-                IStatusCallback callback = statusCallbackIds.get(id);
-                callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
-                statusCallbackDeathRecipients.remove(callback);
-                statusCallbackIds.remove(id);
-            }
+            IStatusCallback callback = statusCallbackIds.get(id);
+            callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
+            statusCallbackDeathRecipients.remove(callback);
+            statusCallbackIds.remove(id);
         }
 
         @Override
@@ -284,13 +272,11 @@ public class SightService extends Service {
                     reconnect = true;
                 }
             }
-            synchronized (statusCallbackIds) {
-                for (IStatusCallback sc : statusCallbackIds.values()) {
-                    try {
-                        sc.onStatusChange(status.name());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            for (Map.Entry<Long, IStatusCallback> entry : statusCallbackIds.entrySet()) {
+                try {
+                    entry.getValue().onStatusChange(status.name());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             Answers.getInstance().logCustom(new CustomEvent("Connection Status Changed")
