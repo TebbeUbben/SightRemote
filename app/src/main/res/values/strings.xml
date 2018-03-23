@@ -161,6 +161,6 @@
     <string name="tube_filled"><![CDATA[Tube filled: <b>%1$s</b>]]></string>
     <string name="cannula_filled"><![CDATA[Cannula filled: <b>%1$s</b>]]></string>
     <string name="system_data">System data</string>
-    <string name="alert"><![CDATA[%1$s: <b>%2$s</b>]]></string>
+    <string name="alert"><![CDATA[Alarm: <b>%1$s</b>]]></string>
     <string name="event_data">Event data</string>
 </resources>
