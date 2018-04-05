@@ -9,7 +9,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-feature
         android:name="android.hardware.bluetooth"
@@ -97,6 +98,9 @@
             android:name=".services.AlertService"
             android:enabled="true" />
         <service
+            android:name=".services.OngoingNotificationService"
+            android:enabled="true" />
+        <service
             android:name="sugar.free.sightparser.handling.SightService"
             android:exported="true"
             android:process="sugar.free.sightparser.handling.SightService" />
@@ -104,6 +108,12 @@
         <receiver android:name=".receivers.ACLReceiver">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receivers.BootCompletedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

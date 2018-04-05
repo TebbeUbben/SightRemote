@@ -163,4 +163,9 @@
     <string name="system_data">System data</string>
     <string name="alert"><![CDATA[%1$s: <b>%2$s</b>]]></string>
     <string name="event_data">Event data</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="sightremote_is_active">SightRemote is active</string>
+    <string name="ongoing_notification_name">Ongoing notification</string>
+    <string name="ongoing_notification_description">Indicates whether your phone is connected to your pump.</string>
 </resources>

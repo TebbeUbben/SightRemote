@@ -161,4 +161,9 @@
     <string name="cannula_filled"><![CDATA[Kanüle gefüllt: <b>%1$s</b>]]></string>
     <string name="system_data">Systemdaten</string>
     <string name="event_data">Ereignisdaten</string>
+    <string name="connected">Verbunden</string>
+    <string name="disconnected">Nicht verbunden</string>
+    <string name="sightremote_is_active">SightRemote ist aktiv</string>
+    <string name="ongoing_notification_name">Laufende Benachrichtigung</string>
+    <string name="ongoing_notification_description">Zeigt an, ob das Telefon mit deiner Pumpe verbunden ist.</string>
 </resources>
