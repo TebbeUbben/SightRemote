@@ -1,4 +1,4 @@
-package sugar.free.sightparser.handling.taskrunners;
+package sugar.free.sightremote.taskrunners;
 
 import java.io.Serializable;
 

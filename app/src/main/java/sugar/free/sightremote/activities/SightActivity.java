@@ -2,10 +2,8 @@ package sugar.free.sightremote.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,11 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.stmt.query.In;
-
 import sugar.free.sightparser.handling.ServiceConnectionCallback;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.StatusCallback;
@@ -30,11 +24,7 @@ import sugar.free.sightremote.R;
 import sugar.free.sightremote.activities.boluses.ExtendedBolusActivity;
 import sugar.free.sightremote.activities.boluses.MultiwaveBolusActivity;
 import sugar.free.sightremote.activities.boluses.StandardBolusActivity;
-import sugar.free.sightremote.activities.history.BolusHistoryActivity;
-import sugar.free.sightremote.activities.history.EventHistoryActivity;
-import sugar.free.sightremote.activities.history.SystemHistoryActivity;
-import sugar.free.sightremote.activities.history.TBRHistoryActivity;
-import sugar.free.sightremote.activities.history.TDDHistoryActivity;
+import sugar.free.sightremote.activities.history.*;
 import sugar.free.sightremote.database.DatabaseHelper;
 
 public abstract class SightActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
