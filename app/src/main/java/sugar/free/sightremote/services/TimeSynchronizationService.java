@@ -82,7 +82,7 @@ public class TimeSynchronizationService extends Service implements StatusCallbac
         Calendar calendar = Calendar.getInstance();
         WriteDateTimeMessage writeMessage = new WriteDateTimeMessage();
         writeMessage.setYear(calendar.get(Calendar.YEAR));
-        writeMessage.setMonth(calendar.get(Calendar.MONTH));
+        writeMessage.setMonth(calendar.get(Calendar.MONTH) + 1);
         writeMessage.setDay(calendar.get(Calendar.DAY_OF_MONTH));
         writeMessage.setHour(calendar.get(Calendar.HOUR_OF_DAY));
         writeMessage.setMinute(calendar.get(Calendar.MINUTE));
@@ -93,7 +93,7 @@ public class TimeSynchronizationService extends Service implements StatusCallbac
     private long parseDateTime(ReadDateTimeMessage dateTime) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, dateTime.getYear());
-        calendar.set(Calendar.MONTH, dateTime.getMonth());
+        calendar.set(Calendar.MONTH, dateTime.getMonth() - 1);
         calendar.set(Calendar.DAY_OF_MONTH, dateTime.getDay());
         calendar.set(Calendar.HOUR_OF_DAY, dateTime.getHour());
         calendar.set(Calendar.MINUTE, dateTime.getMinute());
