@@ -13,6 +13,7 @@ import sugar.free.sightremote.dialogs.ActivationWarningDialogChain;
 import sugar.free.sightremote.dialogs.ChangePINDialog;
 import sugar.free.sightremote.dialogs.ConfirmPINDialog;
 import sugar.free.sightremote.dialogs.ConfirmationDialog;
+import sugar.free.sightremote.services.TimeSynchronizationService;
 import sugar.free.sightremote.utils.HTMLUtil;
 
 import static sugar.free.sightremote.utils.Preferences.*;
@@ -60,6 +61,7 @@ public class SettingsActivity extends SightActivity {
             getPreferenceScreen().findPreference("enable_confirmation_challenges").setOnPreferenceClickListener(this);
             getPreferenceScreen().findPreference(PREF_BOOLEAN_ENABLE_CONFIRMATION_CHALLENGES).setOnPreferenceChangeListener(this);
             getPreferenceScreen().findPreference(PREF_BOOLEAN_CONFIRMATION_USE_FINGERPRINT).setOnPreferenceChangeListener(this);
+            getPreferenceScreen().findPreference(PREF_BOOLEAN_AUTO_ADJUST_TIME).setOnPreferenceChangeListener(this);
             getPreferenceScreen().findPreference(PREF_BOOLEAN_CONFIRMATION_USE_PIN).setOnPreferenceChangeListener(this);
             getPreferenceScreen().findPreference(PREF_STRING_CONFIRMATION_PIN).setOnPreferenceClickListener(this);
             if (!ConfirmationDialog.isFingerprintScannerAvailable()) {
@@ -97,7 +99,7 @@ public class SettingsActivity extends SightActivity {
         }
 
         @Override
-        public boolean onPreferenceChange(Preference preference, Object o) {
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
             if (preference.getKey().equals(PREF_BOOLEAN_CONFIRMATION_USE_PIN)) {
                 if (getBooleanPref(PREF_BOOLEAN_CONFIRMATION_USE_PIN)) {
                     getSettingsActivity().dialog = new ConfirmPINDialog(getSettingsActivity(), () -> {
@@ -130,6 +132,9 @@ public class SettingsActivity extends SightActivity {
                     }).show();
                     return false;
                 }
+            } else if (preference.getKey().equals(PREF_BOOLEAN_AUTO_ADJUST_TIME)) {
+                if ((Boolean) newValue) getActivity().startService(new Intent(getActivity(), TimeSynchronizationService.class));
+                else getActivity().stopService(new Intent(getActivity(), TimeSynchronizationService.class));
             }
             return true;
         }

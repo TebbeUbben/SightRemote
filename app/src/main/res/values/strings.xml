@@ -168,4 +168,9 @@
     <string name="sightremote_is_active">SightRemote is active</string>
     <string name="ongoing_notification_name">Ongoing notification</string>
     <string name="ongoing_notification_description">Indicates whether your phone is connected to your pump.</string>
+    <string name="automatically_adjust_pump_time">Automatically adjust pump time</string>
+    <string name="automatically_adjust_the_pumps_time_if_its_inaccurate">Automatically adjust the pump\'s time if it\'s inaccurate</string>
+    <string name="pump_time_synchronized">Pump time synchronized</string>
+    <string name="the_time_on_your_pump_was_inaccurate_and_has_been_synchronized">The time on your pump was inaccurate and has been synchronized.</string>
+    <string name="notifies_you_when_pump_time_is_changed">Notifies you when the pump\'s time was changed</string>
 </resources>

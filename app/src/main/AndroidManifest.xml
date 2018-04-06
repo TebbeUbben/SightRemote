@@ -101,6 +101,9 @@
             android:name=".services.OngoingNotificationService"
             android:enabled="true" />
         <service
+            android:name=".services.TimeSynchronizationService"
+            android:enabled="true" />
+        <service
             android:name="sugar.free.sightparser.handling.SightService"
             android:exported="true"
             android:process="sugar.free.sightparser.handling.SightService" />

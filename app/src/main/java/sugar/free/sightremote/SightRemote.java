@@ -13,6 +13,7 @@ import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightremote.services.AlertService;
 import sugar.free.sightremote.services.HistorySyncService;
 import sugar.free.sightremote.services.OngoingNotificationService;
+import sugar.free.sightremote.services.TimeSynchronizationService;
 import sugar.free.sightremote.utils.NotificationCenter;
 import sugar.free.sightremote.utils.Preferences;
 
@@ -39,5 +40,7 @@ public class SightRemote extends Application {
         startService(new Intent(this, SightService.class));
         startService(new Intent(this, HistorySyncService.class));
         startService(new Intent(this, AlertService.class));
+        if (Preferences.getBooleanPref(Preferences.PREF_BOOLEAN_AUTO_ADJUST_TIME))
+            startService(new Intent(this, TimeSynchronizationService.class));
     }
 }

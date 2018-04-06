@@ -14,6 +14,7 @@ public class Preferences {
     public static String PREF_BOOLEAN_ENABLE_CONFIRMATION_CHALLENGES = "enable_confirmation_challenges";
     public static String PREF_BOOLEAN_CONFIRMATION_USE_FINGERPRINT = "confirmation_use_fingerprint";
     public static String PREF_BOOLEAN_CONFIRMATION_USE_PIN = "confirmation_use_pin";
+    public static String PREF_BOOLEAN_AUTO_ADJUST_TIME = "auto_adjust_time";
 
     private static SharedPreferences sharedPreferences;
 

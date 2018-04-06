@@ -11,6 +11,11 @@
         android:key="background_sync_enabled"
         android:summary="@string/synchronize_pump_data_automatically_in_the_background"
         android:title="@string/background_sync" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="auto_adjust_time"
+        android:summary="@string/automatically_adjust_the_pumps_time_if_its_inaccurate"
+        android:title="@string/automatically_adjust_pump_time" />
 
     <PreferenceCategory
         android:title="@string/confirmation">
