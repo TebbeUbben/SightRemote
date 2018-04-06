@@ -25,7 +25,7 @@ public class TDDAdapter extends HistoryAdapter<TDDAdapter.ViewHolder, DailyTotal
         holder.bolus.setText(HTMLUtil.getHTML(R.string.history_bolus, UnitFormatter.formatUnits(entry.getBolusTotal())));
         holder.basal.setText(HTMLUtil.getHTML(R.string.history_basal, UnitFormatter.formatUnits(entry.getBasalTotal())));
         holder.total.setText(HTMLUtil.getHTML(R.string.history_total, UnitFormatter.formatUnits(entry.getBolusTotal() + entry.getBasalTotal())));
-        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_formatter)).format(entry.getDateTime()));
+        holder.dateTime.setText(new SimpleDateFormat(holder.dateTime.getResources().getString(R.string.history_date_formatter)).format(entry.getTotalDate()));
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

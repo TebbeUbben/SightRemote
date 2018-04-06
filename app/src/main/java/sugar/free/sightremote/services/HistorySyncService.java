@@ -25,21 +25,8 @@ import java.util.TimeZone;
 
 import sugar.free.sightparser.applayer.descriptors.HistoryReadingDirection;
 import sugar.free.sightparser.applayer.descriptors.HistoryType;
-import sugar.free.sightparser.applayer.descriptors.history_frames.BatteryInsertedFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.CartridgeInsertedFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.DailyTotalFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.HistoryFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.OccurenceOfErrorFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.OccurenceOfMaintenanceFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.OccurenceOfWarningFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.TubeFilledFrame;
+import sugar.free.sightparser.applayer.descriptors.history_frames.*;
 import sugar.free.sightparser.applayer.messages.history.OpenHistoryReadingSessionMessage;
-import sugar.free.sightparser.applayer.descriptors.history_frames.BolusDeliveredFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.BolusProgrammedFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.CannulaFilledFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.EndOfTBRFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.PumpStatusChangedFrame;
-import sugar.free.sightparser.applayer.descriptors.history_frames.TimeChangedFrame;
 import sugar.free.sightparser.applayer.messages.status.ReadDateTimeMessage;
 import sugar.free.sightparser.applayer.messages.status_param.ReadStatusParamBlockMessage;
 import sugar.free.sightparser.applayer.descriptors.status_param_blocks.SystemIdentificationBlock;
@@ -427,40 +414,14 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
         dailyTotal.setDateTime(eventTime);
 
-        Date totalDate = parseDateTimeAddOffset(frame.getTotalYear(), frame.getTotalMonth(),
+        Date totalDate = parseDateTime(frame.getTotalYear(), frame.getTotalMonth(),
                 frame.getTotalDay(), 0, 0, 0);
         dailyTotal.setTotalDate(totalDate);
 
         return dailyTotal;
     }
 
-    private OccurenceOfAlert processFrame(OccurenceOfErrorFrame frame) {
-        OccurenceOfAlert occurenceOfAlert = new OccurenceOfAlert();
-        occurenceOfAlert.setEventNumber(frame.getEventNumber());
-        occurenceOfAlert.setAlertType(frame.getAlertType().getSimpleName());
-        occurenceOfAlert.setAlertId(frame.getAlertId());
-
-        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
-                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
-        occurenceOfAlert.setDateTime(eventTime);
-
-        return occurenceOfAlert;
-    }
-
-    private OccurenceOfAlert processFrame(OccurenceOfMaintenanceFrame frame) {
-        OccurenceOfAlert occurenceOfAlert = new OccurenceOfAlert();
-        occurenceOfAlert.setEventNumber(frame.getEventNumber());
-        occurenceOfAlert.setAlertType(frame.getAlertType().getSimpleName());
-        occurenceOfAlert.setAlertId(frame.getAlertId());
-
-        Date eventTime = parseDateTimeAddOffset(frame.getEventYear(), frame.getEventMonth(),
-                frame.getEventDay(), frame.getEventHour(), frame.getEventMinute(), frame.getEventSecond());
-        occurenceOfAlert.setDateTime(eventTime);
-
-        return occurenceOfAlert;
-    }
-
-    private OccurenceOfAlert processFrame(OccurenceOfWarningFrame frame) {
+    private OccurenceOfAlert processFrame(OccurenceOfAlertFrame frame) {
         OccurenceOfAlert occurenceOfAlert = new OccurenceOfAlert();
         occurenceOfAlert.setEventNumber(frame.getEventNumber());
         occurenceOfAlert.setAlertType(frame.getAlertType().getSimpleName());
