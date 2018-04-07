@@ -244,6 +244,8 @@ public class SightService extends Service {
         public void aclDisconnect(String mac) throws RemoteException {
             if (verifyAdminCaller("aclDisconnect")) {
                 if (bluetoothSocket == null) return;
+                if (mac == null) return;
+                if (getDataStorage().get("DEVICEMAC") == null) return;
                 if (getDataStorage().get("DEVICEMAC").equalsIgnoreCase(mac)) {
                     try {
                         if (bluetoothSocket.isConnected()) {
