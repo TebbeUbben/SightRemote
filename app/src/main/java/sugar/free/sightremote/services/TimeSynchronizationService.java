@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import sugar.free.sightparser.applayer.messages.configuration.WriteDateTimeMessage;
 import sugar.free.sightparser.applayer.messages.status.ReadDateTimeMessage;
 import sugar.free.sightparser.handling.SightServiceConnector;
@@ -42,7 +43,7 @@ public class TimeSynchronizationService extends Service implements StatusCallbac
         if (serviceConnector.isConnectedToService()) {
             serviceConnector.connect();
             if (serviceConnector.getStatus() == Status.CONNECTED)
-                onStatusChange(serviceConnector.getStatus());
+                onStatusChange(Status.CONNECTED);
         }
         Intent serviceIntent = new Intent(this, TimeSynchronizationService.class);
         pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
@@ -69,9 +70,9 @@ public class TimeSynchronizationService extends Service implements StatusCallbac
     public void onResult(Object result) {
         if (result instanceof ReadDateTimeMessage) {
             ReadDateTimeMessage dateTime = (ReadDateTimeMessage) result;
-            if (Math.abs(parseDateTime(dateTime) - System.currentTimeMillis()) >= 1000 * 30) {
+            if (Math.abs(parseDateTime(dateTime) - System.currentTimeMillis()) >= 1000 * 30)
                 new SingleMessageTaskRunner(serviceConnector, createWriteMessage()).fetch(this);
-            }
+            else serviceConnector.disconnect();
         } else if (result instanceof WriteDateTimeMessage) {
             NotificationCenter.showTimeSynchronizedNotification();
             serviceConnector.disconnect();
