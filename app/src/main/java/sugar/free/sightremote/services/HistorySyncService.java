@@ -216,7 +216,14 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 if (getDatabaseHelper().getPumpStatusChangedDao().queryBuilder().where()
                         .eq("eventNumber", pumpStatusChanged.getEventNumber()).and().eq("pump", pumpSerialNumber).countOf() > 0) continue;
                 getDatabaseHelper().getPumpStatusChangedDao().create(pumpStatusChanged);
-                HistorySendIntent.send(getApplicationContext(), pumpStatusChanged, false);
+                PumpStatusChanged oldStatus = getDatabaseHelper().getPumpStatusChangedDao().queryBuilder()
+                        .orderBy("dateTime", false)
+                        .where()
+                        .lt("dateTime", pumpStatusChanged.getDateTime())
+                        .queryForFirst();
+                if (oldStatus != null)
+                    HistorySendIntent.send(getApplicationContext(), pumpStatusChanged, oldStatus.getDateTime(), false);
+                else HistorySendIntent.send(getApplicationContext(), pumpStatusChanged, false);
             }
             for (TimeChanged timeChanged : timeChangedEntries) {
                 if (getDatabaseHelper().getTimeChangedDao().queryBuilder().where()

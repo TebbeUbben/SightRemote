@@ -43,5 +43,6 @@ public class HistoryBroadcast {
     public static final String EXTRA_ALERT_ID = "ALERT_ID";
     public static final String EXTRA_RESYNC = "RESYNC";
     public static final String EXTRA_CARTRIDGE_AMOUNT = "CARTRIDGE_AMOUNT";
+    public static final String EXTRA_OLD_STATUS_TIME = "OLD_STATUS_TIME";
 
 }

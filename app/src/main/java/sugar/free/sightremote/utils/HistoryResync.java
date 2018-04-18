@@ -90,7 +90,14 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending PumpStatusChanged list " + records.size());
             for (PumpStatusChanged pumpStatusChanged : records) {
-                HistorySendIntent.send(context, pumpStatusChanged, true);
+                PumpStatusChanged oldStatus = databaseHelper.getPumpStatusChangedDao().queryBuilder()
+                        .orderBy("dateTime", false)
+                        .where()
+                        .lt("dateTime", pumpStatusChanged.getDateTime())
+                        .queryForFirst();
+                if (oldStatus != null)
+                    HistorySendIntent.send(context, pumpStatusChanged, oldStatus.getDateTime(), true);
+                else HistorySendIntent.send(context, pumpStatusChanged, true);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);

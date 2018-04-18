@@ -16,6 +16,8 @@ import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
 import sugar.free.sightremote.database.TubeFilled;
 
+import java.util.Date;
+
 /**
  * Created by jamorham on 28/01/2018.
  */
@@ -74,6 +76,19 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, pumpStatusChanged.getEventNumber());
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, pumpStatusChanged.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, pumpStatusChanged.getDateTime());
+        intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
+        context.sendBroadcast(intent);
+    }
+
+    public static void send(Context context, PumpStatusChanged pumpStatusChanged, Date oldStatusTime, boolean resync) {
+        Intent intent = new Intent();
+        intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
+        intent.putExtra(HistoryBroadcast.EXTRA_OLD_STATUS, pumpStatusChanged.getOldValue().toString());
+        intent.putExtra(HistoryBroadcast.EXTRA_NEW_STATUS, pumpStatusChanged.getNewValue().toString());
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, pumpStatusChanged.getEventNumber());
+        intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, pumpStatusChanged.getPump());
+        intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, pumpStatusChanged.getDateTime());
+        intent.putExtra(HistoryBroadcast.EXTRA_OLD_STATUS_TIME, oldStatusTime);
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
         context.sendBroadcast(intent);
     }
