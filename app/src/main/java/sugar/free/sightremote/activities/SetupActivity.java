@@ -239,8 +239,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (!bluetoothDevices.contains(bluetoothDevice)) {
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    if (device.getBluetoothClass().getMajorDeviceClass() != 2304) return;
                     bluetoothDevices.add(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
                     bluetoothDeviceAdapter.notifyDataSetChanged();
                 }
