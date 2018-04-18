@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.error.CancelledException;
 import sugar.free.sightparser.error.DisconnectedError;
+import sugar.free.sightparser.error.TimeoutException;
 import sugar.free.sightparser.pipeline.Status;
 
 public abstract class TaskRunner {
@@ -41,11 +42,22 @@ public abstract class TaskRunner {
         else messageCallback.onError(new DisconnectedError());
     }
 
-    public Object fetchBlockingCall() throws Exception {
+    public Object fetchAndWaitUsingLatch() throws Exception {
         fetch(new BlockingCallResultCallback(this));
         resultLatch.wait();
         if (error != null) throw error;
         return result;
+    }
+
+    public Object fetchAndWaitUsingLoop(long frequency, long timeout) throws Exception {
+        fetch(new BlockingCallResultCallback(this));
+        long timeStarted = System.currentTimeMillis();
+        while (true) {
+            Thread.sleep(frequency);
+            if (error != null) throw error;
+            if (result != null) return result;
+            if (timeout > 0 && System.currentTimeMillis() - timeStarted >= timeout) throw new TimeoutException();
+        }
     }
 
     public void cancel() {
