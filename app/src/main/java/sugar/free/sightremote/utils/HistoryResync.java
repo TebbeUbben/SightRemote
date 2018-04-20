@@ -36,11 +36,11 @@ public class HistoryResync {
         this.context = context;
     }
 
-    public void doResync() {
-        resyncFromDatabase();
+    public void doResync(List<String> packages) {
+        resyncFromDatabase(packages);
     }
 
-    private void resyncFromDatabase() {
+    private void resyncFromDatabase(List<String> packages) {
 
         final Date yesterday = new Date(System.currentTimeMillis() - 86400000);
 
@@ -51,7 +51,7 @@ public class HistoryResync {
 
             android.util.Log.d(TAG, "Resending EndOfTBR list " + records.size());
             for (EndOfTBR endOfTBR : records) {
-                HistorySendIntent.send(context, endOfTBR, true);
+                HistorySendIntent.send(context, endOfTBR, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -64,7 +64,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending BolusDelivered list " + records.size());
             for (BolusDelivered bolusDelivered : records) {
-                HistorySendIntent.send(context, bolusDelivered, true);
+                HistorySendIntent.send(context, bolusDelivered, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -77,7 +77,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending BolusProgrammed list " + records.size());
             for (BolusProgrammed bolusProgrammed : records) {
-                HistorySendIntent.send(context, bolusProgrammed, true);
+                HistorySendIntent.send(context, bolusProgrammed, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -96,8 +96,8 @@ public class HistoryResync {
                         .lt("dateTime", pumpStatusChanged.getDateTime())
                         .queryForFirst();
                 if (oldStatus != null)
-                    HistorySendIntent.send(context, pumpStatusChanged, oldStatus.getDateTime(), true);
-                else HistorySendIntent.send(context, pumpStatusChanged, true);
+                    HistorySendIntent.send(context, pumpStatusChanged, oldStatus.getDateTime(), true, packages);
+                else HistorySendIntent.send(context, pumpStatusChanged, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -110,7 +110,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending TimeChanged list " + records.size());
             for (TimeChanged timeChanged : records) {
-                HistorySendIntent.send(context, timeChanged, true);
+                HistorySendIntent.send(context, timeChanged, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -123,7 +123,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending CannulaFilled list " + records.size());
             for (CannulaFilled cannulaFilled : records) {
-                HistorySendIntent.send(context, cannulaFilled, true);
+                HistorySendIntent.send(context, cannulaFilled, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -136,7 +136,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending DailyTotal list " + records.size());
             for (DailyTotal dailyTotal : records) {
-                HistorySendIntent.send(context, dailyTotal, true);
+                HistorySendIntent.send(context, dailyTotal, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -149,7 +149,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending TubeFilled list " + records.size());
             for (TubeFilled tubeFilled : records) {
-                HistorySendIntent.send(context, tubeFilled, true);
+                HistorySendIntent.send(context, tubeFilled, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -162,7 +162,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending CartridgeInserted list " + records.size());
             for (CartridgeInserted cartridgeInserted : records) {
-                HistorySendIntent.send(context, cartridgeInserted, true);
+                HistorySendIntent.send(context, cartridgeInserted, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -175,7 +175,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending BatteryInserted list " + records.size());
             for (BatteryInserted batteryInserted : records) {
-                HistorySendIntent.send(context, batteryInserted, true);
+                HistorySendIntent.send(context, batteryInserted, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);
@@ -188,7 +188,7 @@ public class HistoryResync {
 
             android.util.Log.d("HistoryResync", "Resending OccurenceOfAlert list " + records.size());
             for (OccurenceOfAlert occurenceOfAlert : records) {
-                HistorySendIntent.send(context, occurenceOfAlert, true);
+                HistorySendIntent.send(context, occurenceOfAlert, true, packages);
             }
         } catch (SQLException e) {
             android.util.Log.e(TAG, "SQL ERROR: " + e);

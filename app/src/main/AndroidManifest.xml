@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sugar.free.sightremote">
 
+    <permission
+        android:name="sugar.free.sightremote.HISTORY_BROADCASTS"
+        android:label="@string/access_to_history_broadcasts"
+        android:description="@string/this_app_can_access_sightremotes_history_broadcasts"
+        android:protectionLevel="normal" />
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -11,6 +17,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="sugar.free.sightremote.HISTORY_BROADCASTS" />
 
     <uses-feature
         android:name="android.hardware.bluetooth"
@@ -119,6 +126,14 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-    </application>
 
+        <receiver
+            android:name=".receivers.HistoryReceiver"
+            android:permission="sugar.free.sightremote.HISTORY_BROADCASTS">
+            <intent-filter>
+                <action android:name="sugar.free.sightremote.services.HistorySyncService.START_SYNC" />
+                <action android:name="sugar.free.sightremote.services.HistorySyncService.START_RESYNC" />
+            </intent-filter>
+        </receiver>
+    </application>
 </manifest>

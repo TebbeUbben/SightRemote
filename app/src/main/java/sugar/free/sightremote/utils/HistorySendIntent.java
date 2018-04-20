@@ -17,6 +17,7 @@ import sugar.free.sightremote.database.TimeChanged;
 import sugar.free.sightremote.database.TubeFilled;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by jamorham on 28/01/2018.
@@ -24,7 +25,7 @@ import java.util.Date;
 
 public class HistorySendIntent {
 
-    public static void send(Context context, EndOfTBR endOfTBR, boolean resync) {
+    public static void send(Context context, EndOfTBR endOfTBR, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_END_OF_TBR);
         intent.putExtra(HistoryBroadcast.EXTRA_DURATION, endOfTBR.getDuration());
@@ -34,10 +35,10 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, endOfTBR.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_START_TIME, endOfTBR.getStartTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, BolusDelivered bolusDelivered, boolean resync) {
+    public static void send(Context context, BolusDelivered bolusDelivered, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_BOLUS_DELIVERED);
         intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_ID, bolusDelivered.getBolusId());
@@ -50,10 +51,10 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, bolusDelivered.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_START_TIME, bolusDelivered.getStartTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, BolusProgrammed bolusProgrammed, boolean resync) {
+    public static void send(Context context, BolusProgrammed bolusProgrammed, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_BOLUS_PROGRAMMED);
         intent.putExtra(HistoryBroadcast.EXTRA_BOLUS_ID, bolusProgrammed.getBolusId());
@@ -65,10 +66,10 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, bolusProgrammed.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, bolusProgrammed.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, PumpStatusChanged pumpStatusChanged, boolean resync) {
+    public static void send(Context context, PumpStatusChanged pumpStatusChanged, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
         intent.putExtra(HistoryBroadcast.EXTRA_OLD_STATUS, pumpStatusChanged.getOldValue().toString());
@@ -77,10 +78,10 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, pumpStatusChanged.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, pumpStatusChanged.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, PumpStatusChanged pumpStatusChanged, Date oldStatusTime, boolean resync) {
+    public static void send(Context context, PumpStatusChanged pumpStatusChanged, Date oldStatusTime, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_PUMP_STATUS_CHANGED);
         intent.putExtra(HistoryBroadcast.EXTRA_OLD_STATUS, pumpStatusChanged.getOldValue().toString());
@@ -90,10 +91,10 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, pumpStatusChanged.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_OLD_STATUS_TIME, oldStatusTime);
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, TimeChanged timeChanged, boolean resync) {
+    public static void send(Context context, TimeChanged timeChanged, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_TIME_CHANGED);
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, timeChanged.getDateTime());
@@ -101,10 +102,10 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, timeChanged.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, timeChanged.getEventNumber());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, CannulaFilled cannulaFilled, boolean resync) {
+    public static void send(Context context, CannulaFilled cannulaFilled, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_CANNULA_FILLED);
         intent.putExtra(HistoryBroadcast.EXTRA_FILL_AMOUNT, cannulaFilled.getAmount());
@@ -112,10 +113,10 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, cannulaFilled.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, cannulaFilled.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, DailyTotal dailyTotal, boolean resync) {
+    public static void send(Context context, DailyTotal dailyTotal, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_DAILY_TOTAL);
         intent.putExtra(HistoryBroadcast.EXTRA_BASAL_TOTAL, dailyTotal.getBasalTotal());
@@ -125,10 +126,10 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, dailyTotal.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, dailyTotal.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, TubeFilled tubeFilled, boolean resync) {
+    public static void send(Context context, TubeFilled tubeFilled, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_TUBE_FILLED);
         intent.putExtra(HistoryBroadcast.EXTRA_FILL_AMOUNT, tubeFilled.getAmount());
@@ -136,10 +137,10 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, tubeFilled.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, tubeFilled.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, CartridgeInserted cartridgeInserted, boolean resync) {
+    public static void send(Context context, CartridgeInserted cartridgeInserted, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_CARTRIDGE_INSERTED);
         intent.putExtra(HistoryBroadcast.EXTRA_CARTRIDGE_AMOUNT, cartridgeInserted.getAmount());
@@ -147,20 +148,20 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, cartridgeInserted.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, cartridgeInserted.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, BatteryInserted batteryInserted, boolean resync) {
+    public static void send(Context context, BatteryInserted batteryInserted, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_BATTERY_INSERTED);
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_NUMBER, batteryInserted.getEventNumber());
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, batteryInserted.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, batteryInserted.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
     }
 
-    public static void send(Context context, OccurenceOfAlert occurenceOfAlert, boolean resync) {
+    public static void send(Context context, OccurenceOfAlert occurenceOfAlert, boolean resync, List<String> packages) {
         Intent intent = new Intent();
         intent.setAction(HistoryBroadcast.ACTION_OCCURENCE_OF_ALERT);
         intent.putExtra(HistoryBroadcast.EXTRA_ALERT_TYPE, occurenceOfAlert.getAlertType());
@@ -169,7 +170,15 @@ public class HistorySendIntent {
         intent.putExtra(HistoryBroadcast.EXTRA_PUMP_SERIAL_NUMBER, occurenceOfAlert.getPump());
         intent.putExtra(HistoryBroadcast.EXTRA_EVENT_TIME, occurenceOfAlert.getDateTime());
         intent.putExtra(HistoryBroadcast.EXTRA_RESYNC, resync);
-        context.sendBroadcast(intent);
+        sendBroadcast(context, intent, packages);
+    }
+
+    private static void sendBroadcast(Context context, Intent intent, List<String> packages) {
+        for (String p : packages) {
+            Intent copy = new Intent(intent);
+            copy.setPackage(p);
+            context.sendBroadcast(copy);
+        }
     }
 
 }

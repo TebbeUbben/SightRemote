@@ -173,4 +173,6 @@
     <string name="pump_time_synchronized">Pump time synchronized</string>
     <string name="the_time_on_your_pump_was_inaccurate_and_has_been_synchronized">The time on your pump was inaccurate and has been synchronized.</string>
     <string name="notifies_you_when_pump_time_is_changed">Notifies you when the pump\'s time was changed</string>
+    <string name="access_to_history_broadcasts">Access to history broadcasts</string>
+    <string name="this_app_can_access_sightremotes_history_broadcasts">This app can access SightRemote\'s history broadcasts.</string>
 </resources>
