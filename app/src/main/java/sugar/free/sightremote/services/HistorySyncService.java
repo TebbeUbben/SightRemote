@@ -142,7 +142,6 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             for (String permission : packageInfo.requestedPermissions) {
                 if (permission.equals("sugar.free.sightremote.HISTORY_BROADCASTS")) {
                     packagesWithPermission.add(packageInfo.packageName);
-                    Log.d("Permission", packageInfo.packageName);
                 }
             }
         }
