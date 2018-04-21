@@ -195,6 +195,7 @@ public class HistorySendIntent {
         for (String p : packages) {
             Intent copy = new Intent(intent);
             copy.setPackage(p);
+            copy.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
             context.sendBroadcast(copy);
         }
     }
