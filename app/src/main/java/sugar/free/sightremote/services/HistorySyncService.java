@@ -107,8 +107,8 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 alarmManager.cancel(pendingIntent);
                 pendingIntent = null;
             }
-            if (syncing) sendBroadcast(new Intent(HistoryBroadcast.ACTION_STILL_SYNCING));
-            else if (!connector.isConnectedToService()) sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
+            if (syncing) HistorySendIntent.sendStillSyncing(this, getAppsWithHistoryPermission());
+            else if (!connector.isConnectedToService()) HistorySendIntent.sendSyncFinished(this, getAppsWithHistoryPermission());
             else startSync();
         } else if (HistoryBroadcast.ACTION_START_RESYNC.equals(action)) {
             if (historyResync == null)
@@ -143,6 +143,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             for (String permission : packageInfo.requestedPermissions) {
                 if (permission.equals("sugar.free.sightremote.HISTORY_BROADCASTS")) {
                     packagesWithPermission.add(packageInfo.packageName);
+                    Log.d("Permission", packageInfo.packageName);
                 }
             }
         }
@@ -161,7 +162,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             connector.disconnect();
             connector.disconnectFromService();
             syncing = false;
-            sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
+            HistorySendIntent.sendSyncFinished(this, getAppsWithHistoryPermission());
             if (wakeLock.isHeld()) wakeLock.release();
         }
     }
@@ -180,7 +181,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
             connector.disconnectFromService();
             processHistoryFrames(historyFrames);
             syncing = false;
-            sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
+            HistorySendIntent.sendSyncFinished(this, getAppsWithHistoryPermission());
             if (wakeLock.isHeld()) wakeLock.release();
         } else if (result instanceof ReadDateTimeMessage) {
             ReadDateTimeMessage dateTimeMessage = (ReadDateTimeMessage) result;
@@ -531,7 +532,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         connector.disconnect();
         connector.disconnectFromService();
         syncing = false;
-        sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_FINISHED));
+        HistorySendIntent.sendSyncFinished(this, getAppsWithHistoryPermission());
         if (wakeLock.isHeld()) wakeLock.release();
         CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
@@ -540,7 +541,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         if (!wakeLock.isHeld()) wakeLock.acquire(60000);
         syncing = true;
         connector.connectToService();
-        sendBroadcast(new Intent(HistoryBroadcast.ACTION_SYNC_STARTED));
+        HistorySendIntent.sendSyncStarted(this, getAppsWithHistoryPermission());
     }
 
     @Override

@@ -244,7 +244,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus1Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus1.getBolusType())), PorterDuff.Mode.SRC_IN);
                 bolus1Cancel.setVisibility(View.VISIBLE);
             } else if (bolus1Container.getVisibility() == View.VISIBLE) {
-                sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+                requestHistorySync();
                 bolus1Container.setVisibility(View.GONE);
             }
 
@@ -259,7 +259,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus2Cancel.setVisibility(View.VISIBLE);
                 bolus2Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus2.getBolusType())), PorterDuff.Mode.SRC_IN);
             } else if (bolus2Container.getVisibility() == View.VISIBLE) {
-                sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+                requestHistorySync();
                 bolus2Container.setVisibility(View.GONE);
             }
 
@@ -274,7 +274,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
                 bolus3Progress.getProgressDrawable().setColorFilter(ContextCompat.getColor(this, getBolusColor(bolus3.getBolusType())), PorterDuff.Mode.SRC_IN);
                 bolus3Cancel.setVisibility(View.VISIBLE);
             } else if (bolus3Container.getVisibility() == View.VISIBLE) {
-                sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+                requestHistorySync();
                 bolus3Container.setVisibility(View.GONE);
             }
         }
@@ -338,7 +338,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
     protected void statusChanged(Status status) {
         if (status == Status.CONNECTED) {
             taskRunnerRunnable.run();
-            sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+            requestHistorySync();
         } else {
             if (confirmationDialog != null) confirmationDialog.hide();
         }

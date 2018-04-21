@@ -52,7 +52,7 @@ public abstract class HistoryActivity extends SightActivity implements SwipeRefr
     protected void onStart() {
         super.onStart();
         registerReceiver(broadcastReceiver, new IntentFilter(HistoryBroadcast.ACTION_SYNC_FINISHED));
-        sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+        requestHistorySync();
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class HistoryActivity extends SightActivity implements SwipeRefr
 
     @Override
     public void onRefresh() {
-        sendBroadcast(new Intent(HistoryBroadcast.ACTION_START_SYNC));
+        requestHistorySync();
     }
 
     private class LoadDataTask extends AsyncTask<Void, Void, List> {

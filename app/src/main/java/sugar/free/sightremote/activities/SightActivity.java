@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import sugar.free.sightparser.handling.HistoryBroadcast;
 import sugar.free.sightparser.handling.ServiceConnectionCallback;
 import sugar.free.sightparser.handling.SightServiceConnector;
 import sugar.free.sightparser.handling.StatusCallback;
@@ -108,6 +109,13 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
         sightServiceConnector = new SightServiceConnector(this);
         sightServiceConnector.setConnectionCallback(connectionCallback);
         sightServiceConnector.addStatusCallback(statusCallback);
+    }
+
+    protected void requestHistorySync() {
+        Intent intent = new Intent();
+        intent.setAction(HistoryBroadcast.ACTION_START_SYNC);
+        intent.setPackage(getPackageName());
+        sendBroadcast(intent);
     }
 
     protected int getSelectedNavItemID() {

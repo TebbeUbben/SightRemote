@@ -173,6 +173,24 @@ public class HistorySendIntent {
         sendBroadcast(context, intent, packages);
     }
 
+    public static void sendSyncStarted(Context context, List<String> packages) {
+        Intent intent = new Intent();
+        intent.setAction(HistoryBroadcast.ACTION_SYNC_STARTED);
+        sendBroadcast(context, intent, packages);
+    }
+
+    public static void sendSyncFinished(Context context, List<String> packages) {
+        Intent intent = new Intent();
+        intent.setAction(HistoryBroadcast.ACTION_SYNC_FINISHED);
+        sendBroadcast(context, intent, packages);
+    }
+
+    public static void sendStillSyncing(Context context, List<String> packages) {
+        Intent intent = new Intent();
+        intent.setAction(HistoryBroadcast.ACTION_STILL_SYNCING);
+        sendBroadcast(context, intent, packages);
+    }
+
     private static void sendBroadcast(Context context, Intent intent, List<String> packages) {
         for (String p : packages) {
             Intent copy = new Intent(intent);
