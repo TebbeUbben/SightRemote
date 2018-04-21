@@ -108,7 +108,6 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
                 pendingIntent = null;
             }
             if (syncing) HistorySendIntent.sendStillSyncing(this, getAppsWithHistoryPermission());
-            else if (!connector.isConnectedToService()) HistorySendIntent.sendSyncFinished(this, getAppsWithHistoryPermission());
             else startSync();
         } else if (HistoryBroadcast.ACTION_START_RESYNC.equals(action)) {
             if (historyResync == null)
