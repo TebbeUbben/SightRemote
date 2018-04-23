@@ -17,7 +17,7 @@ import sugar.free.sightparser.authlayer.VerifyDisplayRequest;
 import sugar.free.sightparser.authlayer.VerifyDisplayResponse;
 import sugar.free.sightparser.crypto.Cryptograph;
 import sugar.free.sightparser.crypto.KeyPair;
-import sugar.free.sightparser.error.DisconnectedError;
+import sugar.free.sightparser.exceptions.DisconnectedException;
 import sugar.free.sightparser.pipeline.InboundHandler;
 import sugar.free.sightparser.pipeline.Pipeline;
 import sugar.free.sightparser.pipeline.Status;
@@ -51,7 +51,7 @@ public class PairingEstablisher implements InboundHandler {
             PairingStatus pairingStatus = verifyConfirmResponse.getPairingStatus();
             if (pairingStatus == PairingStatus.REJECTED) {
                 pipeline.setStatus(Status.CODE_REJECTED);
-                throw new DisconnectedError();
+                throw new DisconnectedException();
             } else if (pairingStatus == PairingStatus.CONFIRMED) {
                 pipeline.setStatus(Status.APP_BINDING);
                 pipeline.send(new BindMessage());

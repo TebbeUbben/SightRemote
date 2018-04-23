@@ -19,8 +19,8 @@ import sugar.free.sightparser.DataStorage;
 import sugar.free.sightparser.Pref;
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
-import sugar.free.sightparser.error.DisconnectedError;
-import sugar.free.sightparser.error.NotAuthorizedError;
+import sugar.free.sightparser.exceptions.DisconnectedException;
+import sugar.free.sightparser.errors.NotAuthorizedError;
 import sugar.free.sightparser.pipeline.Pipeline;
 import sugar.free.sightparser.pipeline.Status;
 
@@ -479,7 +479,7 @@ public class SightService extends Service {
                 Log.d("SightService", "IO Exception in state " + pipeline.getStatus() + " " + e);
                 //e.printStackTrace();
             } finally {
-                pipeline.receive(new DisconnectedError());
+                pipeline.receive(new DisconnectedException());
 
                 try {
                     // don't close socket if we were connecting

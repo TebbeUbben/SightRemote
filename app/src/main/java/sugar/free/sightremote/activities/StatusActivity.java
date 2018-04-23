@@ -35,8 +35,8 @@ import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.CancelBolusMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.CancelTBRMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.SetPumpStatusMessage;
-import sugar.free.sightparser.error.CancelledException;
-import sugar.free.sightparser.error.DisconnectedError;
+import sugar.free.sightparser.errors.CancelledException;
+import sugar.free.sightparser.exceptions.DisconnectedException;
 import sugar.free.sightparser.handling.HistoryBroadcast;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
 import sugar.free.sightparser.handling.TaskRunner;
@@ -394,7 +394,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
 
     @Override
     public void onError(Exception e) {
-        if (!(e instanceof CancelledException) && !(e instanceof DisconnectedError)) {
+        if (!(e instanceof CancelledException) && !(e instanceof DisconnectedException)) {
             Snackbar snackbar = Snackbar.make(getRootView(), R.string.error, Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction(R.string.retry, view -> taskRunnerRunnable.run());
             showSnackbar(snackbar);

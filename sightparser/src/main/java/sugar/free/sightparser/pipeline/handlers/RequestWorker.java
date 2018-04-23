@@ -10,8 +10,8 @@ import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.connection.ActivateServiceMessage;
 import sugar.free.sightparser.applayer.messages.connection.ServiceChallengeMessage;
 import sugar.free.sightparser.crypto.Cryptograph;
-import sugar.free.sightparser.error.DisconnectedError;
-import sugar.free.sightparser.error.InvalidServicePasswordError;
+import sugar.free.sightparser.exceptions.DisconnectedException;
+import sugar.free.sightparser.errors.InvalidServicePasswordError;
 import sugar.free.sightparser.handling.MessageRequest;
 import sugar.free.sightparser.handling.MessageStatus;
 import sugar.free.sightparser.pipeline.DuplexHandler;
@@ -25,7 +25,7 @@ public class RequestWorker implements DuplexHandler {
     public void onInboundMessage(final Object message, Pipeline pipeline) throws Exception {
         synchronized (messageRequests) {
             if (messageRequests.size() == 0) return;
-            if (message instanceof DisconnectedError) {
+            if (message instanceof DisconnectedException) {
                 for (MessageRequest messageRequest : new ArrayList<>(messageRequests)) {
                     sendError(messageRequest, (Exception) message);
                     messageRequests.remove(messageRequest);
@@ -116,7 +116,7 @@ public class RequestWorker implements DuplexHandler {
     public void onOutboundMessage(Object message, Pipeline pipeline) throws Exception {
         synchronized (messageRequests) {
             if (messageRequests.size() == 0) return;
-            if (message instanceof DisconnectedError) {
+            if (message instanceof DisconnectedException) {
                 for (MessageRequest messageRequest : messageRequests) {
                     sendError(messageRequest, (Exception) message);
                     messageRequests.remove(messageRequest);

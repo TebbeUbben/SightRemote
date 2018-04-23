@@ -1,7 +1,6 @@
 package sugar.free.sightparser.authlayer;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import org.spongycastle.util.encoders.Hex;
 
@@ -13,12 +12,11 @@ import java.util.Map;
 import lombok.Getter;
 import sugar.free.sightparser.Message;
 import sugar.free.sightparser.crypto.Cryptograph;
-import sugar.free.sightparser.error.InvalidAuthCRCError;
-import sugar.free.sightparser.error.InvalidAuthVersionError;
-import sugar.free.sightparser.error.InvalidNonceError;
-import sugar.free.sightparser.error.InvalidTrailerError;
-import sugar.free.sightparser.error.SightError;
-import sugar.free.sightparser.error.UnknownAuthMessageError;
+import sugar.free.sightparser.exceptions.InvalidAuthCRCException;
+import sugar.free.sightparser.exceptions.InvalidAuthVersionException;
+import sugar.free.sightparser.exceptions.InvalidNonceException;
+import sugar.free.sightparser.exceptions.InvalidTrailerException;
+import sugar.free.sightparser.exceptions.UnknownAuthMessageException;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public abstract class AuthLayerMessage extends Message {
@@ -75,7 +73,7 @@ public abstract class AuthLayerMessage extends Message {
         return byteBuf;
     }
 
-    public static AuthLayerMessage deserialize(ByteBuf data, BigInteger lastNonce, byte[] key) throws IllegalAccessException, InstantiationException, SightError {
+    public static AuthLayerMessage deserialize(ByteBuf data, BigInteger lastNonce, byte[] key) throws Exception {
         data.shift(4); //Preamble
         int packetLength = data.readUInt16LE();
         data.shift(2); //Packet length XOR
@@ -84,7 +82,7 @@ public abstract class AuthLayerMessage extends Message {
         byte version = data.readByte();
         byte command = data.readByte();
         Class clazz = MESSAGES.get(command);
-        if (clazz == null) throw new UnknownAuthMessageError(command);
+        if (clazz == null) throw new UnknownAuthMessageException(command);
         int dataLength = data.readUInt16LE();
         long commID = data.readUInt32LE();
         byte[] nonceTrailer = data.getBytes(13);
@@ -94,9 +92,9 @@ public abstract class AuthLayerMessage extends Message {
         boolean crcPacket = CRCAuthLayerMessage.class.isAssignableFrom(clazz);
         BigInteger nonceInt = new BigInteger(nonce);
         if (version  != VERSION) {
-            throw new InvalidAuthVersionError(version, VERSION);
+            throw new InvalidAuthVersionException(version, VERSION);
         } else if (lastNonce != null && lastNonce.equals(BigInteger.ZERO) && nonceInt.compareTo(lastNonce) != 1) {
-            throw new InvalidNonceError(nonce, processNonce(lastNonce.add(BigInteger.ONE)));
+            throw new InvalidNonceException(nonce, processNonce(lastNonce.add(BigInteger.ONE)));
         } else {
             if (crcPacket) {
                 byte[] crcBytes = new byte[2];
@@ -106,11 +104,11 @@ public abstract class AuthLayerMessage extends Message {
                 payload = rawData;
                 int crc = (crcBytes[0] & 0xFF | (crcBytes[1] & 0xFF)  << 8);
                 int calculatedCRC = Cryptograph.calculateCRC(crcContent);
-                if (crc != calculatedCRC) throw new InvalidAuthCRCError(crc, calculatedCRC);
+                if (crc != calculatedCRC) throw new InvalidAuthCRCException(crc, calculatedCRC);
             } else {
                 payload = Cryptograph.encryptDataCTR(payload, key, nonceTrailer);
                 byte[] calculatedTrailer = Cryptograph.produceCCMTag(nonceTrailer, payload, header, key);
-                if (!Arrays.equals(trailer, calculatedTrailer)) throw new InvalidTrailerError(trailer, calculatedTrailer);
+                if (!Arrays.equals(trailer, calculatedTrailer)) throw new InvalidTrailerException(trailer, calculatedTrailer);
             }
             AuthLayerMessage message = (AuthLayerMessage) clazz.newInstance();
             message.nonce = nonceInt;

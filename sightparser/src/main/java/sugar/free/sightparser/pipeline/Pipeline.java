@@ -29,7 +29,7 @@ import sugar.free.sightparser.authlayer.ConnectionRequest;
 import sugar.free.sightparser.authlayer.DisconnectRequest;
 import sugar.free.sightparser.authlayer.SynRequest;
 import sugar.free.sightparser.crypto.DerivedKeys;
-import sugar.free.sightparser.error.DisconnectedError;
+import sugar.free.sightparser.exceptions.DisconnectedException;
 import sugar.free.sightparser.handling.MessageRequest;
 import sugar.free.sightparser.handling.StatusCallback;
 import sugar.free.sightparser.pipeline.handlers.AppLayerProcessor;
@@ -97,7 +97,7 @@ public class Pipeline {
         if (message instanceof Exception) {
             Exception exception = (Exception) message;
             Log.d("SightService", "EXCEPTION: " + exception.getClass().getName() + ": " + exception.getMessage());
-            if (!(exception instanceof DisconnectedError)) Answers.getInstance().logCustom(new CustomEvent("Exception In Pipeline")
+            if (!(exception instanceof DisconnectedException)) Answers.getInstance().logCustom(new CustomEvent("Exception In Pipeline")
                     .putCustomAttribute("Message", exception.getClass().getSimpleName() + ": " + exception.getMessage()));
         }
         for (Handler handler : handlers) {
@@ -118,7 +118,7 @@ public class Pipeline {
         if (message instanceof Exception) {
             Exception exception = (Exception) message;
             Log.d("SightService", "EXCEPTION: " + exception.getClass().getName() + ": " + exception.getMessage());
-            if (!(exception instanceof DisconnectedError)) Answers.getInstance().logCustom(new CustomEvent("Exception In Pipeline")
+            if (!(exception instanceof DisconnectedException)) Answers.getInstance().logCustom(new CustomEvent("Exception In Pipeline")
                     .putCustomAttribute("Message", exception.getClass().getSimpleName() + ": " + exception.getMessage()));
         }
         for (Handler handler : handlers) {

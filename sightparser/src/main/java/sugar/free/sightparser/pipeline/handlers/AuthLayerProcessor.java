@@ -5,9 +5,9 @@ import java.math.BigInteger;
 import sugar.free.sightparser.authlayer.AuthLayerMessage;
 import sugar.free.sightparser.authlayer.CRCAuthLayerMessage;
 import sugar.free.sightparser.authlayer.KeyRequest;
-import sugar.free.sightparser.error.InvalidAuthCRCError;
-import sugar.free.sightparser.error.InvalidNonceError;
-import sugar.free.sightparser.error.InvalidTrailerError;
+import sugar.free.sightparser.exceptions.InvalidAuthCRCException;
+import sugar.free.sightparser.exceptions.InvalidNonceException;
+import sugar.free.sightparser.exceptions.InvalidTrailerException;
 import sugar.free.sightparser.pipeline.ByteBuf;
 import sugar.free.sightparser.pipeline.DuplexHandler;
 import sugar.free.sightparser.pipeline.Pipeline;
@@ -27,7 +27,7 @@ public class AuthLayerProcessor implements DuplexHandler {
                 pipeline.setLastNonceReceived(authLayerMessage.getNonce());
                 pipeline.setCommID(authLayerMessage.getCommID());
                 pipeline.receive(authLayerMessage);
-            } catch (InvalidNonceError | InvalidAuthCRCError | InvalidTrailerError e) {
+            } catch (InvalidNonceException | InvalidAuthCRCException | InvalidTrailerException e) {
                 data.shift(data.size());
                 throw e;
             }
