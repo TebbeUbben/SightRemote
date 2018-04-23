@@ -1,6 +1,6 @@
 package sugar.free.sightparser.handling;
 
 interface IMessageCallback {
-    void onMessage(in byte[] getClass);
-    void onError(in byte[] error);
+    oneway void onMessage(in byte[] getClass);
+    oneway void onError(in byte[] error);
 }

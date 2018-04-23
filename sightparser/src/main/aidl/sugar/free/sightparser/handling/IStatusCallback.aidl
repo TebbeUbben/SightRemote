@@ -1,5 +1,5 @@
 package sugar.free.sightparser.handling;
 
 interface IStatusCallback {
-    void onStatusChange(String status);
+    oneway void onStatusChange(in byte[] status);
 }
