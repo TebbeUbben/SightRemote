@@ -124,7 +124,6 @@ public class MultiwaveBolusActivity extends SightActivity implements TaskRunner.
     @Override
     public void onError(Exception e) {
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
-        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     @Override

@@ -113,8 +113,7 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
                 dismissSnackbar();
             }
         } else {
-            Answers.getInstance().logCustom(
-                    new CustomEvent("TBR Programmed"));
+            Answers.getInstance().logCustom(new CustomEvent("TBR Programmed"));
             finish();
         }
     }
@@ -122,7 +121,6 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
     @Override
     public void onError(Exception e) {
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
-        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     @Override

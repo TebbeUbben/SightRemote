@@ -162,7 +162,6 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
         @Override
         public void onError(Exception e) {
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(AlertService.this, R.string.error, Toast.LENGTH_SHORT).show());
-            CrashlyticsUtil.logExceptionWithCallStackTrace(e);
         }
     };
 }

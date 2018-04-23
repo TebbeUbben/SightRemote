@@ -532,7 +532,6 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         syncing = false;
         HistorySendIntent.sendSyncFinished(this, getAppsWithHistoryPermission());
         if (wakeLock.isHeld()) wakeLock.release();
-        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     private void startSync() {

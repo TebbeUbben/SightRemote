@@ -104,7 +104,6 @@ public class ExtendedBolusActivity extends SightActivity implements TaskRunner.R
     @Override
     public void onError(Exception e) {
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
-        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     @Override

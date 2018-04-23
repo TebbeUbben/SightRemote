@@ -96,9 +96,7 @@ public class Pipeline {
     public void receive(Object message) {
         if (message instanceof Exception) {
             Exception exception = (Exception) message;
-            Log.d("SightService", "EXCEPTION: " + exception.getClass().getName() + ": " + exception.getMessage());
-            if (!(exception instanceof DisconnectedException)) Answers.getInstance().logCustom(new CustomEvent("Exception In Pipeline")
-                    .putCustomAttribute("Message", exception.getClass().getSimpleName() + ": " + exception.getMessage()));
+            Log.d("SightService", "EXCEPTION: " + exception.getClass().getName() + ": " + exception.getMessage());;
         }
         for (Handler handler : handlers) {
             if (handler instanceof InboundHandler) {
@@ -118,8 +116,6 @@ public class Pipeline {
         if (message instanceof Exception) {
             Exception exception = (Exception) message;
             Log.d("SightService", "EXCEPTION: " + exception.getClass().getName() + ": " + exception.getMessage());
-            if (!(exception instanceof DisconnectedException)) Answers.getInstance().logCustom(new CustomEvent("Exception In Pipeline")
-                    .putCustomAttribute("Message", exception.getClass().getSimpleName() + ": " + exception.getMessage()));
         }
         for (Handler handler : handlers) {
             if (handler instanceof OutboundHandler) {

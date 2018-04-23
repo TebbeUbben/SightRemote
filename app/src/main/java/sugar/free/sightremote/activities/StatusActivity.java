@@ -110,7 +110,6 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         @Override
         public void onError(Exception e) {
             runOnUiThread(() -> Toast.makeText(StatusActivity.this, R.string.error, Toast.LENGTH_SHORT).show());
-            CrashlyticsUtil.logExceptionWithCallStackTrace(e);
         }
     };
     private BroadcastReceiver historyBroadcastReceiver = new BroadcastReceiver() {
@@ -398,7 +397,6 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
             Snackbar snackbar = Snackbar.make(getRootView(), R.string.error, Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction(R.string.retry, view -> taskRunnerRunnable.run());
             showSnackbar(snackbar);
-            CrashlyticsUtil.logExceptionWithCallStackTrace(e);
         }
     }
 

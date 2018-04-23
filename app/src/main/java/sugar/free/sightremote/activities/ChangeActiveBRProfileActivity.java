@@ -134,7 +134,6 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
     public void onError(Exception e) {
         hideLoadingIndicator();
         runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
-        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     @Override
