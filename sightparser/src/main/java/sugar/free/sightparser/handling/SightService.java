@@ -479,11 +479,11 @@ public class SightService extends Service {
                 Log.d("SightService", "IO Exception in state " + pipeline.getStatus() + " " + e);
                 //e.printStackTrace();
             } finally {
-                pipeline.receive(new DisconnectedException());
+                if (pipeline != null) pipeline.receive(new DisconnectedException());
 
                 try {
                     // don't close socket if we were connecting
-                    if ((pipeline.getStatus() != Status.CONNECTING) && (bluetoothSocket != null)) {
+                    if (pipeline != null && (pipeline.getStatus() != Status.CONNECTING) && (bluetoothSocket != null)) {
                         Log.d("SightService", "Closing socket");
                         bluetoothSocket.close();
                         bluetoothSocket = null;
