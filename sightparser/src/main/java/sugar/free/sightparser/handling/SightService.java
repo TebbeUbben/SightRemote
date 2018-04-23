@@ -502,7 +502,7 @@ public class SightService extends Service {
                     //
                 }
 
-                if (pipeline.getStatus() != Status.DISCONNECTED)
+                if (pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
                     pipeline.setStatus(Status.DISCONNECTED);
                 pipeline = null;
                 connectionThread = null;
