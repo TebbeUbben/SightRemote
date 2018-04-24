@@ -133,7 +133,7 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
     @Override
     public void onError(Exception e) {
         hideLoadingIndicator();
-        runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
+        runOnUiThread(() -> Toast.makeText(this, getString(R.string.error, e.getClass().getSimpleName()), Toast.LENGTH_SHORT).show());
     }
 
     @Override

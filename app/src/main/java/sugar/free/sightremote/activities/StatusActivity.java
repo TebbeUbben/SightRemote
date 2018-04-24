@@ -109,7 +109,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
 
         @Override
         public void onError(Exception e) {
-            runOnUiThread(() -> Toast.makeText(StatusActivity.this, R.string.error, Toast.LENGTH_SHORT).show());
+            runOnUiThread(() -> Toast.makeText(StatusActivity.this, getString(R.string.error, e.getClass().getSimpleName()), Toast.LENGTH_SHORT).show());
         }
     };
     private BroadcastReceiver historyBroadcastReceiver = new BroadcastReceiver() {
@@ -354,7 +354,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         handler.removeCallbacks(taskRunnerRunnable);
         AppLayerMessage message = null;
         if (v == tbrCancel) {
-            tbrCancel.setVisibility(View.GONE);
+            tbrCancel.setVisibility(View.INVISIBLE);
             message = new CancelTBRMessage();
             Answers.getInstance().logCustom(new CustomEvent("TBR Cancelled"));
         } else if (v == bolus1Cancel) {
@@ -394,7 +394,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
     @Override
     public void onError(Exception e) {
         if (!(e instanceof CancelledException) && !(e instanceof DisconnectedException)) {
-            Snackbar snackbar = Snackbar.make(getRootView(), R.string.error, Snackbar.LENGTH_INDEFINITE);
+            Snackbar snackbar = Snackbar.make(getRootView(), getString(R.string.error, e.getClass().getSimpleName()), Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction(R.string.retry, view -> taskRunnerRunnable.run());
             showSnackbar(snackbar);
         }

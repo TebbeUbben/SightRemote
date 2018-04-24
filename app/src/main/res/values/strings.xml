@@ -17,7 +17,7 @@
     <string name="confirm_connection">Confirm connection on pump</string>
     <string name="complete_setup">Complete setup</string>
     <string name="connection_declined">The pairing was declined on the pump.</string>
-    <string name="error">Error</string>
+    <string name="error">Error: %1$s</string>
     <string name="accept_terms">You must accept the terms first.</string>
     <string name="status">Status</string>
     <string name="started">Started</string>

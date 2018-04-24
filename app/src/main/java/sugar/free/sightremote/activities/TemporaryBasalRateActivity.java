@@ -120,7 +120,7 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
 
     @Override
     public void onError(Exception e) {
-        runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
+        runOnUiThread(() -> Toast.makeText(this, getString(R.string.error, e.getClass().getSimpleName()), Toast.LENGTH_SHORT).show());
     }
 
     @Override

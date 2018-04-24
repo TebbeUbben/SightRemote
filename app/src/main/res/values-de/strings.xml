@@ -16,7 +16,7 @@
     <string name="confirm_connection">Verbindung auf Pumpe bestätigen</string>
     <string name="complete_setup">Einrichtung abschließen</string>
     <string name="connection_declined">Die Kopplung wurde auf der Pumpe abgelehnt.</string>
-    <string name="error">Fehler</string>
+    <string name="error">Fehler: %1$s</string>
     <string name="accept_terms">Du musst zuerst die Bedingungen akzeptieren.</string>
     <string name="status">Status</string>
     <string name="started">Gestartet</string>
