@@ -178,6 +178,7 @@
     <string name="waiting">Waiting…</string>
     <string name="connect_now">Connect now</string>
     <plurals name="waiting">
+        <item quantity="zero">Waiting… (less than a second)</item>
         <item quantity="one">Waiting… (%d second)</item>
         <item quantity="other">Waiting… (%d seconds)</item>
     </plurals>

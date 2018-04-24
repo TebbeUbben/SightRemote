@@ -174,6 +174,7 @@
     <string name="waiting">Warte…</string>
     <string name="connect_now">Jetzt verbinden</string>
     <plurals name="waiting">
+        <item quantity="zero">Warte… (weniger als eine Sekunde)</item>
         <item quantity="one">Warte… (%d Sekunde)</item>
         <item quantity="other">Warte… (%d Sekunden)</item>
     </plurals>
