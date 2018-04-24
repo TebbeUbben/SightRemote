@@ -193,7 +193,8 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
         } else if (status == Status.CONNECTING) {
             showSnackbar(Snackbar.make(getRootView(), R.string.connecting, Snackbar.LENGTH_INDEFINITE));
         } else if (status == Status.WAITING) {
-            int delay = (int) ((waitTime - (System.currentTimeMillis() - statusTime)) / 1000L);
+            double leftOverWaitTime = waitTime - (System.currentTimeMillis() - statusTime);
+            int delay = (int) Math.round(leftOverWaitTime / 1000D);
             Snackbar snackbar = Snackbar.make(getRootView(), getResources().getQuantityString(R.plurals.waiting, delay, delay), Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction(R.string.connect_now, v -> sightServiceConnector.forceConnect());
             showSnackbar(snackbar);
