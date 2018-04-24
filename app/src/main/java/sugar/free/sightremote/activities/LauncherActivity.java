@@ -18,7 +18,7 @@ public class LauncherActivity extends AppCompatActivity implements ServiceConnec
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_status);
+        setContentView(R.layout.activity_launcher);
         final Bundle bundle = getIntent().getExtras();
         if ((bundle != null) && (!bundle.getString(AUTHORIZE_POLL_EXTRA, "").equals(""))) {
             startActivity(new Intent(this, AuthorizeActivity.class).putExtra(AUTHORIZE_POLL_EXTRA, bundle.getString(AUTHORIZE_POLL_EXTRA)));
