@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
@@ -31,7 +30,6 @@ import sugar.free.sightparser.handling.TaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.activities.AlertActivity;
-import sugar.free.sightremote.utils.CrashlyticsUtil;
 
 public class AlertService extends Service implements StatusCallback, ServiceConnectionCallback, TaskRunner.ResultCallback {
 
@@ -142,7 +140,6 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
 
     @Override
     public void onError(Exception e) {
-        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     public class AlertServiceBinder extends Binder {
