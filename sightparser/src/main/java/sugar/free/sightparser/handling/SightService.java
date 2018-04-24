@@ -483,9 +483,6 @@ public class SightService extends Service {
             } finally {
                 if (pipeline != null) pipeline.receive(new DisconnectedException());
 
-                if (pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
-                    pipeline.setStatus(Status.DISCONNECTED);
-
                 try {
                     // don't close socket if we were connecting
                     if (pipeline != null && (pipeline.getStatus() != Status.CONNECTING) && (bluetoothSocket != null)) {
@@ -496,6 +493,8 @@ public class SightService extends Service {
                         Log.d("SightService", "Not closing socket");
                         timeoutWait = Math.min(timeoutWait + TIMEOUT_WAIT_STEP, MAX_TIMEOUT_WAIT);
                         Log.d("SightService", "sleeping " + timeoutWait);
+                        if (pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
+                            pipeline.setStatus(Status.DISCONNECTED);
                         pipeline.setStatus(Status.WAITING);
                         try {
                             Thread.sleep(timeoutWait);
@@ -507,6 +506,10 @@ public class SightService extends Service {
                 } catch (IOException e1) {
                     //
                 }
+
+                if (pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
+                    pipeline.setStatus(Status.DISCONNECTED);
+
                 pipeline = null;
                 connectionThread = null;
 
