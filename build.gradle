@@ -5,8 +5,8 @@ ext {
     buildToolsVersion = '27.0.3'
 
     versionMajor = 1
-    versionMinor = 5
-    versionRevision = 8
+    versionMinor = 6
+    versionRevision = 0
     versionCompatiblity = 'bellona'
 
     versionCode = 1
