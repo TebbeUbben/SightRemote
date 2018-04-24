@@ -98,7 +98,7 @@ public abstract class TaskRunner {
                 serviceConnector.removeStatusCallback(this);
                 statusCallbackRegistered = false;
                 messageCallback.onMessage((AppLayerMessage) null);
-            } else if (status == Status.DISCONNECTED || status == Status.WAITING) {
+            } else if (status == Status.DISCONNECTED) {
                 messageCallback.onError(new DisconnectedException());
             }
         }
