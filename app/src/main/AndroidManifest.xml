@@ -39,7 +39,9 @@
             android:name="io.fabric.ApiKey"
             android:value="985349aae925fdb49761b17be467c24c19edc831" />
 
-        <activity android:name=".activities.LauncherActivity">
+        <activity
+            android:name=".activities.LauncherActivity"
+            android:theme="@style/AppTheme.NoActionBar.NoStatusBackground">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
