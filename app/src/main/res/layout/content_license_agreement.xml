@@ -45,8 +45,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autoLink="web"
+            android:gravity="center"
             android:text="@string/eula"
-            android:textAlignment="center"
             android:textColor="#FFFFFF" />
 
         <CheckBox

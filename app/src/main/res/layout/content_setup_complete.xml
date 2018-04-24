@@ -11,16 +11,17 @@
     android:paddingTop="16dp">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/setup_complete"
-        android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="45sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/setup_complete_congratulations"
         android:textAlignment="center"
         android:textColor="#FFFFFF"

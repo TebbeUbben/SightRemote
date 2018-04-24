@@ -89,7 +89,7 @@
     <string name="are_you_absolutely_sure_activate">Sind Sie sich absolut sicher, dass Sie den Insulin-Service aktivieren wollen und genau verstehen, was dies zur Folge hat?</string>
     <string name="br_block_formatter">%1$s - %2$s</string>
     <string name="br_end_time">Ende:</string>
-    <string name="br_amount">Menge</string>
+    <string name="br_amount">Menge:</string>
     <string name="edit_block">Block bearbeiten</string>
     <string name="empty">Leer</string>
     <string name="minimum_of">Mindestens %1$s</string>
