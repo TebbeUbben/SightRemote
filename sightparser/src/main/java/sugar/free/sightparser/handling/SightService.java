@@ -483,6 +483,9 @@ public class SightService extends Service {
             } finally {
                 if (pipeline != null) pipeline.receive(new DisconnectedException());
 
+                if (pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
+                    pipeline.setStatus(Status.DISCONNECTED);
+
                 try {
                     // don't close socket if we were connecting
                     if (pipeline != null && (pipeline.getStatus() != Status.CONNECTING) && (bluetoothSocket != null)) {
@@ -504,9 +507,6 @@ public class SightService extends Service {
                 } catch (IOException e1) {
                     //
                 }
-
-                if (pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
-                    pipeline.setStatus(Status.DISCONNECTED);
                 pipeline = null;
                 connectionThread = null;
 
