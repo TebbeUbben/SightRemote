@@ -8,8 +8,8 @@ interface ISightService {
     String getRemoteVersion();
     void pair(String mac, IBinder binder);
     boolean isUseable();
-    byte[] getStatus();
-    oneway void requestMessage(in byte[] getClass, IMessageCallback callback);
+    String getStatus();
+    void requestMessage(in byte[] getClass, IMessageCallback callback);
     long registerStatusCallback(IStatusCallback callback);
     void unregisterStatusCallback(long id);
     void connect(IBinder binder);
@@ -18,5 +18,4 @@ interface ISightService {
     void setAuthorized(String packageName, boolean allowed);
     void reset();
     void aclDisconnect(String mac);
-    void forceConnect();
 }

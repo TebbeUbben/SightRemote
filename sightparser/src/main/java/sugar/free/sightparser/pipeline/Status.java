@@ -1,11 +1,6 @@
 package sugar.free.sightparser.pipeline;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-
-public enum Status implements Serializable {
+public enum Status {
 
     EXCHANGING_KEYS,
     WAITING_FOR_CODE_CONFIRMATION,
@@ -15,16 +10,6 @@ public enum Status implements Serializable {
     CONNECTED,
     DISCONNECTED,
     NOT_AUTHORIZED,
-    INCOMPATIBLE,
-    WAITING;
-
-    @Getter
-    @Setter
-    private long statusTime;
-    @Getter
-    @Setter
-    private long waitTime;
-
-
+    INCOMPATIBLE
 
 }

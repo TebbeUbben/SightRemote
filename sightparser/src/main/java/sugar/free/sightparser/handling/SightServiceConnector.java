@@ -47,9 +47,9 @@ public class SightServiceConnector {
             try {
                 statusCallbackId = boundService.registerStatusCallback(new IStatusCallback.Stub() {
                     @Override
-                    public void onStatusChange(byte[] status) throws RemoteException {
+                    public void onStatusChange(String status) throws RemoteException {
                         if (!connectedToService) return;
-                        Status enumStatus = (Status) SerializationUtils.deserialize(status);
+                        Status enumStatus = Status.valueOf(status);
                         synchronized (statusCallbacks) {
                             for (StatusCallback statusCallback : new ArrayList<>(statusCallbacks)) {
                                 statusCallback.onStatusChange(enumStatus);
@@ -59,7 +59,7 @@ public class SightServiceConnector {
                 });
             } catch (RemoteException e) {
             } catch (NullPointerException e) {
-                android.util.Log.e("SightServiceConnector", "Null pointer exception, probably incompatible application interface - upgrade them to compatible versions", e);
+                android.util.Log.e("SightServiceConnector", "Null pointer exception, probably incompatible application interface - upgrade them to compantible versions", e);
             }
             if (connectLatch != null) connectLatch.countDown();
             if (connectionCallback != null) connectionCallback.onServiceConnected();
@@ -169,7 +169,7 @@ public class SightServiceConnector {
     public Status getStatus() {
         if (boundService == null) return null;
             try {
-            return (Status) SerializationUtils.deserialize(boundService.getStatus());
+            return Status.valueOf(boundService.getStatus());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -223,14 +223,6 @@ public class SightServiceConnector {
     public void aclDisconnect(String mac) {
         try {
             boundService.aclDisconnect(mac);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void forceConnect() {
-        try {
-            boundService.forceConnect();
         } catch (RemoteException e) {
             e.printStackTrace();
         }

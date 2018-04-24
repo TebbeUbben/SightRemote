@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SightService extends Service {
 
-    public static final String COMPATIBILITY_VERSION = "bellona";
+    public static final String COMPATIBILITY_VERSION = "asclepius";
     private static final int DISCONNECT_DELAY = 20000;
     private static final int MIN_TIMEOUT_WAIT = 4000;
     private static final int MAX_TIMEOUT_WAIT = 60000;
@@ -97,11 +97,11 @@ public class SightService extends Service {
         }
 
         @Override
-        public byte[] getStatus() throws RemoteException {
+        public String getStatus() throws RemoteException {
             if (verifyCaller("getStatus")) {
-                return SerializationUtils.serialize(status);
+                return status.name();
             } else {
-                return SerializationUtils.serialize(Status.NOT_AUTHORIZED);
+                return Status.NOT_AUTHORIZED.toString();
             }
         }
 
@@ -157,12 +157,15 @@ public class SightService extends Service {
                     Log.d("SightService", "CLIENT CONNECTS TO PUMP");
                     if (disconnectTimer != null) disconnectTimer.cancel();
                     disconnectTimer = new Timer();
-                    DeathRecipient deathRecipient = () -> {
-                        Log.d("SightService", "CLIENT DIED - CONNECT");
-                        try {
-                            disconnect(binder);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
+                    DeathRecipient deathRecipient = new DeathRecipient() {
+                        @Override
+                        public void binderDied() {
+                            Log.d("SightService", "CLIENT DIED - CONNECT");
+                            try {
+                                disconnect(binder);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
                         }
                     };
                     connectedClients.put(binder, deathRecipient);
@@ -257,17 +260,11 @@ public class SightService extends Service {
                 throw new RemoteException("Not authorized");
             }
         }
-
-        @Override
-        public void forceConnect() throws RemoteException {
-            if (connectedClients.size() > 0 && status == Status.WAITING) connectionThread.interrupt();
-        }
     };
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
         public void onStatusChange(Status status) {
             Log.d("SightService", "STATUS: " + status);
-            status.setStatusTime(System.currentTimeMillis());
             SightService.this.status = status;
             if (status == Status.CONNECTED) {
                 timeoutTimer.cancel();
@@ -279,7 +276,7 @@ public class SightService extends Service {
             }
             for (Map.Entry<Long, IStatusCallback> entry : statusCallbackIds.entrySet()) {
                 try {
-                    entry.getValue().onStatusChange(SerializationUtils.serialize(status));
+                    entry.getValue().onStatusChange(status.name());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -493,8 +490,6 @@ public class SightService extends Service {
                     } else {
                         Log.d("SightService", "Not closing socket");
                         timeoutWait = Math.min(timeoutWait + TIMEOUT_WAIT_STEP, MAX_TIMEOUT_WAIT);
-                        Status.WAITING.setWaitTime(timeoutWait);
-                        pipeline.setStatus(Status.WAITING);
                         Log.d("SightService", "sleeping " + timeoutWait);
                         try {
                             Thread.sleep(timeoutWait);
@@ -507,7 +502,7 @@ public class SightService extends Service {
                     //
                 }
 
-                if (disconnectTimer != null && pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
+                if (pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
                     pipeline.setStatus(Status.DISCONNECTED);
                 pipeline = null;
                 connectionThread = null;
