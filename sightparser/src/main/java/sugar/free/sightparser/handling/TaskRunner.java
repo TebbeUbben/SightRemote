@@ -37,7 +37,7 @@ public abstract class TaskRunner {
         run = true;
         this.resultCallback = resultCallback;
         active = true;
-        if (serviceConnector.getStatus() == Status.CONNECTED || serviceConnector.getStatus() == Status.WAITING)
+        if (serviceConnector.getStatus() == Status.CONNECTED)
             messageCallback.onMessage((AppLayerMessage) null);
         else messageCallback.onError(new DisconnectedException());
     }
