@@ -78,13 +78,13 @@
     <string name="latest_bolus_extended"><![CDATA[%1$s: <b>%2$s für %3$s</b>]]></string>
     <string name="latest_bolus_multiwave"><![CDATA[%1$s: <b>%2$s, %3$s für %4$s</b>]]></string>
     <string name="background_sync">Hintergrund-Synchronisation</string>
-    <string name="please_enter_activation_password">Bitte gib das Passwort zum Aktiveren des Insulin-Services ein:</string>
+    <string name="please_enter_activation_password">Bitte gib das Passwort zum Aktivieren des Insulin-Services ein:</string>
     <string name="no">Nein</string>
     <string name="safety_warning">Sicherheitswarnung!</string>
     <string name="safety_warning_text1">Das Aktivieren des Insulin-Services erlaubt dieser App die Insulinzufuhr der Pumpe zu steuern! Sollte die mit dieser App gekoppelten Pumpe jemals an eine Person angeschlossen werden, so darf die Aktivierung nur von medizinischem Personal, das für diese Person verantwortlich ist, durchgeführt werden.</string>
     <string name="connected_to_a_person">An eine Person angeschlossen</string>
     <string name="never_connected_to_a_person">Niemals an eine Person angeschlossen</string>
-    <string name="are_you_a_qualified_medical_professional">Sind Sie qualifiziertes medizinisches Personal, das für die Person verantwortlich, der die mit dieser App gekoppelten Pumpe gehört?</string>
+    <string name="are_you_a_qualified_medical_professional">Sind Sie qualifiziertes medizinisches Personal, das für die Person verantwortlich ist, der die mit dieser App gekoppelten Pumpe gehört?</string>
     <string name="yes_i_am_a_medical_professional">Ja, ich bin qualifiziertes medizinisches Personal und für diese Person verantwortlich.</string>
     <string name="are_you_absolutely_sure_activate">Sind Sie sich absolut sicher, dass Sie den Insulin-Service aktivieren wollen und genau verstehen, was dies zur Folge hat?</string>
     <string name="br_block_formatter">%1$s - %2$s</string>
