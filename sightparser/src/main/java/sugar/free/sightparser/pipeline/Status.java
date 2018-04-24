@@ -10,6 +10,7 @@ public enum Status {
     CONNECTED,
     DISCONNECTED,
     NOT_AUTHORIZED,
-    INCOMPATIBLE
+    INCOMPATIBLE,
+    WAITING
 
 }

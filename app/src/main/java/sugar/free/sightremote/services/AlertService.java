@@ -61,7 +61,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
     }
 
     @Override
-    public void onStatusChange(Status status) {
+    public void onStatusChange(Status status, long statusTime, long waitTime) {
         if (status == Status.CONNECTED) {
             if (fetchTimer != null) return;
             fetchTimer = new Timer(false);
@@ -84,7 +84,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
     @Override
     public void onServiceConnected() {
         serviceConnector.addStatusCallback(this);
-        onStatusChange(serviceConnector.getStatus());
+        onStatusChange(serviceConnector.getStatus(), 0, 0);
     }
 
     @Override

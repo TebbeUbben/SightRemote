@@ -175,4 +175,10 @@
     <string name="notifies_you_when_pump_time_is_changed">Notifies you when the pump\'s time was changed</string>
     <string name="access_to_history_broadcasts">Access to history broadcasts</string>
     <string name="this_app_can_access_sightremotes_history_broadcasts">This app can access SightRemote\'s history broadcasts.</string>
+    <string name="waiting">Waiting…</string>
+    <string name="connect_now">Connect now</string>
+    <plurals name="waiting">
+        <item quantity="one">Waiting… (%d second)</item>
+        <item quantity="other">Waiting… (%d seconds)</item>
+    </plurals>
 </resources>

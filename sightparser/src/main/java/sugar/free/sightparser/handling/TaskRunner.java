@@ -37,7 +37,7 @@ public abstract class TaskRunner {
         run = true;
         this.resultCallback = resultCallback;
         active = true;
-        if (serviceConnector.getStatus() == Status.CONNECTED)
+        if (serviceConnector.getStatus() == Status.CONNECTED || serviceConnector.getStatus() == Status.WAITING)
             messageCallback.onMessage((AppLayerMessage) null);
         else messageCallback.onError(new DisconnectedException());
     }
@@ -93,12 +93,12 @@ public abstract class TaskRunner {
 
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
-        public void onStatusChange(Status status) {
+        public void onStatusChange(Status status, long statusTime, long waitTime) {
             if (status == Status.CONNECTED) {
                 serviceConnector.removeStatusCallback(this);
                 statusCallbackRegistered = false;
                 messageCallback.onMessage((AppLayerMessage) null);
-            } else if (status == Status.DISCONNECTED) {
+            } else if (status == Status.DISCONNECTED || status == Status.WAITING) {
                 messageCallback.onError(new DisconnectedException());
             }
         }

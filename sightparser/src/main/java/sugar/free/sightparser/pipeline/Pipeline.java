@@ -168,7 +168,7 @@ public class Pipeline {
 
     public void setStatus(Status status) {
         this.status = status;
-        statusCallback.onStatusChange(status);
+        statusCallback.onStatusChange(status, 0, 0);
     }
 
     public void establishPairing() {

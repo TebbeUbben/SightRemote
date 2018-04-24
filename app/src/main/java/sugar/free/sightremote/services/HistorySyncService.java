@@ -150,7 +150,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     }
 
     @Override
-    public void onStatusChange(Status status) {
+    public void onStatusChange(Status status, long statusTime, long waitTime) {
         if (status == Status.CONNECTED) {
             connector.connect();
             ReadStatusParamBlockMessage readMessage = new ReadStatusParamBlockMessage();
@@ -547,7 +547,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         else {
             connector.connect();
             if (connector.getStatus() == Status.CONNECTED) {
-                onStatusChange(Status.CONNECTED);
+                onStatusChange(Status.CONNECTED, 0, 0);
             }
         }
     }

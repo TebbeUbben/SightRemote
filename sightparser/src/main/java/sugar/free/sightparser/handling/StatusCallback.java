@@ -4,5 +4,5 @@ import sugar.free.sightparser.pipeline.Status;
 
 public interface StatusCallback {
 
-    void onStatusChange(Status status);
+    void onStatusChange(Status status, long statusTime, long waitTime);
 }
