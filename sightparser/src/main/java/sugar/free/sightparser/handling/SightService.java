@@ -37,7 +37,7 @@ public class SightService extends Service {
     public static final String COMPATIBILITY_VERSION = "bellona";
     private static final int DISCONNECT_DELAY = 20000;
     private static final int MIN_TIMEOUT_WAIT = 4000;
-    private static final int MAX_TIMEOUT_WAIT = 60000;
+    private static final int MAX_TIMEOUT_WAIT = 20000;
     private static final int TIMEOUT_WAIT_STEP = 1000;
     private static final String SIGHTREMOTE_PACKAGE_NAME = "sugar.free.sightremote";
     private final SparseBooleanArray allowedUid = new SparseBooleanArray();
