@@ -39,7 +39,7 @@ public class SightService extends Service {
     private static final int MIN_TIMEOUT_WAIT = 4000;
     private static final int MAX_TIMEOUT_WAIT = 20000;
     private static final int TIMEOUT_WAIT_STEP = 1000;
-    private static final int MIN_CONNECTION_DURATION = 5000;
+    private static final int MIN_CONNECTION_DURATION = 10000;
     private static final int MAX_ATTEMPTS = 3;
     private static final String SIGHTREMOTE_PACKAGE_NAME = "sugar.free.sightremote";
     private final SparseBooleanArray allowedUid = new SparseBooleanArray();
@@ -424,7 +424,8 @@ public class SightService extends Service {
 
         private String mac;
         private boolean pairing;
-        private long connectedFor = Long.MAX_VALUE;
+        private long connectingFor = 0;
+        private long connectingAt;
 
         public ConnectionThread(String mac, boolean pairing) {
             this.pairing = pairing;
@@ -438,6 +439,7 @@ public class SightService extends Service {
             try {
                 pipeline = new Pipeline(getDataStorage(), statusCallback);
                 pipeline.setStatus(Status.CONNECTING);
+                connectingAt = System.currentTimeMillis();
                 BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
                 BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(mac);
@@ -476,22 +478,25 @@ public class SightService extends Service {
                         }
                     }
                 }, timeoutWait);
-                long connectedAt = System.currentTimeMillis();
                 attempts = 0;
                 while (pipeline.getStatus() != Status.DISCONNECTED && !Thread.currentThread().isInterrupted())
                     pipeline.loopCall();
-                connectedFor = System.currentTimeMillis() - connectedAt;
+                connectingFor = System.currentTimeMillis() - connectingAt;
                 timeoutTimer.cancel();
                 pipeline.disconnect();
             } catch (IOException e) {
                 Log.d("SightService", "IO Exception in state " + pipeline.getStatus() + " " + e);
+                connectingFor = System.currentTimeMillis() - connectingAt;
                 //e.printStackTrace();
             } finally {
                 if (pipeline != null) pipeline.receive(new DisconnectedException());
 
                 try {
                     // don't close socket if we were connecting
-                    if (attempts >= MAX_ATTEMPTS && connectedFor < MIN_CONNECTION_DURATION && pipeline != null && (pipeline.getStatus() != Status.CONNECTING) && (bluetoothSocket != null)) {
+                    if (attempts >= MAX_ATTEMPTS && connectingFor < MIN_CONNECTION_DURATION) {
+                        BluetoothAdapter.getDefaultAdapter().disable();
+                        BluetoothAdapter.getDefaultAdapter().enable();
+                    } else if (pipeline != null && (pipeline.getStatus() != Status.CONNECTING) && (bluetoothSocket != null)) {
                         Log.d("SightService", "Closing socket");
                         bluetoothSocket.close();
                         bluetoothSocket = null;
