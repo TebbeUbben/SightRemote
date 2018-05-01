@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="alert_r1_description"></string>
-    <string name="alert_r2_description"></string>
-    <string name="alert_r3_description"></string>
-    <string name="alert_r4_description"></string>
+    <string name="alert_r1_description" translatable="false"></string>
+    <string name="alert_r2_description" translatable="false"></string>
+    <string name="alert_r3_description" translatable="false"></string>
+    <string name="alert_r4_description" translatable="false"></string>
     <string name="alert_r7_description"><![CDATA[<b>Amount:</b> %1$d%%\n<b>Duration:</b> %2$s hours]]></string>
 
     <string name="alert_w31_description"><![CDATA[<b>Cartridge content:</b> %1$s]]>></string>
@@ -12,7 +12,7 @@
     <string name="alert_w34_description">Contact Accu-Chek support.</string>
     <string name="alert_w36_description"><![CDATA[<b>Amount:</b> %1$d%%<br/><b>Duration:</b> %2$s hours]]></string>
     <string name="alert_w38_description"><![CDATA[<b>Programmed:</b> %1$s<br/><b>Delivered:</b> %2$s]]></string>
-    <string name="alert_w39_description"></string>
+    <string name="alert_w39_description" translatable="false"></string>
 
     <string name="alert_m20_description">Insert cartridge.</string>
     <string name="alert_m21_description">Change cartridge.</string>

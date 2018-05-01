@@ -178,4 +178,7 @@
         <item quantity="one">Warte… (%d Sekunde)</item>
         <item quantity="other">Warte… (%d Sekunden)</item>
     </plurals>
+    <string name="alert"><![CDATA[%1$s: <b>%2$s</b>]]></string>
+    <string name="this_app_can_access_sightremotes_history_broadcasts">Diese App kann auf die Pumpendaten von SightRemote über Broadcasts zugreifen.</string>
+    <string name="access_to_history_broadcasts">Zugriff auf Pumpendaten</string>
 </resources>
