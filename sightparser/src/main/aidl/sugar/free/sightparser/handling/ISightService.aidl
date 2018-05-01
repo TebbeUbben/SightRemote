@@ -9,7 +9,9 @@ interface ISightService {
     void pair(String mac, IBinder binder);
     boolean isUseable();
     String getStatus();
-    void requestMessage(in byte[] getClass, IMessageCallback callback);
+    long getStatusTime();
+    long getWaitTime();
+    oneway void requestMessage(in byte[] getClass, IMessageCallback callback);
     long registerStatusCallback(IStatusCallback callback);
     void unregisterStatusCallback(long id);
     void connect(IBinder binder);
@@ -18,4 +20,5 @@ interface ISightService {
     void setAuthorized(String packageName, boolean allowed);
     void reset();
     void aclDisconnect(String mac);
+    void forceConnect();
 }

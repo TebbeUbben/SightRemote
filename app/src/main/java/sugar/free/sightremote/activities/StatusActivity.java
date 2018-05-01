@@ -35,8 +35,8 @@ import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.CancelBolusMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.CancelTBRMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.SetPumpStatusMessage;
-import sugar.free.sightparser.error.CancelledException;
-import sugar.free.sightparser.error.DisconnectedError;
+import sugar.free.sightparser.errors.CancelledException;
+import sugar.free.sightparser.exceptions.DisconnectedException;
 import sugar.free.sightparser.handling.HistoryBroadcast;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
 import sugar.free.sightparser.handling.TaskRunner;
@@ -45,7 +45,6 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.database.BolusDelivered;
 import sugar.free.sightremote.dialogs.ConfirmationDialog;
-import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
@@ -109,8 +108,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
 
         @Override
         public void onError(Exception e) {
-            runOnUiThread(() -> Toast.makeText(StatusActivity.this, R.string.error, Toast.LENGTH_SHORT).show());
-            CrashlyticsUtil.logExceptionWithCallStackTrace(e);
+            runOnUiThread(() -> Toast.makeText(StatusActivity.this, getString(R.string.error, e.getClass().getSimpleName()), Toast.LENGTH_SHORT).show());
         }
     };
     private BroadcastReceiver historyBroadcastReceiver = new BroadcastReceiver() {
@@ -355,7 +353,7 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         handler.removeCallbacks(taskRunnerRunnable);
         AppLayerMessage message = null;
         if (v == tbrCancel) {
-            tbrCancel.setVisibility(View.GONE);
+            tbrCancel.setVisibility(View.INVISIBLE);
             message = new CancelTBRMessage();
             Answers.getInstance().logCustom(new CustomEvent("TBR Cancelled"));
         } else if (v == bolus1Cancel) {
@@ -394,11 +392,10 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
 
     @Override
     public void onError(Exception e) {
-        if (!(e instanceof CancelledException) && !(e instanceof DisconnectedError)) {
-            Snackbar snackbar = Snackbar.make(getRootView(), R.string.error, Snackbar.LENGTH_INDEFINITE);
+        if (!(e instanceof CancelledException) && !(e instanceof DisconnectedException)) {
+            Snackbar snackbar = Snackbar.make(getRootView(), getString(R.string.error, e.getClass().getSimpleName()), Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction(R.string.retry, view -> taskRunnerRunnable.run());
             showSnackbar(snackbar);
-            CrashlyticsUtil.logExceptionWithCallStackTrace(e);
         }
     }
 

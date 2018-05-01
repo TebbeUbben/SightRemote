@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -148,6 +149,10 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
 
     }
 
+    protected void statusChanged(Status status, long statusTime, long waitTime) {
+
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -169,7 +174,7 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
             Status status = sightServiceConnector.getStatus();
             if (status != latest) {
                 if (useOverlay()) updateOverlay(status);
-                updateSnackbar(status);
+                updateSnackbar(status, sightServiceConnector.getStatusTime(), sightServiceConnector.getWaitTime());
                 latest = status;
             }
             connectedToService();
@@ -181,12 +186,19 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
         }
     };
 
-    private void updateSnackbar(Status status) {
+    private void updateSnackbar(Status status, long statusTime, long waitTime) {
         if (!snackbarEnabled()) return;
         if (status == Status.CONNECTED) {
             dismissSnackbar();
         } else if (status == Status.CONNECTING) {
             showSnackbar(Snackbar.make(getRootView(), R.string.connecting, Snackbar.LENGTH_INDEFINITE));
+        } else if (status == Status.WAITING) {
+            double leftOverWaitTime = waitTime - (System.currentTimeMillis() - statusTime);
+            int delay = (int) Math.round(leftOverWaitTime / 1000D);
+            delay = Math.max(delay, 0);
+            Snackbar snackbar = Snackbar.make(getRootView(), getResources().getQuantityString(R.plurals.waiting, delay, delay), Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.connect_now, v -> sightServiceConnector.forceConnect());
+            showSnackbar(snackbar);
         }
     }
 
@@ -217,10 +229,11 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
         });
     }
 
-    private StatusCallback statusCallback = status -> {
-        updateSnackbar(status);
+    private StatusCallback statusCallback = (status, statusTime, waitTime) -> {
+        updateSnackbar(status, statusTime, waitTime);
         updateOverlay(status);
         statusChanged(status);
+        statusChanged(status, statusTime, waitTime);
     };
 
     public SightServiceConnector getServiceConnector() {
@@ -252,12 +265,11 @@ public abstract class SightActivity extends AppCompatActivity implements Navigat
     }
 
     protected void showSnackbar(final Snackbar snackbar) {
-        runOnUiThread(() -> {
-            if (snackbar != null) snackbar.dismiss();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
             SightActivity.this.snackbar = snackbar;
             snackbar.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
             snackbar.show();
-        });
+        }, 300);
     }
 
     protected void dismissSnackbar() {

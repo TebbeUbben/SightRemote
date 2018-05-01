@@ -17,7 +17,7 @@
     <string name="confirm_connection">Confirm connection on pump</string>
     <string name="complete_setup">Complete setup</string>
     <string name="connection_declined">The pairing was declined on the pump.</string>
-    <string name="error">Error</string>
+    <string name="error">Error: %1$s</string>
     <string name="accept_terms">You must accept the terms first.</string>
     <string name="status">Status</string>
     <string name="started">Started</string>
@@ -175,4 +175,11 @@
     <string name="notifies_you_when_pump_time_is_changed">Notifies you when the pump\'s time was changed</string>
     <string name="access_to_history_broadcasts">Access to history broadcasts</string>
     <string name="this_app_can_access_sightremotes_history_broadcasts">This app can access SightRemote\'s history broadcasts.</string>
+    <string name="waiting">Waiting…</string>
+    <string name="connect_now">Connect now</string>
+    <plurals name="waiting">
+        <item quantity="zero">Waiting… (less than a second)</item>
+        <item quantity="one">Waiting… (%d second)</item>
+        <item quantity="other">Waiting… (%d seconds)</item>
+    </plurals>
 </resources>

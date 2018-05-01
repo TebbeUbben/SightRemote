@@ -3,15 +3,10 @@ package sugar.free.sightremote.services;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
@@ -27,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.spongycastle.util.Pack;
 import sugar.free.sightparser.applayer.descriptors.HistoryReadingDirection;
 import sugar.free.sightparser.applayer.descriptors.HistoryType;
 import sugar.free.sightparser.applayer.descriptors.history_frames.*;
@@ -56,7 +50,6 @@ import sugar.free.sightremote.database.Offset;
 import sugar.free.sightremote.database.PumpStatusChanged;
 import sugar.free.sightremote.database.TimeChanged;
 import sugar.free.sightremote.database.TubeFilled;
-import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HistoryResync;
 import sugar.free.sightremote.utils.HistorySendIntent;
 
@@ -150,7 +143,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
     }
 
     @Override
-    public void onStatusChange(Status status) {
+    public void onStatusChange(Status status, long statusTime, long waitTime) {
         if (status == Status.CONNECTED) {
             connector.connect();
             ReadStatusParamBlockMessage readMessage = new ReadStatusParamBlockMessage();
@@ -532,7 +525,6 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         syncing = false;
         HistorySendIntent.sendSyncFinished(this, getAppsWithHistoryPermission());
         if (wakeLock.isHeld()) wakeLock.release();
-        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
     }
 
     private void startSync() {
@@ -548,7 +540,7 @@ public class HistorySyncService extends Service implements StatusCallback, TaskR
         else {
             connector.connect();
             if (connector.getStatus() == Status.CONNECTED) {
-                onStatusChange(Status.CONNECTED);
+                onStatusChange(Status.CONNECTED, 0, 0);
             }
         }
     }

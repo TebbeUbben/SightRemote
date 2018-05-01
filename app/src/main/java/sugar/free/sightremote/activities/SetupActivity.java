@@ -262,7 +262,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
-        public void onStatusChange(final Status status) {
+        public void onStatusChange(final Status status, long statusTime, long waitTime) {
             if (viewPager.getCurrentItem() != 3) return;
             runOnUiThread(() -> {
                 if (status == Status.CONNECTING)
@@ -293,7 +293,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private ServiceConnectionCallback connectionCallback = new ServiceConnectionCallback() {
         @Override
         public void onServiceConnected() {
-            statusCallback.onStatusChange(serviceConnector.getStatus());
+            statusCallback.onStatusChange(serviceConnector.getStatus(), 0, 0);
         }
 
         @Override

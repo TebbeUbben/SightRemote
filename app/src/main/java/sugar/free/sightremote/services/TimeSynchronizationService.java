@@ -43,7 +43,7 @@ public class TimeSynchronizationService extends Service implements StatusCallbac
         if (serviceConnector.isConnectedToService()) {
             serviceConnector.connect();
             if (serviceConnector.getStatus() == Status.CONNECTED)
-                onStatusChange(Status.CONNECTED);
+                onStatusChange(Status.CONNECTED, 0, 0);
         }
         Intent serviceIntent = new Intent(this, TimeSynchronizationService.class);
         pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
@@ -59,7 +59,7 @@ public class TimeSynchronizationService extends Service implements StatusCallbac
     }
 
     @Override
-    public void onStatusChange(Status status) {
+    public void onStatusChange(Status status, long statusTime, long waitTime) {
         if (status == Status.CONNECTED) {
             serviceConnector.connect();
             new SingleMessageTaskRunner(serviceConnector, new ReadDateTimeMessage()).fetch(this);

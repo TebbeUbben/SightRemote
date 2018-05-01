@@ -26,19 +26,19 @@ public class OngoingNotificationService extends Service {
         serviceConnector.setConnectionCallback(new ServiceConnectionCallback() {
             @Override
             public void onServiceConnected() {
-                statusChanged(serviceConnector.getStatus());
+                statusChanged(serviceConnector.getStatus(), 0, 0);
             }
 
             @Override
             public void onServiceDisconnected() {
-                statusChanged(Status.DISCONNECTED);
+                statusChanged(Status.DISCONNECTED, 0, 0);
             }
         });
         serviceConnector.addStatusCallback(this::statusChanged);
         serviceConnector.connectToService();
     }
 
-    private void statusChanged(Status status) {
+    private void statusChanged(Status status, long statusTime, long waitTime) {
         switch (status) {
             case CONNECTED:
                 NotificationCenter.showOngoingNotification(R.string.connected);
@@ -49,12 +49,15 @@ public class OngoingNotificationService extends Service {
             case CONNECTING:
                 NotificationCenter.showOngoingNotification(R.string.connecting);
                 break;
+            case WAITING:
+                NotificationCenter.showOngoingNotification(R.string.waiting);
+                break;
         }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        statusChanged(serviceConnector.isConnectedToService() ? serviceConnector.getStatus() : Status.DISCONNECTED);
+        statusChanged(serviceConnector.isConnectedToService() ? serviceConnector.getStatus() : Status.DISCONNECTED, 0, 0);
         startForeground(NotificationCenter.ONGOING_NOTIFICATION_ID, NotificationCenter.getOngoingNotification());
         return START_STICKY;
     }

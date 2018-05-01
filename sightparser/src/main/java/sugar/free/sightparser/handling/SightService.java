@@ -19,8 +19,8 @@ import sugar.free.sightparser.DataStorage;
 import sugar.free.sightparser.Pref;
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
-import sugar.free.sightparser.error.DisconnectedError;
-import sugar.free.sightparser.error.NotAuthorizedError;
+import sugar.free.sightparser.exceptions.DisconnectedException;
+import sugar.free.sightparser.errors.NotAuthorizedError;
 import sugar.free.sightparser.pipeline.Pipeline;
 import sugar.free.sightparser.pipeline.Status;
 
@@ -34,11 +34,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SightService extends Service {
 
-    public static final String COMPATIBILITY_VERSION = "asclepius";
+    public static final String COMPATIBILITY_VERSION = "bellona";
     private static final int DISCONNECT_DELAY = 20000;
     private static final int MIN_TIMEOUT_WAIT = 4000;
-    private static final int MAX_TIMEOUT_WAIT = 60000;
+    private static final int MAX_TIMEOUT_WAIT = 20000;
     private static final int TIMEOUT_WAIT_STEP = 1000;
+    private static final int MIN_CONNECTION_DURATION = 10000;
+    private static final int MAX_ATTEMPTS = 3;
     private static final String SIGHTREMOTE_PACKAGE_NAME = "sugar.free.sightremote";
     private final SparseBooleanArray allowedUid = new SparseBooleanArray();
     private long statusIdCounter = 0;
@@ -51,8 +53,10 @@ public class SightService extends Service {
     private Map<IStatusCallback, IBinder.DeathRecipient> statusCallbackDeathRecipients = new ConcurrentHashMap<>();
     private Map<Long, IStatusCallback> statusCallbackIds = new ConcurrentHashMap<>();
     private Status status = Status.DISCONNECTED;
+    private long statusTime = System.currentTimeMillis();
     private Timer disconnectTimer;
     private Timer timeoutTimer;
+    private int attempts = 0;
     private boolean reconnect;
     private long timeoutWait = MIN_TIMEOUT_WAIT;
     private volatile BluetoothSocket bluetoothSocket = null;
@@ -66,29 +70,26 @@ public class SightService extends Service {
 
         @Override
         public void pair(String mac, final IBinder binder) throws RemoteException {
-            if (verifyAdminCaller("pair")) {
-                if (!connectedClients.containsKey(binder)) {
-                    Log.d("SightService", "CLIENT CONNECTS TO PUMP");
-                    if (disconnectTimer != null) disconnectTimer.cancel();
-                    disconnectTimer = new Timer();
-                    DeathRecipient deathRecipient = () -> {
-                        Log.d("SightService", "CLIENT DIED - CONNECT");
-                        try {
-                            disconnect(binder);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    };
-                    connectedClients.put(binder, deathRecipient);
-                    binder.linkToDeath(deathRecipient, 0);
-                }
-                SightService.this.disconnect(false);
-                reset();
-                tempMac = mac;
-                SightService.this.connect(mac, true);
-            } else {
-                throw new RemoteException("Not authorized");
+            if (!verifyAdminCaller("pair")) throw new RemoteException("Not authorized");
+            if (!connectedClients.containsKey(binder)) {
+                Log.d("SightService", "CLIENT CONNECTS TO PUMP");
+                if (disconnectTimer != null) disconnectTimer.cancel();
+                disconnectTimer = new Timer();
+                DeathRecipient deathRecipient = () -> {
+                    Log.d("SightService", "CLIENT DIED - CONNECT");
+                    try {
+                        disconnect(binder);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                };
+                connectedClients.put(binder, deathRecipient);
+                binder.linkToDeath(deathRecipient, 0);
             }
+            SightService.this.disconnect(false);
+            reset();
+            tempMac = mac;
+            SightService.this.connect(mac, true);
         }
 
         @Override
@@ -106,27 +107,37 @@ public class SightService extends Service {
         }
 
         @Override
+        public long getStatusTime() throws RemoteException {
+            if (!verifyCaller("getStatusTime")) throw new RemoteException("Not authorized");
+            return statusTime;
+        }
+
+        @Override
+        public long getWaitTime() throws RemoteException {
+            if (!verifyCaller("getWaitTime")) throw new RemoteException("Not authorized");
+            return timeoutWait;
+        }
+
+        @Override
         public void requestMessage(byte[] message, IMessageCallback callback) throws RemoteException {
-            if (verifyCaller("requestMessage")) {
-                final AppLayerMessage msg = (AppLayerMessage) SerializationUtils.deserialize(message);
-                Answers.getInstance().logCustom(new CustomEvent("Message Requested")
-                        .putCustomAttribute("Application", getCallerName())
-                        .putCustomAttribute("Message", msg.getClass().getSimpleName()));
-                if (firewall.isAllowed(msg)) {
-                    MessageRequest messageRequest = new MessageRequest(msg, callback, callback.asBinder());
-                    if (pipeline != null && status == Status.CONNECTED)
-                        pipeline.requestMessage(messageRequest);
-                } else {
-                    showToast("Blocked by SiteRemote firewall preference" + " :: " + msg.toString());
-                    callback.onError(SerializationUtils.serialize(new NotAuthorizedError("Blocked by Firewall preference")));
-                }
+            if (!verifyCaller("requestMessage")) throw new RemoteException("Not authorized");
+            final AppLayerMessage msg = (AppLayerMessage) SerializationUtils.deserialize(message);
+            Answers.getInstance().logCustom(new CustomEvent("Message Requested")
+                    .putCustomAttribute("Application", getCallerName())
+                    .putCustomAttribute("Message", msg.getClass().getSimpleName()));
+            if (firewall.isAllowed(msg)) {
+                MessageRequest messageRequest = new MessageRequest(msg, callback, callback.asBinder());
+                if (pipeline != null && status == Status.CONNECTED)
+                    pipeline.requestMessage(messageRequest);
             } else {
-                callback.onError(SerializationUtils.serialize(new NotAuthorizedError("Application not authorized")));
+                showToast("Blocked by SiteRemote firewall preference" + " :: " + msg.toString());
+                callback.onError(SerializationUtils.serialize(new NotAuthorizedError("Blocked by Firewall preference")));
             }
         }
 
         @Override
         public long registerStatusCallback(final IStatusCallback callback) throws RemoteException {
+            if (!verifyCaller("registerStatusCallback")) throw new RemoteException("Not authorized");
             final long id = ++statusIdCounter;
             DeathRecipient deathRecipient = () -> {
                 Log.d("SightService", "CLIENT DIED - STATUS");
@@ -142,6 +153,7 @@ public class SightService extends Service {
 
         @Override
         public void unregisterStatusCallback(long id) throws RemoteException {
+            if (!verifyCaller("unregisterStatusCallback")) throw new RemoteException("Not authorized");
             IStatusCallback callback = statusCallbackIds.get(id);
             callback.asBinder().unlinkToDeath(statusCallbackDeathRecipients.get(callback), 0);
             statusCallbackDeathRecipients.remove(callback);
@@ -150,36 +162,34 @@ public class SightService extends Service {
 
         @Override
         public void connect(final IBinder binder) throws RemoteException {
-            if (verifyCaller("connect")) {
-                Answers.getInstance().logCustom(new CustomEvent("Requested Connection To Pump")
-                        .putCustomAttribute("Application", getCallerName()));
-                if (!connectedClients.containsKey(binder)) {
-                    Log.d("SightService", "CLIENT CONNECTS TO PUMP");
-                    if (disconnectTimer != null) disconnectTimer.cancel();
-                    disconnectTimer = new Timer();
-                    DeathRecipient deathRecipient = new DeathRecipient() {
-                        @Override
-                        public void binderDied() {
-                            Log.d("SightService", "CLIENT DIED - CONNECT");
-                            try {
-                                disconnect(binder);
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
+            if (!verifyCaller("connect")) throw new RemoteException("Not authorized");
+            Answers.getInstance().logCustom(new CustomEvent("Requested Connection To Pump")
+                    .putCustomAttribute("Application", getCallerName()));
+            if (!connectedClients.containsKey(binder)) {
+                Log.d("SightService", "CLIENT CONNECTS TO PUMP");
+                if (disconnectTimer != null) disconnectTimer.cancel();
+                disconnectTimer = new Timer();
+                DeathRecipient deathRecipient = new DeathRecipient() {
+                    @Override
+                    public void binderDied() {
+                        Log.d("SightService", "CLIENT DIED - CONNECT");
+                        try {
+                            disconnect(binder);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
                         }
-                    };
-                    connectedClients.put(binder, deathRecipient);
-                    binder.linkToDeath(deathRecipient, 0);
-                    if (getDataStorage().contains("DEVICEMAC"))
-                        SightService.this.connect(getDataStorage().get("DEVICEMAC"), false);
-                }
-            } else {
-                // throw exception?
+                    }
+                };
+                connectedClients.put(binder, deathRecipient);
+                binder.linkToDeath(deathRecipient, 0);
+                if (getDataStorage().contains("DEVICEMAC"))
+                    SightService.this.connect(getDataStorage().get("DEVICEMAC"), false);
             }
         }
 
         @Override
         public void disconnect(IBinder binder) throws RemoteException {
+            if (!verifyCaller("disconnect")) throw new RemoteException("Not authorized");
             if (connectedClients.containsKey(binder)) {
                 Answers.getInstance().logCustom(new CustomEvent("Connection Request Withdrawn")
                         .putCustomAttribute("Application", getCallerName()));
@@ -200,72 +210,67 @@ public class SightService extends Service {
 
         @Override
         public void setPassword(String password) throws RemoteException {
-            if (verifyCaller("setPassword")) {
-                getDataStorage().set("PASSWORD", password);
-                sugar.free.sightparser.applayer.descriptors.Service.REMOTE_CONTROL.setServicePassword(password);
-            } else {
-                throw new RemoteException("Not authorized");
-            }
+            if (!verifyCaller("setPassword")) throw new RemoteException("Not authorized");
+            getDataStorage().set("PASSWORD", password);
+            sugar.free.sightparser.applayer.descriptors.Service.REMOTE_CONTROL.setServicePassword(password);
         }
 
         @Override
         public void setAuthorized(String packageName, boolean allowed) throws RemoteException {
-            if (verifyAdminCaller("setAuthorized")) {
-                if (allowed) {
-                    getDataStorage().set("package-allowed-" + packageName, "yes");
-                } else {
-                    if (packageName.startsWith(Pref.CHANGE_PREFS_SPECIAL_CASE)) {
-                        firewall.parsePreference(packageName);
-                    } else {
-                        getDataStorage().remove("package-allowed-" + packageName);
-                    }
-                }
+            if (!verifyAdminCaller("setAuthorized")) throw new RemoteException("Not authorized");
+            if (allowed) {
+                getDataStorage().set("package-allowed-" + packageName, "yes");
             } else {
-                throw new RemoteException("Not authorized");
+                if (packageName.startsWith(Pref.CHANGE_PREFS_SPECIAL_CASE)) {
+                    firewall.parsePreference(packageName);
+                } else {
+                    getDataStorage().remove("package-allowed-" + packageName);
+                }
             }
         }
 
         @Override
         public void reset() throws RemoteException {
-            if (verifyAdminCaller("reset")) {
+            if (!verifyAdminCaller("reset")) throw new RemoteException("Not authorized");
                 SightService.this.disconnect(false);
-                getDataStorage().remove("INCOMINGKEY");
-                getDataStorage().remove("OUTGOINGKEY");
-                getDataStorage().remove("COMMID");
-                getDataStorage().remove("LASTNONCESENT");
-                getDataStorage().remove("LASTNONCERECEIVED");
-                getDataStorage().remove("DEVICEMAC");
-            } else {
-                throw new RemoteException("Not authorized");
-            }
+            getDataStorage().remove("INCOMINGKEY");
+            getDataStorage().remove("OUTGOINGKEY");
+            getDataStorage().remove("COMMID");
+            getDataStorage().remove("LASTNONCESENT");
+            getDataStorage().remove("LASTNONCERECEIVED");
+            getDataStorage().remove("DEVICEMAC");
         }
 
         @Override
         public void aclDisconnect(String mac) throws RemoteException {
-            if (verifyAdminCaller("aclDisconnect")) {
-                if (bluetoothSocket == null) return;
-                if (mac == null) return;
-                if (getDataStorage().get("DEVICEMAC") == null) return;
-                if (getDataStorage().get("DEVICEMAC").equalsIgnoreCase(mac)) {
-                    try {
-                        if (bluetoothSocket.isConnected()) {
-                            Log.d("SightService", "Received ACL disconnect, closing socket...");
-                            bluetoothSocket.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            if (!verifyAdminCaller("aclDisconnect")) throw new RemoteException("Not authorized");
+            if (bluetoothSocket == null) return;
+            if (mac == null) return;
+            if (getDataStorage().get("DEVICEMAC") == null) return;
+            if (getDataStorage().get("DEVICEMAC").equalsIgnoreCase(mac)) {
+                try {
+                    if (bluetoothSocket.isConnected()) {
+                        Log.d("SightService", "Received ACL disconnect, closing socket...");
+                        bluetoothSocket.close();
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } else {
-                throw new RemoteException("Not authorized");
             }
+        }
+
+        @Override
+        public void forceConnect() throws RemoteException {
+            if (!verifyCaller("aclDisconnect")) throw new RemoteException("Not authorized");
+            if (status == Status.WAITING) connectionThread.interrupt();
         }
     };
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
-        public void onStatusChange(Status status) {
+        public void onStatusChange(Status status, long statusTime, long waitTime) {
             Log.d("SightService", "STATUS: " + status);
             SightService.this.status = status;
+            statusTime = System.currentTimeMillis();
             if (status == Status.CONNECTED) {
                 timeoutTimer.cancel();
                 if (tempMac != null) {
@@ -276,7 +281,7 @@ public class SightService extends Service {
             }
             for (Map.Entry<Long, IStatusCallback> entry : statusCallbackIds.entrySet()) {
                 try {
-                    entry.getValue().onStatusChange(status.name());
+                    entry.getValue().onStatusChange(status.name(), statusTime, timeoutWait);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -419,7 +424,8 @@ public class SightService extends Service {
 
         private String mac;
         private boolean pairing;
-
+        private long connectingFor = 0;
+        private long connectingAt;
 
         public ConnectionThread(String mac, boolean pairing) {
             this.pairing = pairing;
@@ -433,6 +439,7 @@ public class SightService extends Service {
             try {
                 pipeline = new Pipeline(getDataStorage(), statusCallback);
                 pipeline.setStatus(Status.CONNECTING);
+                connectingAt = System.currentTimeMillis();
                 BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
                 BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(mac);
@@ -471,19 +478,25 @@ public class SightService extends Service {
                         }
                     }
                 }, timeoutWait);
+                attempts = 0;
                 while (pipeline.getStatus() != Status.DISCONNECTED && !Thread.currentThread().isInterrupted())
                     pipeline.loopCall();
+                connectingFor = System.currentTimeMillis() - connectingAt;
                 timeoutTimer.cancel();
                 pipeline.disconnect();
             } catch (IOException e) {
                 Log.d("SightService", "IO Exception in state " + pipeline.getStatus() + " " + e);
+                connectingFor = System.currentTimeMillis() - connectingAt;
                 //e.printStackTrace();
             } finally {
-                pipeline.receive(new DisconnectedError());
+                if (pipeline != null) pipeline.receive(new DisconnectedException());
 
                 try {
                     // don't close socket if we were connecting
-                    if ((pipeline.getStatus() != Status.CONNECTING) && (bluetoothSocket != null)) {
+                    if (attempts >= MAX_ATTEMPTS && connectingFor < MIN_CONNECTION_DURATION) {
+                        BluetoothAdapter.getDefaultAdapter().disable();
+                        BluetoothAdapter.getDefaultAdapter().enable();
+                    } else if (pipeline != null && (pipeline.getStatus() != Status.CONNECTING) && (bluetoothSocket != null)) {
                         Log.d("SightService", "Closing socket");
                         bluetoothSocket.close();
                         bluetoothSocket = null;
@@ -491,6 +504,9 @@ public class SightService extends Service {
                         Log.d("SightService", "Not closing socket");
                         timeoutWait = Math.min(timeoutWait + TIMEOUT_WAIT_STEP, MAX_TIMEOUT_WAIT);
                         Log.d("SightService", "sleeping " + timeoutWait);
+                        if (pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
+                            pipeline.setStatus(Status.DISCONNECTED);
+                        pipeline.setStatus(Status.WAITING);
                         try {
                             Thread.sleep(timeoutWait);
                         } catch (InterruptedException e) {
@@ -502,8 +518,9 @@ public class SightService extends Service {
                     //
                 }
 
-                if (pipeline.getStatus() != Status.DISCONNECTED)
+                if (pipeline != null && pipeline.getStatus() != Status.DISCONNECTED)
                     pipeline.setStatus(Status.DISCONNECTED);
+
                 pipeline = null;
                 connectionThread = null;
 

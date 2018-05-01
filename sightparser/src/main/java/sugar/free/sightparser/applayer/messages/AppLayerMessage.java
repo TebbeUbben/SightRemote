@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import sugar.free.sightparser.Errors;
 import sugar.free.sightparser.Message;
 import sugar.free.sightparser.applayer.messages.configuration.CloseWriteSessionMessage;
 import sugar.free.sightparser.applayer.messages.configuration.OpenWriteSessionMessage;
@@ -45,12 +44,12 @@ import sugar.free.sightparser.applayer.messages.status.ReadDateTimeMessage;
 import sugar.free.sightparser.applayer.messages.status.WarrantyTimerMessage;
 import sugar.free.sightparser.applayer.messages.status_param.ReadStatusParamBlockMessage;
 import sugar.free.sightparser.crypto.Cryptograph;
-import sugar.free.sightparser.error.AppErrorCodeError;
-import sugar.free.sightparser.error.InvalidAppCRCError;
-import sugar.free.sightparser.error.InvalidAppVersionError;
-import sugar.free.sightparser.error.UnknownAppErrorCodeError;
-import sugar.free.sightparser.error.UnknownAppMessageError;
-import sugar.free.sightparser.error.UnknownServiceError;
+import sugar.free.sightparser.errors.AppError;
+import sugar.free.sightparser.exceptions.InvalidAppCRCException;
+import sugar.free.sightparser.exceptions.InvalidAppVersionException;
+import sugar.free.sightparser.errors.UnknownAppErrorCodeError;
+import sugar.free.sightparser.exceptions.UnknownAppMessageException;
+import sugar.free.sightparser.exceptions.UnknownServiceException;
 import sugar.free.sightparser.pipeline.ByteBuf;
 
 public abstract class AppLayerMessage extends Message implements Serializable {
@@ -152,12 +151,12 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         short command = byteBuf.readShort();
         short error = byteBuf.readShort();
         byte[] data = byteBuf.readBytes();
-        if (version != VERSION) throw new InvalidAppVersionError(version, VERSION);
-        if (!MESSAGES.containsKey(service)) throw new UnknownServiceError(service);
+        if (version != VERSION) throw new InvalidAppVersionException(version, VERSION);
+        if (!MESSAGES.containsKey(service)) throw new UnknownServiceException(service);
         Class<? extends AppLayerMessage> clazz = MESSAGES.get(service).get(command);
-        if (clazz == null) throw new UnknownAppMessageError(service, command);
-        if (error != 0x0000 && error != 0xF0CC) {
-            Class<? extends AppErrorCodeError> errorClass = Errors.ERRORS.get(error);
+        if (clazz == null) throw new UnknownAppMessageException(service, command);
+        if (error != 0x0000) {
+            Class<? extends AppError> errorClass = AppError.ERRORS.get(error);
             if (errorClass != null) throw errorClass.getConstructor(Class.class, short.class).newInstance(clazz, error);
             else throw new UnknownAppErrorCodeError(clazz, error);
         }
@@ -168,7 +167,7 @@ public abstract class AppLayerMessage extends Message implements Serializable {
             int crc = dataBuf.getUInt16LE(data.length - 2);
             byte[] bytes = dataBuf.getBytes(data.length - 2);
             int calculatedCRC = Cryptograph.calculateCRC(bytes);
-            if (crc != calculatedCRC) throw new InvalidAppCRCError(crc, calculatedCRC);
+            if (crc != calculatedCRC) throw new InvalidAppCRCException(crc, calculatedCRC);
             dataBuf = new ByteBuf(bytes.length);
             dataBuf.putBytes(bytes);
         }

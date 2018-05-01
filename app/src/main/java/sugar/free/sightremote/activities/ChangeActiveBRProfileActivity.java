@@ -1,6 +1,5 @@
 package sugar.free.sightremote.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
@@ -37,7 +35,6 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.adapters.BRProfileAdapter;
 import sugar.free.sightremote.dialogs.ConfirmationDialog;
-import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HTMLUtil;
 
 public class ChangeActiveBRProfileActivity extends SightActivity implements TaskRunner.ResultCallback, BRProfileAdapter.BRProfileChangeListener, BRProfileAdapter.OnClickListener {
@@ -133,8 +130,7 @@ public class ChangeActiveBRProfileActivity extends SightActivity implements Task
     @Override
     public void onError(Exception e) {
         hideLoadingIndicator();
-        runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
-        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
+        runOnUiThread(() -> Toast.makeText(this, getString(R.string.error, e.getClass().getSimpleName()), Toast.LENGTH_SHORT).show());
     }
 
     @Override

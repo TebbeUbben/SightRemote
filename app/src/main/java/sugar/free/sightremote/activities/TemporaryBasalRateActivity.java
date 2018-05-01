@@ -20,7 +20,6 @@ import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
 import sugar.free.sightremote.dialogs.ConfirmationDialog;
 import sugar.free.sightremote.utils.DurationPicker;
-import sugar.free.sightremote.utils.CrashlyticsUtil;
 import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
@@ -113,16 +112,14 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
                 dismissSnackbar();
             }
         } else {
-            Answers.getInstance().logCustom(
-                    new CustomEvent("TBR Programmed"));
+            Answers.getInstance().logCustom(new CustomEvent("TBR Programmed"));
             finish();
         }
     }
 
     @Override
     public void onError(Exception e) {
-        runOnUiThread(() -> Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show());
-        CrashlyticsUtil.logExceptionWithCallStackTrace(e);
+        runOnUiThread(() -> Toast.makeText(this, getString(R.string.error, e.getClass().getSimpleName()), Toast.LENGTH_SHORT).show());
     }
 
     @Override

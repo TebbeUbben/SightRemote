@@ -47,12 +47,12 @@ public class SightServiceConnector {
             try {
                 statusCallbackId = boundService.registerStatusCallback(new IStatusCallback.Stub() {
                     @Override
-                    public void onStatusChange(String status) throws RemoteException {
+                    public void onStatusChange(String status, long statusTime, long waitTime) throws RemoteException {
                         if (!connectedToService) return;
                         Status enumStatus = Status.valueOf(status);
                         synchronized (statusCallbacks) {
                             for (StatusCallback statusCallback : new ArrayList<>(statusCallbacks)) {
-                                statusCallback.onStatusChange(enumStatus);
+                                statusCallback.onStatusChange(enumStatus, statusTime, waitTime);
                             }
                         }
                     }
@@ -223,6 +223,32 @@ public class SightServiceConnector {
     public void aclDisconnect(String mac) {
         try {
             boundService.aclDisconnect(mac);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public long getStatusTime() {
+        try {
+            return boundService.getStatusTime();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public long getWaitTime() {
+        try {
+            return boundService.getWaitTime();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void forceConnect() {
+        try {
+            boundService.forceConnect();
         } catch (RemoteException e) {
             e.printStackTrace();
         }

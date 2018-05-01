@@ -37,7 +37,7 @@ public class ActiveProfileBlock extends ConfigurationBlock {
         BR_PROFILE_2((short) 0xE300),
         BR_PROFILE_3((short) 0xFC00),
         BR_PROFILE_4((short) 0x2503),
-        BR_PROFILE_5((short) 0xC603);
+        BR_PROFILE_5((short) 0x3A03);
 
         private static final long serialVersionUID = 1L;
 

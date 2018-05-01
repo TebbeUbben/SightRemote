@@ -3,9 +3,9 @@ package sugar.free.sightparser.handling;
 import java.util.concurrent.CountDownLatch;
 
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
-import sugar.free.sightparser.error.CancelledException;
-import sugar.free.sightparser.error.DisconnectedError;
-import sugar.free.sightparser.error.TimeoutException;
+import sugar.free.sightparser.errors.CancelledException;
+import sugar.free.sightparser.exceptions.DisconnectedException;
+import sugar.free.sightparser.exceptions.TimeoutException;
 import sugar.free.sightparser.pipeline.Status;
 
 public abstract class TaskRunner {
@@ -39,7 +39,7 @@ public abstract class TaskRunner {
         active = true;
         if (serviceConnector.getStatus() == Status.CONNECTED)
             messageCallback.onMessage((AppLayerMessage) null);
-        else messageCallback.onError(new DisconnectedError());
+        else messageCallback.onError(new DisconnectedException());
     }
 
     public Object fetchAndWaitUsingLatch() throws Exception {
@@ -93,13 +93,13 @@ public abstract class TaskRunner {
 
     private StatusCallback statusCallback = new StatusCallback() {
         @Override
-        public void onStatusChange(Status status) {
+        public void onStatusChange(Status status, long statusTime, long waitTime) {
             if (status == Status.CONNECTED) {
                 serviceConnector.removeStatusCallback(this);
                 statusCallbackRegistered = false;
                 messageCallback.onMessage((AppLayerMessage) null);
             } else if (status == Status.DISCONNECTED) {
-                messageCallback.onError(new DisconnectedError());
+                messageCallback.onError(new DisconnectedException());
             }
         }
     };
