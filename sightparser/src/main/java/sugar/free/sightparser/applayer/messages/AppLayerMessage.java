@@ -6,7 +6,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
 import sugar.free.sightparser.Message;
+import sugar.free.sightparser.applayer.descriptors.MessagePriority;
 import sugar.free.sightparser.applayer.messages.configuration.CloseWriteSessionMessage;
 import sugar.free.sightparser.applayer.messages.configuration.OpenWriteSessionMessage;
 import sugar.free.sightparser.applayer.messages.configuration.ReadConfigurationBlockMessage;
@@ -114,6 +117,10 @@ public abstract class AppLayerMessage extends Message implements Serializable {
         statusParamMessages.put((short) 0x561E, ReadStatusParamBlockMessage.class);
         MESSAGES.put(Service.STATUS_PARAM.getServiceID(), statusParamMessages);
     }
+
+    @Getter
+    @Setter
+    private MessagePriority messagePriority = MessagePriority.NORMAL;
 
     protected byte[] getData() throws Exception {
         return new byte[0];

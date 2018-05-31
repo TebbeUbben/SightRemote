@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolus;
 import sugar.free.sightparser.applayer.descriptors.ActiveBolusType;
 import sugar.free.sightparser.applayer.descriptors.HistoryBolusType;
+import sugar.free.sightparser.applayer.descriptors.MessagePriority;
 import sugar.free.sightparser.applayer.descriptors.PumpStatus;
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.applayer.messages.remote_control.CancelBolusMessage;
@@ -355,22 +356,26 @@ public class StatusActivity extends SightActivity implements View.OnClickListene
         if (v == tbrCancel) {
             tbrCancel.setVisibility(View.INVISIBLE);
             message = new CancelTBRMessage();
+            message.setMessagePriority(MessagePriority.HIGHEST);
             Answers.getInstance().logCustom(new CustomEvent("TBR Cancelled"));
         } else if (v == bolus1Cancel) {
             bolus1Cancel.setVisibility(View.INVISIBLE);
             CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
+            cancelBolusMessage.setMessagePriority(MessagePriority.HIGHEST);
             cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus1().getBolusID());
             message = cancelBolusMessage;
             Answers.getInstance().logCustom(new CustomEvent("Bolus Cancelled"));
         } else if (v == bolus2Cancel) {
             bolus2Cancel.setVisibility(View.INVISIBLE);
             CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
+            cancelBolusMessage.setMessagePriority(MessagePriority.HIGHEST);
             cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus2().getBolusID());
             message = cancelBolusMessage;
             Answers.getInstance().logCustom(new CustomEvent("Bolus Cancelled"));
         } else if (v == bolus3Cancel) {
             bolus3Cancel.setVisibility(View.INVISIBLE);
             CancelBolusMessage cancelBolusMessage = new CancelBolusMessage();
+            cancelBolusMessage.setMessagePriority(MessagePriority.HIGHEST);
             cancelBolusMessage.setBolusId(statusResult.getActiveBolusesMessage().getBolus3().getBolusID());
             message = cancelBolusMessage;
             Answers.getInstance().logCustom(new CustomEvent("Bolus Cancelled"));

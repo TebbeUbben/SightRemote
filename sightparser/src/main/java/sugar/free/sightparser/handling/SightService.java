@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SightService extends Service {
 
-    public static final String COMPATIBILITY_VERSION = "bellona";
+    public static final String COMPATIBILITY_VERSION = "cardea";
     private static final int DISCONNECT_DELAY = 20000;
     private static final int MIN_TIMEOUT_WAIT = 4000;
     private static final int MAX_TIMEOUT_WAIT = 20000;

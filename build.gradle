@@ -6,8 +6,8 @@ ext {
 
     versionMajor = 1
     versionMinor = 6
-    versionRevision = 0
-    versionCompatiblity = 'bellona'
+    versionRevision = 1
+    versionCompatiblity = 'cardea'
 
     versionCode = 1
     versionName = versionMajor + "." + versionMinor + "." + versionRevision + "_" + versionCompatiblity
