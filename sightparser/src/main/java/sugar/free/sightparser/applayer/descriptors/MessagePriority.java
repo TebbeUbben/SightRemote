@@ -7,7 +7,7 @@ public enum MessagePriority {
     HIGHEST(2),
     HIGHER(1),
     NORMAL(0),
-    LOW(-1),
+    LOWER(-1),
     LOWEST(-2);
 
     @Getter
