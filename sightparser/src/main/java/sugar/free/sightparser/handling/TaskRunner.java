@@ -1,6 +1,7 @@
 package sugar.free.sightparser.handling;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import sugar.free.sightparser.applayer.messages.AppLayerMessage;
 import sugar.free.sightparser.errors.CancelledException;
@@ -13,8 +14,8 @@ public abstract class TaskRunner {
     private SightServiceConnector serviceConnector;
     private ResultCallback resultCallback;
     private boolean run;
-    private Object result;
-    private Exception error;
+    private volatile Object result;
+    private volatile Exception error;
     private CountDownLatch resultLatch = new CountDownLatch(1);
     private boolean cancelled;
     private boolean active;
@@ -43,21 +44,17 @@ public abstract class TaskRunner {
     }
 
     public Object fetchAndWaitUsingLatch() throws Exception {
-        fetch(new BlockingCallResultCallback(this));
-        resultLatch.wait();
+        new Thread(() -> fetch(new BlockingCallResultCallback(this))).start();
+        resultLatch.await();
         if (error != null) throw error;
         return result;
     }
 
-    public Object fetchAndWaitUsingLoop(long frequency, long timeout) throws Exception {
-        fetch(new BlockingCallResultCallback(this));
-        long timeStarted = System.currentTimeMillis();
-        while (true) {
-            Thread.sleep(frequency);
-            if (error != null) throw error;
-            if (result != null) return result;
-            if (timeout > 0 && System.currentTimeMillis() - timeStarted >= timeout) throw new TimeoutException();
-        }
+    public Object fetchAndWaitUsingLatch(long timeout) throws Exception {
+        new Thread(() -> fetch(new BlockingCallResultCallback(this))).start();
+        if (!resultLatch.await(timeout, TimeUnit.MILLISECONDS)) throw new TimeoutException();
+        if (error != null) throw error;
+        return result;
     }
 
     public void cancel() {
