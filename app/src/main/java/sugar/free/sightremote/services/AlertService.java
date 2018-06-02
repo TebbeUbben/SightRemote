@@ -17,6 +17,7 @@ import java.util.TimerTask;
 import lombok.Setter;
 import sugar.free.sightparser.SerializationUtils;
 import sugar.free.sightparser.applayer.descriptors.AlertStatus;
+import sugar.free.sightparser.applayer.descriptors.MessagePriority;
 import sugar.free.sightparser.applayer.descriptors.alerts.Alert;
 import sugar.free.sightparser.applayer.descriptors.alerts.Error7ElectronicError;
 import sugar.free.sightparser.applayer.messages.remote_control.DismissAlertMessage;
@@ -63,6 +64,8 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
         if (status == Status.CONNECTED) {
             if (fetchTimer != null) return;
             fetchTimer = new Timer(false);
+            ActiveAlertMessage activeAlertMessage = new ActiveAlertMessage();
+            activeAlertMessage.setMessagePriority(MessagePriority.LOWER);
             fetchTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
