@@ -68,7 +68,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
                 public void run() {
                     new SingleMessageTaskRunner(serviceConnector, new ActiveAlertMessage()).fetch(AlertService.this);
                 }
-            }, 0, 2000);
+            }, 0, 1000);
         } else {
             if (alertActivity != null) alertActivity.finish();
             if (fetchTimer != null) {
@@ -108,19 +108,21 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
                 if (alertActivity != null) alertActivity.finish();
                 serviceConnector.disconnect();
                 return;
-            } else serviceConnector.connect();
+            }
+            serviceConnector.connect();
             if (latestId != activeAlertMessage.getAlertID()) {
                 if (alertActivity != null) alertActivity.finish();
                 if (activeAlertMessage.getAlertStatus() == AlertStatus.MUTED) return;
                 latestId = activeAlertMessage.getAlertID();
-                Intent intent = new Intent(this, AlertActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("alertMessage", SerializationUtils.serialize(activeAlertMessage));
-                startActivity(intent);
                 Answers.getInstance().logCustom(new CustomEvent("Active Alert").putCustomAttribute("Alert", alert.getClass().getSimpleName()));
             } else if (alertActivity != null) {
                 alertActivity.setAlertMessage(activeAlertMessage);
                 alertActivity.update();
+            } else {
+                Intent intent = new Intent(this, AlertActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("alertMessage", SerializationUtils.serialize(activeAlertMessage));
+                startActivity(intent);
             }
         }
     }
