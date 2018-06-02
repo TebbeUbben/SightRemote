@@ -105,6 +105,7 @@ public class AlertService extends Service implements StatusCallback, ServiceConn
             }
             Alert alert = activeAlertMessage.getAlert();
             if (alert == null) {
+                if (alertActivity != null) alertActivity.finish();
                 serviceConnector.disconnect();
                 return;
             } else serviceConnector.connect();
