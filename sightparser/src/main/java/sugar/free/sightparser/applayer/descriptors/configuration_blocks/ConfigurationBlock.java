@@ -60,6 +60,7 @@ public abstract class ConfigurationBlock implements Serializable {
         CONFIGURATIONBLOCKS.put(CustomTBR3NameBlock.ID, CustomTBR3NameBlock.class);
         CONFIGURATIONBLOCKS.put(CustomTBR4NameBlock.ID, CustomTBR4NameBlock.class);
         CONFIGURATIONBLOCKS.put(CustomTBR5NameBlock.ID, CustomTBR5NameBlock.class);
+        CONFIGURATIONBLOCKS.put(TBROverNotificationBlock.ID, TBROverNotificationBlock.class);
     }
 
     public abstract short getID();
