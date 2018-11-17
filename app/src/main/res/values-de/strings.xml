@@ -181,4 +181,7 @@
     <string name="alert"><![CDATA[%1$s: <b>%2$s</b>]]></string>
     <string name="this_app_can_access_sightremotes_history_broadcasts">Diese App kann auf die Pumpendaten von SightRemote über Broadcasts zugreifen.</string>
     <string name="access_to_history_broadcasts">Zugriff auf Pumpendaten</string>
+    <string name="enable_tbr_over_notification">TBR-Abgeschlossen-Benachrichtung aktivieren</string>
+    <string name="disable_tbr_over_notification">TBR-Abgeschlossen-Benachrichtung deaktivieren</string>
+    <string name="changed_tbr_over_notification">TBR-Abgeschlossen-Benachrichtung geändert</string>
 </resources>

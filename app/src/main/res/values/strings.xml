@@ -182,4 +182,7 @@
         <item quantity="one">Waiting… (%d second)</item>
         <item quantity="other">Waiting… (%d seconds)</item>
     </plurals>
+    <string name="enable_tbr_over_notification">Enable TBR over notification</string>
+    <string name="disable_tbr_over_notification">Disable TBR over notification</string>
+    <string name="changed_tbr_over_notification">Changed TBR over notification</string>
 </resources>

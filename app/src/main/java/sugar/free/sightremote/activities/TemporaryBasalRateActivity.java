@@ -3,6 +3,8 @@ package sugar.free.sightremote.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
@@ -11,10 +13,19 @@ import android.widget.Toast;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import sugar.free.sightparser.applayer.descriptors.PumpStatus;
+import sugar.free.sightparser.applayer.descriptors.configuration_blocks.ConfigurationBlock;
+import sugar.free.sightparser.applayer.descriptors.configuration_blocks.TBROverNotificationBlock;
+import sugar.free.sightparser.applayer.messages.configuration.ReadConfigurationBlockMessage;
+import sugar.free.sightparser.applayer.messages.configuration.WriteConfigurationBlockMessage;
 import sugar.free.sightparser.applayer.messages.status.PumpStatusMessage;
 import sugar.free.sightparser.handling.SingleMessageTaskRunner;
 import sugar.free.sightparser.handling.TaskRunner;
+import sugar.free.sightparser.handling.taskrunners.WriteConfigurationTaskRunner;
 import sugar.free.sightremote.taskrunners.SetTBRTaskRunner;
 import sugar.free.sightparser.pipeline.Status;
 import sugar.free.sightremote.R;
@@ -24,6 +35,10 @@ import sugar.free.sightremote.utils.HTMLUtil;
 import sugar.free.sightremote.utils.UnitFormatter;
 
 public class TemporaryBasalRateActivity extends SightActivity implements View.OnClickListener, TaskRunner.ResultCallback, NumberPicker.OnValueChangeListener, DurationPicker.OnDurationChangeListener {
+
+    private TBROverNotificationBlock configurationBlock;
+    private MenuItem enableItem;
+    private MenuItem disableItem;
 
     private DurationPicker durationPicker;
     private ConfirmationDialog confirmationDialog;
@@ -67,6 +82,38 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tbr_menu, menu);
+        enableItem = menu.findItem(R.id.enable_tbr_over_notification);
+        disableItem = menu.findItem(R.id.disable_tbr_over_notification);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        item.setVisible(false);
+        configurationBlock.setEnabled(item == enableItem);
+        new WriteConfigurationTaskRunner(getServiceConnector(), new ArrayList<>(Collections.singletonList(configurationBlock))).fetch(new TaskRunner.ResultCallback() {
+            @Override
+            public void onResult(Object result) {
+                runOnUiThread(() -> {
+                    Toast.makeText(TemporaryBasalRateActivity.this, R.string.changed_tbr_over_notification, Toast.LENGTH_SHORT).show();
+                    if (configurationBlock.isEnabled()) {
+                        enableItem.setVisible(false);
+                        disableItem.setVisible(true);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                runOnUiThread(() -> Toast.makeText(TemporaryBasalRateActivity.this, getString(R.string.error, e.getClass().getSimpleName()), Toast.LENGTH_SHORT).show());
+            }
+        });
+        return true;
+    }
+
+    @Override
     protected void statusChanged(Status status) {
         if (status == Status.CONNECTED) {
             new SingleMessageTaskRunner(getServiceConnector(), new PumpStatusMessage()).fetch(this);
@@ -76,6 +123,8 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
             if (confirmationDialog != null) confirmationDialog.hide();
             showManualOverlay();
             hideLoadingIndicator();
+            disableItem.setVisible(false);
+            enableItem.setVisible(false);
         }
     }
 
@@ -111,6 +160,21 @@ public class TemporaryBasalRateActivity extends SightActivity implements View.On
                 hideManualOverlay();
                 dismissSnackbar();
             }
+            ReadConfigurationBlockMessage readMessage = new ReadConfigurationBlockMessage();
+            readMessage.setConfigurationBlockID(TBROverNotificationBlock.ID);
+            new SingleMessageTaskRunner(getServiceConnector(), readMessage).fetch(this);
+        } else if (result instanceof ReadConfigurationBlockMessage) {
+            ReadConfigurationBlockMessage readMessage = (ReadConfigurationBlockMessage) result;
+            configurationBlock = (TBROverNotificationBlock) readMessage.getConfigurationBlock();
+            runOnUiThread(() -> {
+                if (configurationBlock.isEnabled()) {
+                    enableItem.setVisible(false);
+                    disableItem.setVisible(true);
+                } else {
+                    enableItem.setVisible(true);
+                    disableItem.setVisible(false);
+                }
+            });
         } else {
             Answers.getInstance().logCustom(new CustomEvent("TBR Programmed"));
             finish();
